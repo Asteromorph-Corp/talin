@@ -1,0 +1,24 @@
+[package]
+name = "automatic-compaction"
+version = "0.1.0"
+edition.workspace = true
+default-run = "automatic-compaction"
+
+[dependencies]
+talin.workspace = true
+talin-provider.workspace = true
+async-trait.workspace = true
+clap = { version = "4", features = ["derive"] }
+dotenvy.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json = { version = "1", features = ["raw_value"] }
+thiserror = "2"
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+toml = "0.9"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[build-dependencies]
+talin-build.workspace = true
+
+[dev-dependencies]
+mockito = "1"

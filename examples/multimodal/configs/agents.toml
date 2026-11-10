@@ -1,0 +1,8 @@
+[multimodal]
+system_prompt = "You are a helpful AI assistant"
+user_prompt = "Describe each attachment you were given."
+
+attachments.images = ["images"]
+attachments.audios = ["audios"]
+attachments.videos = ["videos"]
+attachments.documents = ["documents"]

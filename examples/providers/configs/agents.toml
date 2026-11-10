@@ -1,0 +1,6 @@
+# The agent does not depend on a provider. The model is chosen when the agent is created.
+[assistant]
+system_prompt = "You are a helpful assistant. Use the tools you are given instead of guessing."
+user_prompt = "{{question}}"
+model = "openai_responses"
+tools = ["current_time"]

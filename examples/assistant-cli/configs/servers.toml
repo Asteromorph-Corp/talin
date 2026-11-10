@@ -1,0 +1,5 @@
+# A public MCP server with documentation for GitHub repositories.
+[deepwiki]
+url = "https://mcp.deepwiki.com/mcp"
+description = "Documentation and Q&A for GitHub repositories."
+tools = ["ask_wiki_question"]

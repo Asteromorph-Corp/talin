@@ -1,0 +1,13 @@
+[package]
+name = "multi-turn"
+version = "0.1.0"
+edition.workspace = true
+
+[dependencies]
+dotenvy.workspace = true
+env_logger.workspace = true
+tokio = { workspace = true, features = ["io-std", "io-util", "macros", "rt-multi-thread", "signal", "sync"] }
+talin.workspace = true
+
+[build-dependencies]
+talin-build.workspace = true

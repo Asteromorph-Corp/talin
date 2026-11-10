@@ -1,0 +1,5 @@
+# A secondary release-plz.toml for the second registry in the dual release: the first registry's run already created the tag and GitHub release, so this one must not create them again.
+[workspace]
+release_always = false
+git_tag_enable = false
+git_release_enable = false

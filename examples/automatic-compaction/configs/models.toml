@@ -1,0 +1,38 @@
+[openai]
+model_type = "openai_responses"
+model = "gpt-5-nano"
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+max_completion_tokens = 4096
+reasoning_effort = "minimal"
+
+[claude]
+model_type = "claude_messages"
+model = "claude-sonnet-5-5"
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+anthropic_beta = ["compact-2026-01-12"]
+max_tokens = 1024
+
+[claude_compact]
+model_type = "claude_messages"
+model = "claude-haiku-5-5"
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+anthropic_beta = ["compact-2026-09-04"]
+max_tokens = 2048
+
+[openai_compact]
+model_type = "openai_responses"
+model = "gpt-5-nano"
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+max_completion_tokens = 4096
+reasoning_effort = "minimal"
+
+[claude_custom]
+model_type = "claude_messages"
+model = "claude-sonnet-5-5"
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+max_tokens = 2048

@@ -1,0 +1,27 @@
+name: Install oasdiff
+description: >
+  Puts a pinned oasdiff on PATH.
+
+  Pinned to an exact release because spec/<provider>/oasdiff-ignore.txt matches each report by its message in full.
+
+runs:
+  using: composite
+  steps:
+    - name: Install oasdiff
+      shell: bash
+      env:
+        VERSION: "1.28.0"
+        # From the release's checksums.txt.
+        SHA256: "e0ef076f2cf953d922addc04be9c3851cf3ec18f7678d2b94d44cea23dca51b5"
+      run: |
+        set -euo pipefail
+
+        archive="$RUNNER_TEMP/oasdiff.tar.gz"
+        curl --fail --silent --show-error --location --output "$archive" \
+          "https://github.com/oasdiff/oasdiff/releases/download/v${VERSION}/oasdiff_${VERSION}_linux_amd64.tar.gz"
+        echo "${SHA256}  ${archive}" | sha256sum --check --quiet
+
+        tar --extract --gzip --file "$archive" --directory "$RUNNER_TEMP" oasdiff
+        # Takes effect from the next step, so this one calls it by path.
+        echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+        "$RUNNER_TEMP/oasdiff" --version

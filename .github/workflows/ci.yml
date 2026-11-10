@@ -1,0 +1,446 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - v0.*
+  pull_request: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+  # All workspace members:
+  CARGO_PACKAGE_ARGS: "--workspace"
+
+  # Or selected packages only:
+  # CARGO_PACKAGE_ARGS: "--package my-core --package my-cli"
+
+  # Or all except helper crates:
+  # CARGO_PACKAGE_ARGS: "--workspace --exclude xtask"
+
+jobs:
+  fmt:
+    name: fmt
+    runs-on: ubuntu-latest
+    steps:
+      # Optional, uncomment if disk space pressure is observed.
+      # - name: Free disk space
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
+      #     tool-cache: false
+
+      - uses: actions/checkout@v7
+
+      - name: Read pinned nightly toolchain
+        run: echo "NIGHTLY_TOOLCHAIN=$(<.github/nightly-toolchain)" >> "$GITHUB_ENV"
+
+      - name: Install nightly rustfmt
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+          components: rustfmt
+
+      - name: Check formatting
+        run: cargo +$NIGHTLY_TOOLCHAIN fmt --all -- --check
+
+  restore-dependencies:
+    name: Restore dependency bundle
+    runs-on: ubuntu-latest
+    needs: fmt
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
+      cache-key: ${{ steps.cache.outputs.cache-primary-key }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Use gzip for dependency cache
+        run: |
+          disabled_dir=$(mktemp -d "$RUNNER_TEMP/zstd-disabled.XXXXXX")
+          count=0
+          while command -v zstd >/dev/null 2>&1; do
+            zstd_path=$(command -v zstd)
+            sudo mv "$zstd_path" "$disabled_dir/zstd-$count"
+            count=$((count + 1))
+            hash -r
+          done
+
+      - name: Restore cached dependencies
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: cargo-dependencies.tar
+          key: cargo-dependencies-v1-${{ hashFiles('Cargo.lock', 'examples/Cargo.lock') }}
+
+      - name: Upload dependencies
+        if: steps.cache.outputs.cache-hit == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: cargo-dependencies.tar
+          retention-days: 30
+          if-no-files-found: error
+          overwrite: true
+
+  prepare:
+    name: Prepare dependencies
+    runs-on: ubuntu-latest
+    needs: restore-dependencies
+    if: needs.restore-dependencies.outputs.cache-hit != 'true'
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read pinned nightly toolchain
+        run: echo "NIGHTLY_TOOLCHAIN=$(<.github/nightly-toolchain)" >> "$GITHUB_ENV"
+
+      - name: Install nightly Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.NIGHTLY_TOOLCHAIN }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Use an isolated CARGO_HOME
+        run: |
+          CARGO_HOME=$(mktemp -d "$RUNNER_TEMP/cargo-dependencies.XXXXXX")
+          echo "CARGO_HOME=$CARGO_HOME" >> "$GITHUB_ENV"
+
+      - name: Fetch dependencies
+        run: |
+          cargo fetch --locked
+          cargo fetch --manifest-path examples/Cargo.toml
+          cp examples/Cargo.lock "$CARGO_HOME/examples-Cargo.lock"
+          cargo +$NIGHTLY_TOOLCHAIN generate-lockfile -Z direct-minimal-versions
+          cargo fetch --locked
+          cp Cargo.lock "$CARGO_HOME/minimal-Cargo.lock"
+
+      - name: Archive dependencies
+        run: |
+          mkdir -p "$CARGO_HOME/registry/index" "$CARGO_HOME/registry/cache" "$CARGO_HOME/git/db"
+          tar -cf "$GITHUB_WORKSPACE/cargo-dependencies.tar" -C "$CARGO_HOME" \
+            registry/index registry/cache git/db examples-Cargo.lock minimal-Cargo.lock
+
+      - name: Cache dependencies
+        uses: actions/cache/save@v4
+        with:
+          path: cargo-dependencies.tar
+          key: ${{ needs.restore-dependencies.outputs.cache-key }}
+
+      - name: Upload dependencies
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: cargo-dependencies.tar
+          retention-days: 30
+          if-no-files-found: error
+          overwrite: true
+
+  doc:
+    name: doc / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: [restore-dependencies, prepare]
+    if: ${{ !cancelled() && needs.restore-dependencies.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            args: ""
+          # Optional, uncomment if your crate has default features.
+          # - name: no-default-features
+          #   args: "--no-default-features"
+          # Optional, uncomment if your crate has optional features.
+          # - name: all-features
+          #   args: "--all-features"
+
+    steps:
+      # Optional, uncomment if disk space pressure is observed.
+      # - name: Free disk space
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
+      #     tool-cache: false
+
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: doc-${{ matrix.name }}
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: ${{ runner.temp }}/cargo-dependencies
+
+      - name: Restore dependencies
+        run: tar -xf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" -C ~/.cargo
+
+      - name: Check documentation
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc $CARGO_PACKAGE_ARGS --frozen --no-deps --document-private-items ${{ matrix.args }}
+
+  test:
+    name: test / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: [restore-dependencies, prepare]
+    if: ${{ !cancelled() && needs.restore-dependencies.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            args: ""
+          # Optional, uncomment if your crate has default features.
+          # - name: no-default-features
+          #   args: "--no-default-features"
+          # Optional, uncomment if your crate has optional features.
+          - name: all-features
+            args: "--all-features"
+          # Any other feature combinations you want to test.
+          # - name: core-serde
+          #   args: "--no-default-features --features my-core/serde"
+
+    steps:
+      # Optional, uncomment if disk space pressure is observed.
+      # - name: Free disk space
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
+      #     tool-cache: false
+
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: test-${{ matrix.name }}
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: ${{ runner.temp }}/cargo-dependencies
+
+      - name: Restore dependencies
+        run: tar -xf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" -C ~/.cargo
+
+      - name: Run cargo clippy
+        run: cargo clippy $CARGO_PACKAGE_ARGS --frozen --all-targets ${{ matrix.args }} -- -D warnings
+
+      - name: Run tests
+        run: cargo test $CARGO_PACKAGE_ARGS --frozen --all-targets ${{ matrix.args }}
+
+      - name: Run doc tests
+        run: cargo test $CARGO_PACKAGE_ARGS --frozen --doc ${{ matrix.args }}
+
+  # The examples form their own workspace (`examples/Cargo.toml`), so nothing above builds them.
+  examples:
+    name: examples
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples
+    needs: [restore-dependencies, prepare]
+    if: ${{ !cancelled() && needs.restore-dependencies.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: ${{ runner.temp }}/cargo-dependencies
+
+      - name: Restore examples lockfile
+        run: tar -xOf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" examples-Cargo.lock > Cargo.lock
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: examples
+          workspaces: examples
+
+      - name: Restore dependencies
+        run: tar -xf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" -C ~/.cargo
+
+      - name: Check examples
+        run: cargo check --workspace --frozen --all-targets --all-features
+
+      # The tests of the examples run without API keys.
+      - name: Test examples
+        run: cargo test --workspace --frozen --all-features
+
+  get-msrv:
+    name: Get MSRV
+    runs-on: ubuntu-latest
+    outputs:
+      msrv: ${{ steps.msrv.outputs.value }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Get MSRV
+        id: msrv
+        uses: SebRollen/toml-action@v1.2.0
+        with:
+          file: Cargo.toml
+          field: workspace.package.rust-version
+
+  msrv:
+    name: MSRV / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: [restore-dependencies, prepare, get-msrv]
+    if: ${{ !cancelled() && needs.restore-dependencies.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') && needs.get-msrv.result == 'success' && needs.get-msrv.outputs.msrv != '' }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            args: ""
+          # Optional, uncomment if your crate has default features.
+          # - name: no-default-features
+          #   args: "--no-default-features"
+          # Optional, uncomment if your crate has optional features.
+          # - name: all-features
+          #   args: "--all-features"
+
+    steps:
+      # Optional, uncomment if disk space pressure is observed.
+      # - name: Free disk space
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
+      #     tool-cache: false
+
+      - uses: actions/checkout@v7
+
+      - name: Install MSRV Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ needs.get-msrv.outputs.msrv }}
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: msrv-${{ matrix.name }}
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: ${{ runner.temp }}/cargo-dependencies
+
+      - name: Restore dependencies
+        run: tar -xf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" -C ~/.cargo
+
+      # No cargo clippy, because older versions of clippy have different lints and may fail the build for reasons unrelated to the crate.
+
+      - name: Run tests
+        run: cargo test $CARGO_PACKAGE_ARGS --frozen --all-targets ${{ matrix.args }}
+
+  minimal-versions:
+    name: Minimal versions / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    needs: [restore-dependencies, prepare]
+    if: ${{ !cancelled() && needs.restore-dependencies.result == 'success' && (needs.prepare.result == 'success' || needs.prepare.result == 'skipped') }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: default
+            args: ""
+          # Optional, uncomment if your crate has default features.
+          # - name: no-default-features
+          #   args: "--no-default-features"
+          # Optional, uncomment if your crate has optional features.
+          # - name: all-features
+          #   args: "--all-features"
+
+    steps:
+      # Optional, uncomment if disk space pressure is observed.
+      # - name: Free disk space
+      #   uses: jlumbroso/free-disk-space@v1.3.1
+      #   with:
+      #     android: true
+      #     dotnet: true
+      #     haskell: true
+      #     large-packages: true
+      #     docker-images: true
+      #     swap-storage: true
+      #     tool-cache: false
+
+      - uses: actions/checkout@v7
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: cargo-dependencies
+          path: ${{ runner.temp }}/cargo-dependencies
+
+      - name: Select minimal-versions lockfile
+        run: tar -xOf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" minimal-Cargo.lock > Cargo.lock
+
+      - name: Restore dependencies
+        run: tar -xf "$RUNNER_TEMP/cargo-dependencies/cargo-dependencies.tar" -C ~/.cargo
+
+      - name: Run cargo clippy
+        run: cargo clippy $CARGO_PACKAGE_ARGS --frozen --all-targets ${{ matrix.args }} -- -D warnings
+
+      - name: Run tests
+        run: cargo test $CARGO_PACKAGE_ARGS --frozen --all-targets ${{ matrix.args }}
+
+      - name: Run doc tests
+        run: cargo test $CARGO_PACKAGE_ARGS --frozen --doc ${{ matrix.args }}

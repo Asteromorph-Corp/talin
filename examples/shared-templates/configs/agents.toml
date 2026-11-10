@@ -1,0 +1,17 @@
+[mit_cs]
+system_prompt = "{{config.RESEARCH_SYSTEM}}"
+user_prompt = "{{config.RESEARCH_USER}}"
+model = "gpt_4o_mini"
+
+[mit_cs.prompts]
+field = "computer science"
+university = "MIT"
+
+[stanford_physics]
+system_prompt = "{{config.RESEARCH_SYSTEM}}"
+user_prompt = "{{config.RESEARCH_USER}}"
+model = "gpt_4o_mini"
+
+[stanford_physics.prompts]
+field = "physics"
+university = "Stanford"

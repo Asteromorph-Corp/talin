@@ -1,0 +1,9 @@
+# This agent has no tools of its own. The strategy adds one for the duration of a run.
+[reader]
+system_prompt = """
+You read a text and keep notes on it.
+Record every key fact with the `jot` tool, one fact per call.
+When you have recorded them all, reply with a one-sentence summary.
+"""
+user_prompt = "{{text}}"
+model = "gpt_4o_mini"

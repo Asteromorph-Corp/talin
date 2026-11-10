@@ -1,0 +1,15 @@
+[read_file]
+name = "read_file"
+description = "Reads a text file from the project directory."
+[read_file.input]
+path = { type = "String", description = "The path of the file, relative to the project directory." }
+[read_file.config]
+root = "String"
+
+[take_note]
+name = "take_note"
+description = "Appends a note to the notes file, which the user can read later."
+[take_note.input]
+note = { type = "String", description = "The note, in one or two sentences." }
+[take_note.config]
+file = "String"

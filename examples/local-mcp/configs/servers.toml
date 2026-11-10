@@ -1,0 +1,11 @@
+[dice_http]
+url = "http://localhost:8000/mcp"
+description = "Dice roller for tabletop games like D&D."
+tools = ["roll_dice"]
+always_local = true
+
+[dice_stdio]
+command = "cargo"
+args = ["run", "--quiet", "--features", "server-stdio", "--bin", "server-stdio"]
+description = "Dice roller for tabletop games like D&D."
+tools = ["roll_dice"]

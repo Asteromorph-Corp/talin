@@ -1,0 +1,280 @@
+{
+  "model": "claude-sonnet-5-5",
+  "threshold": 50000,
+  "archive_rows": 2200,
+  "passed": true,
+  "requests": [
+    {
+      "number": 1,
+      "bytes": 1567,
+      "contains_archive_noise": false,
+      "compactions": [],
+      "context_management": {
+        "edits": [
+          {
+            "type": "compact_20260112",
+            "instructions": "Summarize the project state for continuation. Preserve the exact codename, launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call any tools.",
+            "pause_after_compaction": true,
+            "trigger": {
+              "type": "input_tokens",
+              "value": 50000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "number": 2,
+      "bytes": 172518,
+      "contains_archive_noise": true,
+      "compactions": [],
+      "context_management": {
+        "edits": [
+          {
+            "type": "compact_20260112",
+            "instructions": "Summarize the project state for continuation. Preserve the exact codename, launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call any tools.",
+            "pause_after_compaction": true,
+            "trigger": {
+              "type": "input_tokens",
+              "value": 50000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "number": 3,
+      "bytes": 2098,
+      "contains_archive_noise": false,
+      "compactions": [
+        {
+          "type": "compaction",
+          "content": "**Project state summary**\n\n- **Codename:** project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\n- **Launch port:** 50196\n- **Recovery phrase:** 643ab54d-aa81-4990-a089-cd10e0d93988\n- **Region:** region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\n- **Archive revision:** 467a6228-4767-4837-9bc7-63cd4502e92f\n\n**Archive status:** I called LoadArchive once and it loaded successfully. It held 2,200 entries (0–2199), all routine inventory checks. None of them changed a project decision or the facts above.\n\n**Pending user task:** There is nothing outstanding. The original instruction was to load the archive once, remember the revision, and reply only \"READY\". The archive load and revision capture are done. This summary request came before I sent that reply. I'm treating the summary as the current deliverable, and no further tool calls are needed."
+        }
+      ],
+      "context_management": {
+        "edits": [
+          {
+            "type": "compact_20260112",
+            "instructions": "Summarize the project state for continuation. Preserve the exact codename, launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call any tools.",
+            "pause_after_compaction": true,
+            "trigger": {
+              "type": "input_tokens",
+              "value": 50000
+            }
+          }
+        ]
+      }
+    },
+    {
+      "number": 4,
+      "bytes": 3426,
+      "contains_archive_noise": false,
+      "compactions": [
+        {
+          "type": "compaction",
+          "content": "**Project state summary**\n\n- **Codename:** project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\n- **Launch port:** 50196\n- **Recovery phrase:** 643ab54d-aa81-4990-a089-cd10e0d93988\n- **Region:** region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\n- **Archive revision:** 467a6228-4767-4837-9bc7-63cd4502e92f\n\n**Archive status:** I called LoadArchive once and it loaded successfully. It held 2,200 entries (0–2199), all routine inventory checks. None of them changed a project decision or the facts above.\n\n**Pending user task:** There is nothing outstanding. The original instruction was to load the archive once, remember the revision, and reply only \"READY\". The archive load and revision capture are done. This summary request came before I sent that reply. I'm treating the summary as the current deliverable, and no further tool calls are needed."
+        }
+      ],
+      "context_management": {
+        "edits": [
+          {
+            "type": "compact_20260112",
+            "instructions": "Summarize the project state for continuation. Preserve the exact codename, launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call any tools.",
+            "pause_after_compaction": true,
+            "trigger": {
+              "type": "input_tokens",
+              "value": 50000
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "responses": [
+    {
+      "id": "msg_011Cfja9dXJWSaWph2wAM3hS",
+      "model": "claude-sonnet-5-5",
+      "stop_reason": "tool_use",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 700
+        },
+        "cache_creation_input_tokens": 700,
+        "cache_read_input_tokens": 0,
+        "input_tokens": 4,
+        "output_tokens": 28,
+        "iterations": [
+          {
+            "type": "message",
+            "input_tokens": 4,
+            "output_tokens": 28,
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 700
+            },
+            "cache_creation_input_tokens": 700,
+            "cache_read_input_tokens": 0
+          }
+        ],
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard"
+      },
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "toolu_016x1FjhycMgMVURrnQmbrnr",
+          "name": "loadarchive",
+          "input": {},
+          "caller": {
+            "type": "direct"
+          }
+        }
+      ]
+    },
+    {
+      "id": "msg_011Cfja9zmyd2g36B4FYsTZR",
+      "model": "claude-sonnet-5-5",
+      "stop_reason": "compaction",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 56316
+        },
+        "cache_creation_input_tokens": 56316,
+        "cache_read_input_tokens": 700,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "iterations": [
+          {
+            "type": "compaction",
+            "input_tokens": 82,
+            "output_tokens": 477,
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 56316
+            },
+            "cache_creation_input_tokens": 56316,
+            "cache_read_input_tokens": 700
+          }
+        ],
+        "output_tokens_details": null,
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard"
+      },
+      "content": [
+        {
+          "type": "compaction",
+          "content": "**Project state summary**\n\n- **Codename:** project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\n- **Launch port:** 50196\n- **Recovery phrase:** 643ab54d-aa81-4990-a089-cd10e0d93988\n- **Region:** region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\n- **Archive revision:** 467a6228-4767-4837-9bc7-63cd4502e92f\n\n**Archive status:** I called LoadArchive once and it loaded successfully. It held 2,200 entries (0–2199), all routine inventory checks. None of them changed a project decision or the facts above.\n\n**Pending user task:** There is nothing outstanding. The original instruction was to load the archive once, remember the revision, and reply only \"READY\". The archive load and revision capture are done. This summary request came before I sent that reply. I'm treating the summary as the current deliverable, and no further tool calls are needed."
+        }
+      ]
+    },
+    {
+      "id": "msg_011CfjaAn8WR8WArxJH4jvJB",
+      "model": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "input_tokens": 901,
+        "output_tokens": 42,
+        "iterations": [
+          {
+            "type": "message",
+            "input_tokens": 901,
+            "output_tokens": 42,
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 0
+            },
+            "cache_creation_input_tokens": 0,
+            "cache_read_input_tokens": 0
+          }
+        ],
+        "output_tokens_details": {
+          "thinking_tokens": 38
+        },
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard"
+      },
+      "content": [
+        {
+          "type": "thinking",
+          "thinking": "",
+          "signature": "CAQS0gUKEAgSGAI4AUIIdGhpbmtpbmcSDO+8iJbSXa7Gva8L8BoMEAaIWc96EQCUsNmqIjCDH3MnsIO62NPWuCYc6ngNFPCdVndeuc8083FFZC43EuW4zMkqwzVHlBfNzKboEfEq7wRsvWnNHatlwz4DwpLfvBP4A6+BTHs6s/yyVzPC52mo0Wg6VArriC8wsecFvVg9JJrcHmNjLshqCIb7d1VxrtMM0ONTlli3sqREMEJ1+QwT/Fvu1irctKlKGRyahAn68Kfqa1jkqQVPsFm6KmHWdA5yBPKWvq0UvWKXkI2ydXZ+MWVhk4ozQcfDfLL+vs86fqP/LjsPcL+bayMiCgCQ2j8KdKfosxJHnVMzc5pyezXZPkWuJ0HfIr2Zzl1AVDFKozRNVwq3GggoeHpmQMvbFqZLLE6lXuB2fv3XetNK4FinRixjqkWS500eXKfHWQbT4GA7VNaTBzvxSyIqST1NFtcFdax2Qh9lFC+B+3VkIF4aB8R6S6ioFDscNXN3rlO1WLx9wzL3jEE1VBZ3yOHLrt9V6nYbXagnphKuy53Zrko5gGCtyHeX/ekknT6+j4uDxVxroKuweGA3hgL6W4rDTV5W76MsKqdflodjs7NZE4Pm2oaXo1pTJ5gjrYTDM9l5exWAlq72eENZa/820FJpKbucN5XgvyMdCFeQaIkyAIiS5koR1dRl1NzsO+xDrLN0olIy/X4rYHWIvZft28HRwx5Myz6XB7kmAS8ZAnuCfdRahMLIR/2Q0BXrefVIqzYwLZftoGJ20cxVPcomjyoX5WslpVxFJhlny1jFOehMEd5K67NKB6BHH/DJpFfuqgTBaRHIFr6xkM5IiAHHassaZ2nIOelLAd5fT3JVMe+HW68Y2qRwJCWC2G0JR9ex3PubPJDl5SWLFFD1PQH5kX5mbhk65AY0bQ5c/dZq5EZMet6g3UMRLXwctHd1LCZ1M+ThKRgB"
+        },
+        {
+          "type": "text",
+          "text": "READY"
+        }
+      ]
+    },
+    {
+      "id": "msg_011CfjaAvMropK55VLhEb1JP",
+      "model": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "usage": {
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 0,
+          "ephemeral_5m_input_tokens": 1005
+        },
+        "cache_creation_input_tokens": 1005,
+        "cache_read_input_tokens": 0,
+        "input_tokens": 4,
+        "output_tokens": 144,
+        "iterations": [
+          {
+            "type": "message",
+            "input_tokens": 4,
+            "output_tokens": 144,
+            "cache_creation": {
+              "ephemeral_1h_input_tokens": 0,
+              "ephemeral_5m_input_tokens": 1005
+            },
+            "cache_creation_input_tokens": 1005,
+            "cache_read_input_tokens": 0
+          }
+        ],
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"codename\":\"project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\",\"port\":50196,\"recovery\":\"643ab54d-aa81-4990-a089-cd10e0d93988\",\"region\":\"region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\",\"archive_revision\":\"467a6228-4767-4837-9bc7-63cd4502e92f\"}"
+        }
+      ]
+    }
+  ],
+  "input_facts": {
+    "codename": "project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a",
+    "port": 50196,
+    "recovery": "643ab54d-aa81-4990-a089-cd10e0d93988",
+    "region": "region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc",
+    "archive_revision": "467a6228-4767-4837-9bc7-63cd4502e92f"
+  },
+  "answers": [
+    "READY",
+    "{\"codename\":\"project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\",\"port\":50196,\"recovery\":\"643ab54d-aa81-4990-a089-cd10e0d93988\",\"region\":\"region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\",\"archive_revision\":\"467a6228-4767-4837-9bc7-63cd4502e92f\"}"
+  ],
+  "transcript": {
+    "compaction_markers": 1,
+    "stored_records": 7,
+    "rendered_records": 4
+  }
+}

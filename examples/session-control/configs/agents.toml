@@ -1,0 +1,42 @@
+[guesser]
+system_prompt = "You are a number guesser, a master of deduction and probability."
+user_prompt = """
+Guess the number that the user is thinking of using the provided tools. The number is between 1 and 10.
+The number likely didn't change from last time, but you should double check just in case.
+"""
+
+model = "gpt_4o_mini"
+call_options.tool_choice.function = "up_or_down"
+
+[[guesser.tools]]
+name = "up_or_down"
+config = { answer = 9 }
+
+[guesser.response_format]
+name = "game_result"
+description = "The result of the number guessing game."
+[guesser.response_format.fields]
+attempt = { type = "i32", description = "The number of attempts you took." }
+answer = { type = "i32", description = "The final number." }
+
+[guesser.if.model_type.claude_messages]
+system_prompt = "You are Claude, a careful number guesser."
+max_iterations = 42
+
+[[guesser.if.model_type.claude_messages.tools]]
+name = "up_or_down"
+config = { answer = 7 }
+
+[summarizer]
+system_prompt = "You are a summary agent."
+user_prompt = "You critisize the result of the guessing game."
+
+model = "gpt_4o_mini"
+
+[summarizer.response_format]
+name = "game_summary"
+description = "The summary of the number guessing game."
+[summarizer.response_format.fields]
+attempt = { type = "i32", description = "The total number of attempts in the session." }
+answer = { type = "Vec<i32>", description = "The answers recorded in the games" }
+evaluation = { type = "String", description = "Your evaluation of the guessing game." }

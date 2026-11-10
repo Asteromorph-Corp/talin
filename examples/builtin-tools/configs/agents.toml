@@ -1,0 +1,11 @@
+[search_agent]
+system_prompt = "You are a research agent, aiding users with their queries."
+user_prompt = "Research about {{topic}} and give me a detailed summary."
+
+model = "gpt_4o_mini"
+call_options.tool_choice = "required"
+
+if.model_type.openai_responses.tools = ["builtin.openai_responses/web_search"]
+if.model_type.claude_messages.tools = ["builtin.claude_messages/web_search"]
+if.model_type.gemini_interactions.tools = ["builtin.gemini_interactions/google_search"]
+if.model_type.xai_responses.tools = ["builtin.xai_responses/web_search"]

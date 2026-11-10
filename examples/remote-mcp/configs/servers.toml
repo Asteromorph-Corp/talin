@@ -1,0 +1,7 @@
+# A public MCP server over streamable HTTP, which answers questions about GitHub repositories.
+# There is no `always_local`, so a provider that has its own MCP client uses it: the request
+# carries the server's address, and the provider lists and calls the tools.
+[deepwiki]
+url = "https://mcp.deepwiki.com/mcp"
+description = "Documentation and Q&A for GitHub repositories."
+tools = ["read_wiki_structure", "ask_wiki_question"]

@@ -1,0 +1,187 @@
+{
+  "model": "gpt-5.4-nano",
+  "threshold": 4000,
+  "archive_rows": 500,
+  "passed": false,
+  "requests": [
+    {
+      "number": 1,
+      "bytes": 1307,
+      "contains_archive_noise": false,
+      "compactions": [],
+      "context_management": [
+        {
+          "type": "compaction",
+          "compact_threshold": 4000
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "bytes": 40170,
+      "contains_archive_noise": true,
+      "compactions": [],
+      "context_management": [
+        {
+          "type": "compaction",
+          "compact_threshold": 4000
+        }
+      ]
+    }
+  ],
+  "responses": [
+    {
+      "background": false,
+      "billing": {
+        "payer": "developer"
+      },
+      "created_at": 1791225566,
+      "completed_at": 1791225567,
+      "id": "resp_0c62faacb4a591fa006ac3eede7cf487d0a83952322a4a1475",
+      "max_output_tokens": 4096,
+      "metadata": {},
+      "model": "gpt-5.4-nano-2026-03-17",
+      "object": "response",
+      "output": [
+        {
+          "type": "function_call",
+          "arguments": "{}",
+          "call_id": "call_92eRcuf0rNcXnhlgLjTcl3uG",
+          "name": "loadarchive",
+          "id": "fc_0c62faacb4a591fa006ac3eedf098087d080b3681b0c2e0cc4",
+          "status": "completed"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "prompt_cache_retention": "24h",
+      "reasoning": {
+        "effort": "none",
+        "mode": "standard",
+        "context": "current_turn"
+      },
+      "service_tier": "default",
+      "status": "completed",
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [
+        {
+          "type": "function",
+          "name": "loadarchive",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An empty input type for tools that require no arguments.\n\nUse this for tools that don't require any input parameters",
+            "title": "EmptyFunctionInput",
+            "$schema": "https://json-schema.org/draft/2020-12/schema"
+          },
+          "strict": false,
+          "description": "Read the project archive once; returns its revision and routine historical entries. Input: {}."
+        }
+      ],
+      "top_logprobs": 0,
+      "top_p": 0.9800000190734863,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 206,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 14,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 220
+      }
+    },
+    {
+      "background": false,
+      "billing": {
+        "payer": "developer"
+      },
+      "created_at": 1791225567,
+      "completed_at": 1791225568,
+      "id": "resp_0c62faacb4a591fa006ac3eedf8bac87d0840a2c6d5ddf151d",
+      "max_output_tokens": 4096,
+      "metadata": {},
+      "model": "gpt-5.4-nano-2026-03-17",
+      "object": "response",
+      "output": [
+        {
+          "type": "compaction",
+          "id": "cmp_0c62faacb4a591fa006ac3eee00c2887d09836c5b84ff4668e",
+          "encrypted_content": "gAAAAABqw-7ghD1Kbs8bHjppaWUOd__rDNjBMCRFmQTYsgmOBVcMeU3a-Yj1XaQC7r4XJdgifqQmw7FNMHuSSMlYxVlvC4ZbWG62Y6-3VXJ7PSGbMecimuaK2fo4bx3_4KNPPA1SzDQ_oOa2sYyCmOOXkK21H_vR4SfLMywxS_S8TMb8kojCccDwsJWQ0Zn4c8754JChQbUdt0gbmpZkgqt9cOUpr5cwaMbl97FPyDxQzcmMtg6dyOrgI7JD_4yuXoLnjUk9FPTHPCbN6un5W6joif7tZ0M_ao6NepORB_cWqbqTmBwVUx2xgtLgIdyur1nXFS92RqVmp9cziH7ucOUR6Q1QQmT8UkpQkD2GKCwEQn9TgpXqnSm5MOSuGNfqTx4sacoM1UdfZwepJrvCSjDbYP1WTWfLBtCpr4m_D4hFoBFoJBOOc82f9q7ri0tlZBInntz1yQMkSGIGN190951UXktcfnsdrhZMzDsgGZLFngZ1lSiTPlVDWMRnizL9tzGnfP5N5CQKWB5cc87o2wVXJE5wlrEC6W5UbKRfcbyNyPsGgIu6f672i0VIE7BQOWWsFp32VE85ShC2UUH33IBWsD5PSuuvGRD1bDbKD-icN3iG3rwxlCxJ9E4G8H6A67Y59yv3OKanRUqEx9XmzuL-RekP3iMGS24nTh5mHSPyjyPV0NfDWga71UPPUDIJn7zRbEZlJIZpxKeTnW8wnh4kEjxQgu5GrWzQmnASf8uejAM0rk27kVEPeyPQpnWVuYxIUAqBW_Hw0-a_GOXmnQ2HtNL9s72NPkjVPI7BrsQeAeJIoSUoXRv1nVhHKqXZvwuhxbChGLnI8WRdpowOvt9RaOYIt9Ds_gAc8wJ0V4goIzXj2MmGLi0v0FnLogGnGDqck_uLx1rvP2-ZkH6VB6idDf45dBClHi_xAW83jJ3eTTZfcbgyquK8dPeQJ7z_pYsq1yUIxXHNOcROJoMEmaijGR9L68oyEqotuMxY2_4_maQyyaN8dMlbRg5yHdNXLSGWVKBu65xDEMb7hlG6v21xkJXo_Qw42alQZtPr7Y4KKsWbTnV6CVOuoShqT5BtmRYyCQD9CjLAyGsQbaBLCorhVzHiVAeVgKgZO2kDKB1KzwIwCBMvwQHnxjLcwAVQQ50WD4TyK_bmHQDm9PHFzZGe9LToc8J5w2oqrhu13VHXzOy1Eg937abwWJmQNi6TImdHTOtKdqgiAloit4qReOIBOXYJe-_yIUodL2GCNAJILWJJr7MCwwM7cIoirQy7QUSseql2ctb7dq4_9lipepwYs_rh0WwiA3AGRqOx9kSFp_jPAtVPuSZCcFfmQ-kxdu1eS-8mwB-u8gXFuMVpJfsu4K5zCRgfKl6rmIOgZv6hf0n7QmYGUO7fuFdQBpJ4aZhyMFrc60LwaFqeTRM6-68uRgzIb4gHM09RC8pFI1cwb-3cZf4rcIrrPhaIiKmYrnIc2YDUu8-EkkmnqpcCGIWXtwMQz9udxIJHY1gpuRD4uJMcFed6U5c-0rbFAWYxesIjWjPdpM3Yr2l3k1HdSinLDCkMjPjk68rsL3NzSezHvLnY9Vkd-FH79ewrdABylS57nQbTBP8LgrJKuSbYV6d_XvYhspOvtSnCk2sf0RC31JvKo5uzYYUVNDr5WJlmQZ4U3mC61c5pEMOkDry-OO1KC3_I3kJgTiqPuDpboKJlciMhRB5vjNRfb34xK__myVrHtvZN8aTNyc0FmCgyfcx7BESi_dVGxj-CYQtUgQk_w7ZYbAoBMKUmJeuZLVNcPCnd3ZXGTAa4OH4SbnK0lQ_jVQXPtjVGV11qHj_GLe1_QkBoh3YbeehL-6F0qotaV8CwRzC9DFUvrGAS2qfS64jP7cnIi84mYPP_8RPQxr3yGBNHF_PokQ0WLqJL5_5YsLf1f5WxsfheU3WGED_0e2Et_Z7UshL6fvtWOgrbE1A5LDhmacY83knhRFs9dU5aMAWmDyBYNJ5gJdaU921kiFohOgmeCECxix6O4RrZNpfYMzoqXb3dM781gdMXCwGkI0HnzJObLs_ooLk64RA1awZTTOBPQui4CyrsRvCtkrU3ECHL7lBvjw4gGEjJzNHhKQNkCnYpd9Pw67AISopWa_2mB6m5hRxOyq2YPa7Y4tdr4dZNeQC_oZ7yohXv4m4O2VtwGipMhM8hC8D443WBhkXd-JRMl-h5tDOlw5OqqFYqbYgwpAzlU-o7XVQm_odXhIbW_21C_VJORksrm_eTF-HQM1huDskPs5DkFZUKp2G5VaczPUTnGMQ0dC3YryW10WMCV22NXqMsjlD1ztQ8gUCoNC_r75AL2npWZL8CQpXLrT5cutgOC8RR8KrC1SEvcMiPTPwR-kjykJyeEOFtWCZi5iiERJ_eMk4pyhc7fwQsKbS6_6hpuFYUhkvRDj2r9mWvtldnpCS_YsiPCfmzp6WwNSGQj3j-eM0J98v-MVja7RiT8W3yaTykN1Jxzv7zu8ljtPl_D5MLXc2hDRZXvWcj8qKn3rgyZKS_p-h4RaYwnjE5J3qSSo0hesjJHfRoybCfu7661zMUudhHdLfe8wE6eSVujPnvGbTS-C_FI6gBnOtZ8yPUDum1Qb7MO-jXCC1lverIDkVhrUX8_oYNzO7T890IF8lrG06IORuRaL9sT6PGeVHN1eI5ZzdJcXn9c5UtBU0UaZ_H-pGeX0O2f1W4si_I7q3QZ5zhM3o0a4gWPLqI5JaUhD17rXPjS_YPrN7eUmM5kL4rm1c9L4rKGOs2U9y2gnPffmZu4PuDfW_Tk0giihl3R1rqcrDQfCLgCFvVFkVTEGT3EAOvOR-LD06oLwB7DZtSItI1pPOCEdMWmF7pixhFq8QsZ-oTsxQjzgWWeO1QGUYR3XrgQ03W8-ulzcA6LIoPyMvlK_goIImSGZ2ti6RgakFa5C75OaNc0ejrELq1kEnmLDEwM98DxEqQS67uUOBzoojilvGjW4TC4FiKZKlOOzn2yeG-L8MIY9gS7C-qJqKh"
+        },
+        {
+          "type": "function_call",
+          "arguments": "{}",
+          "call_id": "call_5o2WeAdfHuw4pIHCHdvb9ZjM",
+          "name": "loadarchive",
+          "id": "fc_0c62faacb4a591fa006ac3eee0a32c87d0b0ed54ad6f336e84",
+          "status": "completed"
+        }
+      ],
+      "parallel_tool_calls": true,
+      "prompt_cache_retention": "24h",
+      "reasoning": {
+        "effort": "none",
+        "mode": "standard",
+        "context": "current_turn"
+      },
+      "service_tier": "default",
+      "status": "completed",
+      "temperature": 1.0,
+      "text": {
+        "format": {
+          "type": "text"
+        },
+        "verbosity": "medium"
+      },
+      "tool_choice": "auto",
+      "tools": [
+        {
+          "type": "function",
+          "name": "loadarchive",
+          "parameters": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An empty input type for tools that require no arguments.\n\nUse this for tools that don't require any input parameters",
+            "title": "EmptyFunctionInput",
+            "$schema": "https://json-schema.org/draft/2020-12/schema"
+          },
+          "strict": false,
+          "description": "Read the project archive once; returns its revision and routine historical entries. Input: {}."
+        }
+      ],
+      "top_logprobs": 0,
+      "top_p": 0.9800000190734863,
+      "truncation": "disabled",
+      "usage": {
+        "input_tokens": 7248,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 14,
+        "output_tokens_details": {
+          "reasoning_tokens": 5
+        },
+        "total_tokens": 7262
+      }
+    }
+  ],
+  "input_facts": {
+    "codename": "project-b8c17e4c-51fd-474d-bf0e-2e8073dd652c",
+    "port": 58906,
+    "recovery": "ece86c21-7535-4dcf-bd8b-5ccb11b7866b",
+    "region": "region-61f831e9-2667-4c1c-b42a-379e73e8516b",
+    "archive_revision": "749626a6-baf0-431c-9855-653ba4f94dbb"
+  },
+  "error": "all tool executions failed for a step"
+}

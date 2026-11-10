@@ -1,0 +1,6 @@
+[claude_haiku_45]
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+model_type = "claude_messages"
+anthropic_version = "2023-06-01"

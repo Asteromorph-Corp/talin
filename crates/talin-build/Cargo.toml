@@ -1,0 +1,46 @@
+[package]
+name = "talin-build"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Build-time code generation for talin agents from TOML configuration files"
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = true
+
+[lints]
+workspace = true
+
+[dependencies]
+talin-provider.workspace = true
+
+once_cell.workspace = true
+
+blake3 = "1"
+heck = "0.5"
+indexmap.workspace = true
+itertools.workspace = true
+regex.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+serde_with.workspace = true
+toml = "0.9"
+walkdir = "2"
+
+url.workspace = true
+
+thiserror.workspace = true
+
+prettyplease.workspace = true
+proc-macro-crate.workspace = true
+# codegen utils
+proc-macro2.workspace = true
+quote.workspace = true
+syn = { workspace = true, features = ["extra-traits", "full", "visit", "visit-mut"] }
+
+[dev-dependencies]
+indoc.workspace = true
+pretty_assertions = "1.4.1"
+rstest = "0.26"

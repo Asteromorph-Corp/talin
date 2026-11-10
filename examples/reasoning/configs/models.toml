@@ -1,0 +1,13 @@
+[claude]
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+model = "claude-sonnet-5-5"
+model_type = "claude_messages"
+anthropic_version = "2023-06-01"
+max_tokens = 8192
+
+[openai]
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+model = "gpt-5-mini"
+model_type = "openai_responses"

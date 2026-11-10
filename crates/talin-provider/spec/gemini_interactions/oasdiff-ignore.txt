@@ -1,0 +1,37 @@
+# Reports that say nothing about the difference between this crate and the API.
+# Passed to both --err-ignore and --warn-ignore, which take one severity each.
+
+# The per-agent configuration types, unmodelled by the crate:
+post /{api_version}/interactions added `subschema #1: antigravity, subschema #2: deep-research, subschema #3: dynamic` to the `agent_config` response property `oneOf` list for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed `subschema #1: antigravity, subschema #2: deep-research, subschema #3: dynamic` from the `oneOf[subschema #1: CreateAgentInteractionParams]/agent_config` request property `oneOf` list
+post /{api_version}/interactions added the new required request property `oneOf[subschema #1: CreateAgentInteractionParams]/agent_config/type`
+
+# Models the API offers that this crate has taken no `KnownModel` variant for.
+#
+# Preview models, which the API retires on a schedule.
+post /{api_version}/interactions added the new `gemini-3-flash-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-3-flash-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-3.1-flash-tts-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-3.1-flash-tts-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-3.1-pro-preview-customtools` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-3.1-pro-preview-customtools` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-3.1-pro-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-3.1-pro-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-robotics-er-1.6-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-robotics-er-1.6-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-robotics-er-2-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-robotics-er-2-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemini-omni-flash-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemini-omni-flash-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `lyria-3-clip-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `lyria-3-clip-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `lyria-3-pro-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `lyria-3-pro-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `nano-banana-pro-preview` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `nano-banana-pro-preview` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+#
+# The Gemma models, whose names carry a size rather than a version.
+post /{api_version}/interactions added the new `gemma-4-26b-a4b-it` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemma-4-26b-a4b-it` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`
+post /{api_version}/interactions added the new `gemma-4-31b-it` enum value to the `model` response property for the response status `200` (media type: application/json)
+post /{api_version}/interactions removed the enum value `gemma-4-31b-it` of the request property `oneOf[subschema #2: CreateModelInteractionParams]/model`

@@ -1,0 +1,16 @@
+# This archive is generated test data, not a repository or a stored conversation.
+# Its revision is a random dataset identifier supplied only by the tool result.
+[openai]
+threshold = 4000
+archive_rows = 500
+
+[claude]
+threshold = 50000
+archive_rows = 2200
+instructions = "Summarize the project state for continuation. Preserve the exact codename, launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call any tools."
+
+[archive]
+header = "Archive revision: {revision}. Preserve this exact value for later questions.\nARCHIVE_NOISE_START\n"
+entry = "Archive entry {index}: routine inventory checked; no project decisions changed.\n"
+footer = "End of archive. Routine entries do not change the original project facts.\n"
+noise_marker = "ARCHIVE_NOISE_START"

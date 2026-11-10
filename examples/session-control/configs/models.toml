@@ -1,0 +1,19 @@
+[gpt_4o_mini]
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+model = "gpt-4o-mini"
+model_type = "openai_responses"
+
+[claude_haiku_45]
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+model_type = "claude_messages"
+anthropic_version = "2023-06-01"
+anthropic_beta = ["structured-outputs-2025-11-13"]
+
+[gemini_flash_latest]
+api_base = "https://generativelanguage.googleapis.com"
+api_key.env = "GEMINI_API_KEY"
+model = "gemini-flash-latest"
+model_type = "gemini_generate_content"
