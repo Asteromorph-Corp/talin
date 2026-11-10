@@ -1,0 +1,8 @@
+[send_email]
+name = "send_email"
+description = "Sends an email on the user's behalf."
+
+[send_email.input]
+to = { type = "String", description = "The recipient's email address." }
+subject = { type = "String", description = "The subject line." }
+body = { type = "String", description = "The text of the email." }

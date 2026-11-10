@@ -1,0 +1,5 @@
+[repo_guide]
+system_prompt = "You answer questions about open source projects. Use the tools to look things up."
+user_prompt = "{{question}}"
+model = "gpt_4o_mini"
+tools = ["mcp.deepwiki/read_wiki_structure", "mcp.deepwiki/ask_wiki_question"]

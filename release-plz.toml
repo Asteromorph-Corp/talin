@@ -1,0 +1,51 @@
+# https://release-plz.dev/docs/config
+
+[workspace]
+# Only publish when the release PR is merged. Without this, `release-plz
+# release` would try to release on every push to `main`, which is the behaviour
+# the old hand-rolled workflow paid for with four wasted verification builds.
+release_always = false
+
+# All published crates share `[workspace.package] version`, so `talin`
+# alone carries the tag and the GitHub release. The other crates opt out below
+# and inherit the same version through `version_group`.
+git_tag_enable = false
+git_release_enable = false
+pr_branch_prefix = "release-plz-"
+
+[[package]]
+name = "talin"
+version_group = "talin"
+changelog_path = "CHANGELOG.md"
+changelog_include = ["talin-provider", "talin-macros", "talin-build"]
+git_tag_enable = true
+git_tag_name = "v{{ version }}"
+git_release_enable = true
+git_release_name = "v{{ version }}"
+
+[[package]]
+name = "talin-provider"
+version_group = "talin"
+changelog_update = false
+
+[[package]]
+name = "talin-macros"
+version_group = "talin"
+changelog_update = false
+
+[[package]]
+name = "talin-build"
+version_group = "talin"
+changelog_update = false
+
+[changelog]
+protect_breaking_commits = true
+# Mapped onto the Keep a Changelog headings CHANGELOG.md already uses.
+commit_parsers = [
+  { message = "^feat", group = "Added" },
+  { message = "^fix", group = "Fixed" },
+  { message = "^refactor", group = "Changed" },
+  { message = "^perf", group = "Changed" },
+  { message = "^docs?", group = "Documentation" },
+  { message = "^(chore|ci|test|example|release)", skip = true },
+]

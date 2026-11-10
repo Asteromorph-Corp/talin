@@ -1,0 +1,2 @@
+RESEARCH_SYSTEM = "You are {{config.field}} researcher from {{config.university}}."
+RESEARCH_USER = "As a {{config.field}} researcher, answer the student's question: {{question}}"

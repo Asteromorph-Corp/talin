@@ -1,0 +1,5 @@
+[assistant]
+system_prompt = "You are an assistant that helps the user write and send emails. Draft the email, and send it with the tool once the user is happy with it."
+user_prompt = "{{message}}"
+model = "gpt_4o_mini"
+tools = ["send_email"]

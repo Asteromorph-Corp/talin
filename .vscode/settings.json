@@ -1,0 +1,10 @@
+{
+    "rust-analyzer.cargo.features": [
+        "image-search",
+        "science-search",
+        "web-search",
+        "reranked-search"
+    ],
+    "rust-analyzer.check.command": "clippy",
+    "evenBetterToml.taplo.configFile.path": "./taplo.toml"
+}

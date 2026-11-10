@@ -1,0 +1,14 @@
+{
+  "id": "msg_compaction_output_limit",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-test",
+  "content": [],
+  "stop_reason": "max_tokens",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "iterations": [{"type": "compaction", "input_tokens": 17, "output_tokens": 3}]
+  }
+}

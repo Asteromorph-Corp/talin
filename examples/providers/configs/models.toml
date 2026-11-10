@@ -1,0 +1,52 @@
+# One entry per `model_type`. Select one by name: `cargo run -- <name>`.
+
+# OpenAI
+[openai_responses]
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+model = "gpt-4o-mini"
+model_type = "openai_responses"
+# Prices are in USD per million tokens. With a `pricing` table, usage is reported with its cost.
+pricing = { input_tokens = 0.15, cached_input_tokens = 0.075, output_tokens = 0.6 }
+
+[openai_chat]
+api_base = "https://api.openai.com/v1"
+api_key.env = "OPENAI_API_KEY"
+model = "gpt-4o-mini"
+model_type = "openai_chat"
+
+# Anthropic
+[claude_messages]
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+model_type = "claude_messages"
+anthropic_version = "2023-06-01"
+max_tokens = 2048
+
+# Google
+[gemini_generate_content]
+api_base = "https://generativelanguage.googleapis.com"
+api_key.env = "GEMINI_API_KEY"
+model = "gemini-flash-latest"
+model_type = "gemini_generate_content"
+
+[gemini_interactions]
+api_base = "https://generativelanguage.googleapis.com"
+api_key.env = "GEMINI_API_KEY"
+model = "gemini-flash-latest"
+model_type = "gemini_interactions"
+
+# xAI
+[xai_responses]
+api_base = "https://api.x.ai/v1"
+api_key.env = "XAI_API_KEY"
+model = "grok-4-1-fast-non-reasoning"
+model_type = "xai_responses"
+
+# Any server that speaks the OpenAI chat completions API without extras: Ollama, vLLM, OpenRouter...
+# This is the default `model_type`.
+[generic_chat]
+api_base = "http://localhost:11434/v1"
+model = "qwen3:8b"
+model_type = "generic_chat"

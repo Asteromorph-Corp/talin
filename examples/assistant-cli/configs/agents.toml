@@ -1,0 +1,44 @@
+[assistant]
+system_prompt = """
+You are a project assistant working in a terminal.
+Answer questions about the files in the project directory, using the tools to read them.
+When you learn something worth remembering, record it with `take_note`.
+Use `ask_wiki_question` for questions about open source repositories.
+"""
+user_prompt = "{{message}}"
+model = "claude_haiku_45"
+
+# Skills are read from `skills/` when the model asks for them.
+skills = ["note-style"]
+
+# Tools with a configuration are written out in full, so the MCP tool is too.
+[[assistant.tools]]
+kind = "local"
+name = "read_file"
+config = { root = "." }
+
+[[assistant.tools]]
+kind = "local"
+name = "take_note"
+config = { file = "notes/notes.md" }
+
+[[assistant.tools]]
+kind = "mcp"
+server = "deepwiki"
+name = "ask_wiki_question"
+
+# The report is a separate agent. It takes over the same session, so it sees the whole
+# conversation, and answers with a typed struct.
+[reporter]
+system_prompt = "You write concise reports of conversations."
+user_prompt = "Write a report of our conversation so far. Focus on: {{focus}}"
+model = "claude_haiku_45"
+
+[reporter.response_format]
+name = "report"
+description = "A report of the conversation."
+[reporter.response_format.fields]
+title = { type = "String", description = "A short title." }
+summary = { type = "String", description = "A summary in two or three sentences." }
+decisions = { type = "Vec<String>", description = "Decisions that were made." }
+follow_ups = { type = "Vec<String>", description = "Things that still need to be done." }

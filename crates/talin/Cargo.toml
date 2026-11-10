@@ -1,0 +1,71 @@
+[package]
+name = "talin"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "A minimal, type-safe framework for defining LLM agents using TOML."
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = true
+
+[lints]
+workspace = true
+
+[dependencies]
+talin-macros.workspace = true
+talin-provider = { workspace = true, features = ["mcp-client-2025-11-20", "vertex"] }
+
+async-trait.workspace = true
+futures.workspace = true
+once_cell.workspace = true
+tokio = { workspace = true, features = ["process"] }
+
+base64 = "0.22.1"
+blake3 = "1"
+chrono = "0.4.44"
+indexmap = { workspace = true, features = ["serde"] }
+indoc.workspace = true
+itertools.workspace = true
+random_word = { version = "0.5", features = ["en"] }
+regex.workspace = true
+schemars.workspace = true
+secrecy.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+yaml_serde = "0.10"
+twox-hash = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+log = "0.4.17"
+thiserror.workspace = true
+tracing.workspace = true
+
+reqwest.workspace = true
+url.workspace = true
+
+rmcp = { version = "3.4.0", features = ["client", "reqwest", "transport-streamable-http-client-reqwest"] }
+
+# buffered-final-answer
+diffy = { version = "0.5.0", optional = true }
+dyn-clone = "1.0.20"
+
+[dev-dependencies]
+anyhow = "1.0.104"
+clap = { version = "4", features = ["derive"] }
+dotenvy = "0.15"
+env_logger = "0.11"
+mockito = "1.0.1"
+rstest = "0.26"
+
+axum = "0.8"
+rmcp = { version = "3.4.0", features = ["server", "transport-streamable-http-server", "transport-streamable-http-server-session"] }
+
+[features]
+mcp-stdio = ["rmcp/transport-child-process"]
+buffered-final-answer = ["dep:diffy"]
+
+[[example]]
+name = "buffered_final_answer"
+required-features = ["buffered-final-answer"]

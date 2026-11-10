@@ -1,0 +1,2 @@
+# Reports that say nothing about the difference between this crate and the API.
+# Passed to both --err-ignore and --warn-ignore, which take one severity each.

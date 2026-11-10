@@ -1,0 +1,4 @@
+[check_deploy]
+name = "check_deploy"
+description = "Reports how far along the deployment is."
+input = {}

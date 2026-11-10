@@ -1,0 +1,4 @@
+[current_time]
+name = "current_time"
+description = "Returns the current date and time in UTC."
+input = {}

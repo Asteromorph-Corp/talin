@@ -1,0 +1,19 @@
+# The model sees `name`, `description` and the field descriptions of `input`.
+[check_stock]
+name = "check_stock"
+description = "Looks up how many copies of a book are in stock."
+
+[check_stock.input]
+title = { type = "String", description = "The exact title of the book." }
+
+# `config` is filled in per agent, in `agents.toml`.
+[check_stock.config]
+store = "String"
+
+[place_order]
+name = "place_order"
+description = "Orders copies of a book that is in stock."
+
+[place_order.input]
+title = { type = "String", description = "The exact title of the book." }
+copies = { type = "u32", description = "How many copies to order." }

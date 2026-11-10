@@ -1,0 +1,8 @@
+[monitor]
+system_prompt = """
+You monitor a deployment. Call `check_deploy` again and again until it reports 100%, then tell the user it is finished.
+Call the tool once per step.
+"""
+user_prompt = "{{request}}"
+model = "gpt_4o_mini"
+tools = ["check_deploy"]

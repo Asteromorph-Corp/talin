@@ -1,0 +1,4 @@
+[load_archive]
+name = "LoadArchive"
+description = "Read the project archive once; returns its revision and routine historical entries. Input: {}."
+input = {}

@@ -1,0 +1,11 @@
+# Settings for the comparison check.sh runs.
+exclude-elements:
+  - description
+  - examples
+  - title
+  - summary
+  - extensions
+match-path: '^/v1/messages$'
+err-ignore: oasdiff-ignore.txt
+warn-ignore: oasdiff-ignore.txt
+fail-on: WARN

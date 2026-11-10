@@ -1,0 +1,71 @@
+{
+  "model": "gpt-5-nano",
+  "threshold": 4000,
+  "archive_rows": 500,
+  "input_facts": {
+    "codename": "project-d6d28ced-6bf3-4e71-8c5a-48e796c341a2",
+    "port": 34328,
+    "recovery": "14004d33-84db-4424-ac81-f467aefc87cb",
+    "region": "region-8ba38392-dd18-46dd-8735-bb65a670c924",
+    "archive_revision": "dae69f66-080f-4e30-81ca-0f859efcbbc4"
+  },
+  "requests": [
+    {
+      "bytes": 1204,
+      "contains_archive_noise": false,
+      "compactions": []
+    },
+    {
+      "bytes": 41450,
+      "contains_archive_noise": true,
+      "compactions": []
+    }
+  ],
+  "responses": [
+    {
+      "compactions": [],
+      "usage": {
+        "OpenAI": {
+          "input_tokens": 198,
+          "input_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0
+          },
+          "output_tokens": 28,
+          "output_tokens_details": {
+            "reasoning_tokens": 12
+          },
+          "total_tokens": 226
+        }
+      }
+    },
+    {
+      "compactions": [
+        {
+          "OpenAI": {
+            "id": "cmp_0f3549ced8d089b0006ac3f62973e887d0bf35572ebde51430",
+            "encrypted_content": "gAAAAABqw_YpM7VA7omDJLGdQNny16Qxs1Rp0xSdgTX3yBTCqPdR_LWZi_5Wa4Ts4_rdS0E3LKOtind4mor2__XIDzx5pnQQDXZIuwJR_PIn1U9z12Zu2NTbvZvOndRh0-eEGMMzRRl6YticB0WvsF2fQykgtlKlTpPcSRNUo-OLBGP9pSUCtQ60mKvAb1bR_ehW9qrlRkZG-IJSTb78PYd_c6OC-PDfQYflWnj9rZmVjJtSCpNM3xN2QSC_hvFjtPsV8XYCZoqCV8kR_VwetAaUZirW10wshLEkt4IxGqmDOjgKP5wby7Re137F26TcuWWRlzV526ux27OJmr3QP3UCDqtsi0d5-EAzWm7K5E1OBnOoVHR0bDTxWTD0QDTpeffl3k_tW6sVQz6bxUkgoGae-YYcku-shWjJmwOvRaN016swsMlWUrsyBQ0akEoqzpn44_kl1JNR51HV8qZfMhlNcNfPxEOjihIWxeK3_5uQsYa_ptcREmwMSrOL5k6DVBT5iE778byCTjAa5Yo2UO0Kh3stppB-KKm5Ex3kQqpHEUZulfCd2NzmwjBsvnPLc2jwkpyloV3V2m29v2kZ2K5xyO5q4QqWvjUQfDndqZB7CiQaixF3ZiZS6GC1AU21NjcqoChhCZmSe2hOz95vuk5a3AHaHs7_u0Grkw2aZ51vonQD-Rgi4gn7y6xkW1graAxdZju-YjpjAZg_dLIgfEPcooxD6B04p7T2eAM8blT9WV100sIRhjHeBHk6vSI9NAfQrvAz3GwQmVkWwISDsDnO6J9mshOmXZmhm2XF4_EyzOio4iK1V6_Ht26BNydZ9q6iAew14j3TZ5UscJKt9vvASmONaElYbUTBOVO3LQkSGWGFVwfl8QWNcCK7uayva4DNJL98rzdL7DDJGUsbKYIelIOC4IReoraJ7guWzTfUqVyKJep-CG8CKxufMnvdeNkPKeM_8CZjvFy6WiKNZ3K77gUbYch7zaik5rAXYatuZRap1pjfJj5uIaNpchS1z6-Af6QinVS1_gMWkykdNovmkF1ljPsgRWk3L4NuKudK4jdKk1laMtTzStBd7b1NXAPLpa994NnFcIAVeNhEBSnbyYH8q9BPAoarQ5WNlSxBdQxIhGhpTxFekbMtWUkEGOcaOCoOC-OsDmzJ7FTmbJHPRAGAuj2gqZJGGzpYXEjV1RnycBuB33PEg6VRqGrHyn0UbijhdWaVijd6S_JkmJ3cX6XtLUyu8PhrtEd88ZT-WBUangY7-YBvlQCpGAFxUlStDqAVK4zLffqtJQQ1e1_dx5lMCHCQurC1x7ncTmdaEtg4wcfugNq72nCdUIXt3HtjNy7BWIR5PeuKr15F7CzsW6JjrYVBMlGOSckVX4y4S3jMisUsNl2vBlAE521wCsqVXPkVpKmyxyJVyQBSsls8cNInJsww7JOe9lAeFPRc9xWjrCx2IiJazJJQGoHU_1lCSTpIG__Uc69AJDQJL8IIeUyMDBOrmhXJdxXorot1Te0sK8ymX__g3H6c3K1BgIt7R6Qqh9ccgaPyCqDJkcO4Deb-zBkdyww30gJ0XLrIs_TbK8nzJ6xg_hMDtWoxuvYcL-1DJZonYR1BJ3Xvuv2pPok74yUzOPxknQ2Noeq8WQwEKvM8HDfuzHF5gYEFfwsyS2mbfNsLCzPsy3aiXgiiPrgRO5YRyPHXANhxybpoqLpCW3ikHSAIK0L_84qWgjlBLMe2vXQ2VQIY70s4r5kN5bs337rrIJPnDtgzQIEwUXN9RkOrxOny4BDXMpR3ug7_SW7DPB5CkgAWvzQw1LqK_cZ1BI3yDj5Zy2LIeJyrTyPsQkvtvfjHW5SxjjQoAKvlr-2vAdoHryw5GRSdSwA9833Iw72tyftpnwqHHxZi5tRjmfL88ROiIQ21Mwy8JIEp4UEjtDpr7zLRZhDvNIFTgs1HEvfQlc6vGyvEc8T7R1Xs1lb_0oPn3KP8U4S8awGsO3RI6D_-KXtlKWYcvg5USPvuYX4v1ngoySarslXLz-ScEtjqhLKxZUktg9k54kHas-t2t7abLGl4WhXbK6ctx1wakToeDvD-Y8fWIkWmDNxxdkealeHRgH3Tm9pw_OF41LCzTwL9C_H23Cj1RiI8bQUukryzD6AW52vpX_fK-wToyVQ0JpbT_AcGob_UASX_knbqxRFfG0ZeNfkoO_y6w_Cu9B1T4acNH2zJIrs-ZmZzWlP3sv9bm_GUOMiUItiNN6oklfRSGe5F2WIF84vRIDeTZpzOkXUKoChSyc8_OviFREbwvseCDV6fSdXsF4Hnf-Z4KBrG74W2gAIbZjMlaMUHaOwGuNZTlGuzpAhaqYRjw5--xuGAtn1RzkL1GAod14nllcadXs0gQb2WQ6ZZBI7Wc_C3HqEunV__Tk6ZwTG6CNbtPDzNSUpv5PRslBqObh1syt58KGw-y7B2NZFwvsLutMYyzoADnxYdwCxL2ltizAoS1IWy4aDCCa0MNeLTTZ38JKow1qvLqOJ6mkMcW7HciyuNeq4lEVVINdj2VhFCYf4uVgg_S7BhLW8W8jjbGxWObUrY_jZDZsszYIZuYY98cc-_huNqBDvHmKOvrm_p1cZuTzpPxguRAA5Frwg13hIG6TkkB7vGaGehKE2hnB6VX2JfBKz5VSM-7z-jd54uXVpLu6jzxiRt_CZ07h5FnVupGXJLk-z3JAb-a5WOeUUCT3nL1iz8OdBDcotd9G_150X3tMF-uld0GVLeNAUDP3EnVuCSiiSmtR6vAPEXF2rtPdSjy1idiNE2hvgnBOt1ZDbk71AevuzBpP1ZUkfHiFnMDyJmYOGB_Edf7dkaqcpV3VpfzqBGBHi-xSR3LGzKUpDLyNXrK3hzj2DnuytVNedNKZdDm50oR7FmTrtt7rbp3rHuHfxdsNHRLDFZgJhpsFFVT330CF9BWb2Oo2JMQnGzsecDJmzQcijpuyPiOe2Iw1asSo2g-UQT8BpV5UVaFb0sF-aadDd-HDg7tdzdLLgU7W0e"
+          }
+        }
+      ],
+      "usage": {
+        "OpenAI": {
+          "input_tokens": 7587,
+          "input_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0
+          },
+          "output_tokens": 350,
+          "output_tokens_details": {
+            "reasoning_tokens": 343
+          },
+          "total_tokens": 7937
+        }
+      }
+    }
+  ],
+  "recalls": [],
+  "turns": [],
+  "passed": false,
+  "error": "all tool executions failed for a step"
+}

@@ -1,0 +1,24 @@
+[shopper]
+system_prompt = "You are a shopping assistant for a bookshop. Check the stock before you order, and only order what is in stock."
+user_prompt = "{{request}}"
+model = "gpt_4o_mini"
+
+# The same tool, configured for this agent.
+[[shopper.tools]]
+name = "check_stock"
+config = { store = "Downtown" }
+
+[[shopper.tools]]
+name = "place_order"
+
+[uptown_shopper]
+system_prompt = "You are a shopping assistant for a bookshop. Check the stock before you order, and only order what is in stock."
+user_prompt = "{{request}}"
+model = "gpt_4o_mini"
+
+[[uptown_shopper.tools]]
+name = "check_stock"
+config = { store = "Uptown" }
+
+[[uptown_shopper.tools]]
+name = "place_order"
