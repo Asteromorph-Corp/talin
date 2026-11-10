@@ -1,0 +1,42 @@
+[package]
+name = "local-mcp"
+version = "0.1.0"
+edition.workspace = true
+default-run = "local-mcp"
+
+[dependencies]
+dotenvy.workspace = true
+env_logger.workspace = true
+log.workspace = true
+tokio = { workspace = true, features = ["signal", "rt-multi-thread"] }
+talin = { workspace = true, features = ["mcp-stdio"] }
+
+# Optional: only needed by the example MCP servers (see `[features]`).
+rmcp = { version = "3.1.4", features = ["server"], optional = true }
+rand = { version = "0.9", optional = true }
+axum = { version = "0.8.8", optional = true }
+serde = { version = "1.0.229", optional = true }
+schemars = { version = "1.2.2", optional = true }
+
+[features]
+# Dice roller shared by both servers.
+server = ["dep:rmcp", "dep:rand", "dep:serde", "dep:schemars"]
+server-http = ["server", "rmcp/transport-streamable-http-server", "rmcp/reqwest", "dep:axum"]
+server-stdio = ["server", "rmcp/transport-io"]
+
+[[bin]]
+name = "local-mcp"
+path = "src/main.rs"
+
+[[bin]]
+name = "server-http"
+path = "src/bin/server_http.rs"
+required-features = ["server-http"]
+
+[[bin]]
+name = "server-stdio"
+path = "src/bin/server_stdio.rs"
+required-features = ["server-stdio"]
+
+[build-dependencies]
+talin-build.workspace = true

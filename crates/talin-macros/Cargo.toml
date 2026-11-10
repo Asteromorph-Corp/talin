@@ -1,0 +1,29 @@
+[package]
+name = "talin-macros"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description = "Macro implementations for talin"
+repository.workspace = true
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+publish = true
+
+[lib]
+proc-macro = true
+
+[lints]
+workspace = true
+
+[dependencies]
+once_cell.workspace = true
+
+heck.workspace = true
+indoc.workspace = true
+
+proc-macro-crate.workspace = true
+proc-macro2.workspace = true
+proc-macro2-diagnostics.workspace = true
+quote.workspace = true
+syn = { workspace = true, features = ["extra-traits", "full"] }

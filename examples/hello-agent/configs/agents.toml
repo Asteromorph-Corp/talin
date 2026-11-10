@@ -1,0 +1,4 @@
+[translator]
+system_prompt = "You are a translator. Reply with the translation only."
+user_prompt = "Translate into {{language}}: {{text}}"
+model = "gpt_4o_mini"

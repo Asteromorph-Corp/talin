@@ -1,0 +1,66 @@
+name: Spec
+
+# Compares the two committed descriptions of each provider's API — this crate's and the API's — and
+# fails when they have parted in a way the provider's oasdiff-ignore.txt does not account for.
+#
+# Runs on every pull request, which is what makes one check serve both directions the drift can
+# come from. A change to this crate's types arrives as a pull request and is checked here against
+# the API; a change to the API arrives as the pull request the `Spec sync` workflow opens, and is
+# checked here against this crate. Neither needs an issue filed: in both cases there is already a
+# pull request with a red check on it, which is the same thing with the diff attached.
+#
+# Needs no Rust, because both descriptions are in the tree. Keeping openapi.generated.json in step
+# with the types is the `generated_spec_matches_types` unit tests' job, over in the CI workflow.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - v0.*
+  pull_request: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    name: drift / ${{ matrix.provider }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crates/talin-provider
+
+    strategy:
+      fail-fast: false
+      matrix:
+        provider:
+          - claude_messages
+          - gemini_interactions
+          - xai_responses
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install oasdiff
+        uses: ./.github/actions/oasdiff
+
+      - name: Compare with the published description
+        run: spec/check.sh ${{ matrix.provider }} --format githubactions
+
+  deferred:
+    name: deferred
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: crates/talin-provider
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check for expired deferrals
+        run: spec/check-deferred.sh

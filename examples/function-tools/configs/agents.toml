@@ -1,0 +1,15 @@
+[guesser]
+system_prompt = "You are a number guesser, a master of deduction and probability."
+user_prompt = """
+Guess the number that the user is thinking of using the provided tools. The number is between 1 and 10.
+The number likely didn't change from last time, but you should double check just in case.
+"""
+model = "gpt_4o_mini"
+
+[[guesser.tools]]
+name = "up_or_down"
+config = { answer = 9 }
+
+[guesser.call_options]
+tool_choice.function = "up_or_down"
+# call_options.drop_thought = true

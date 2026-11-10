@@ -1,0 +1,10 @@
+[up_or_down]
+name = "Up or Down"
+description = "Tells you whether your guess is higher or lower than the answer."
+
+# input = "custom" # Use the custom struct in your code.
+[up_or_down.input]
+guess = { type = "u8", description = "The number you're guessing." }
+
+[up_or_down.config]
+answer = "u8"

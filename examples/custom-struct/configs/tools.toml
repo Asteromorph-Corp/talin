@@ -1,0 +1,10 @@
+[book_room]
+name = "book_room"
+description = "Books a meeting room for a number of hours."
+
+# The inline syntax only allows simple fields. `"custom"` means the struct is written in Rust,
+# so it can use enums, optional fields and nested types.
+input = "custom"
+
+# The same goes for the configuration an agent supplies to the tool.
+config = "custom"

@@ -1,0 +1,14 @@
+[claude_haiku_45]
+api_base = "https://api.anthropic.com/v1"
+api_key.env = "ANTHROPIC_API_KEY"
+model = "claude-haiku-4-5-20251001"
+model_type = "claude_messages"
+anthropic_version = "2023-06-01"
+# Lets Claude connect to the MCP server in `servers.toml` itself.
+anthropic_beta = ["mcp-client-2025-11-20"]
+max_tokens = 4096
+
+# USD per million tokens, so the cost of the session can be reported.
+[claude_haiku_45.pricing]
+input_tokens = 1.0
+output_tokens = 5.0

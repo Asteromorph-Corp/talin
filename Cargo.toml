@@ -1,0 +1,71 @@
+[workspace]
+resolver = "3"
+members = [
+  "crates/talin",
+  "crates/talin-build",
+  "crates/talin-macros",
+  "crates/talin-provider",
+]
+exclude = ["examples"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95.0"
+repository = "https://github.com/Asteromorph-Corp/talin"
+license = "MIT OR Apache-2.0"
+keywords = ["llm", "ai", "agents", "openai", "anthropic"]
+categories = ["artificial-intelligence", "api-bindings", "asynchronous"]
+
+[workspace.lints.rust]
+unreachable_pub = "warn"
+unused_lifetimes = "warn"
+# Not enabled: a type may be imported for match arms while still intentionally referenced by its fully qualified name in function signatures.
+# unused_qualifications = "warn"
+single_use_lifetimes = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"
+# Not enabled: forces `Debug` bound on generic parameters, which is not always desired.
+# missing_debug_implementations = "warn"
+missing_docs = "warn"
+rust_2018_idioms = "warn"
+noop_method_call = "warn"
+let_underscore_drop = "warn"
+meta_variable_misuse = "warn"
+# Not enabled: needlessly noisy, and `unused_must_use` catches most cases that are relevant.
+# unused_results = "warn"
+
+[workspace.dependencies]
+talin = { path = "crates/talin", version = "=0.1.0" }
+talin-macros = { path = "crates/talin-macros", version = "=0.1.0" }
+talin-provider = { path = "crates/talin-provider", version = "=0.1.0" }
+
+async-trait = "0.1.92"
+futures = "0.3.30"
+once_cell = "1.20"
+tokio = "1.52.3"
+
+heck = "0.5"
+indexmap = "2.14"
+indoc = "2"
+itertools = "0.14"
+regex = "1.12"
+schemars = { version = "1.0.2", features = ["preserve_order"] }
+secrecy = "0.10.3"
+serde = "1.0.228"
+serde_json = "1.0.150"
+serde_with = "3.21.0"
+
+reqwest = "0.13.4"
+url = "2.5"
+
+thiserror = "2.0.17"
+tracing = "0.1.40"
+
+prettyplease = "0.2"
+proc-macro-crate = "3.2.0"
+# codegen utils
+proc-macro2 = "1.0.95"
+proc-macro2-diagnostics = { version = "0.10", default-features = false }
+quote = "1.0.37"
+syn = "2.0.87"

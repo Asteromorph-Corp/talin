@@ -1,0 +1,28 @@
+[place_recommender]
+system_prompt = """
+You are a travel assistant. Given a destination, suggest 2-3 popular places a tourist must visit there.
+Respond with a JSON object like:
+{
+  "places": ["Eiffel Tower", "Louvre Museum", "Montmartre"]
+}"""
+user_prompt = "Suggest tourist places to visit in {{destination}}."
+model = "gpt_4o_mini"
+response_format = "custom"
+
+[budget_estimator]
+system_prompt = """
+You are a travel budget planner. Estimate the total budget in USD to visit the following places in {{destination}}. Consider moderate travel and meal costs.
+
+Respond with:
+{
+  "estimated_budget_usd": 1234
+}"""
+user_prompt = "Estimate a travel budget for visiting these places in {{destination}}: {{places: Vec<String>}}."
+model = "gpt_4o_mini"
+response_format = "custom"
+
+[summary_generator]
+system_prompt = "You are a trip summary assistant. Based on the itinerary and budget, create a one-paragraph trip summary for the user."
+user_prompt = "Summarize the itinerary for a trip to {{destination}}, visiting {{places: Vec<String>}}, with a total budget of ${{estimated_budget_usd: f64}}."
+model = "gpt_4o_mini"
+response_format = "custom"

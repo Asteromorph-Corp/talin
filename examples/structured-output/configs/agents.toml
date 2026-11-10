@@ -1,0 +1,21 @@
+[structured_output_agent]
+system_prompt = """
+You are a json formatting assistant.
+Your task is to extract the appropriate information from the user's input and format it as a JSON object.
+"""
+model = "gpt_4o_mini"
+
+[structured_output_agent.response_format]
+name = "User Info"
+description = "Extracted user information"
+fields.name = { type = "String", description = "The user's full name" }
+fields.location = { type = "String", description = "The user's location" }
+fields.email = { type = "String", description = "The user's email address" }
+
+[custom_output_agent]
+system_prompt = """
+You are a json formatting assistant.
+Your task is to extract the appropriate information from the user's input and format it as a JSON object.
+"""
+model = "gpt_4o_mini"
+response_format = "custom"

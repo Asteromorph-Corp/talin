@@ -1,0 +1,10 @@
+# Settings for the comparison check.sh runs.
+exclude-elements:
+  - description
+  - examples
+  - title
+  - summary
+match-path: '^/v1/responses$'
+err-ignore: oasdiff-ignore.txt
+warn-ignore: oasdiff-ignore.txt
+fail-on: WARN

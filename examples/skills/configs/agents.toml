@@ -1,0 +1,9 @@
+[reviewer]
+system_prompt = "You are a poetry reviewer."
+user_prompt = "{{poem}}"
+model = "claude_haiku_45"
+
+# Skills are listed by name, and looked up in the directories of `$TALIN_SKILLS_HOME`,
+# else in `skills/` in the package directory under `cargo run`, else in `skills/` in the working
+# directory.
+skills = ["haiku-reviewer"]

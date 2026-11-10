@@ -1,0 +1,13 @@
+[solver]
+system_prompt = "You are a careful analyst. Look up every exchange rate with the tool instead of relying on memory."
+user_prompt = "{{question}}"
+model = "claude"
+tools = ["exchange_rate"]
+call_options.reasoning_effort = "high"
+
+[solver_quick]
+system_prompt = "You are a careful analyst. Look up every exchange rate with the tool instead of relying on memory."
+user_prompt = "{{question}}"
+model = "claude"
+tools = ["exchange_rate"]
+call_options.reasoning_effort = "low"

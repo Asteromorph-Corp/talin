@@ -1,0 +1,4922 @@
+{
+  "components": {
+    "schemas": {
+      "AgentConfig": {
+        "additionalProperties": {
+          "description": "The agent-specific configuration fields."
+        },
+        "description": "Configuration parameters for an agent interaction.",
+        "properties": {
+          "type": {
+            "description": "The agent this configures. (e.g. `deep-research`, `antigravity`).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "AllowedTools": {
+        "description": "The configuration for allowed tools.",
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/ToolMode",
+            "description": "The mode of the tool choice."
+          },
+          "tools": {
+            "description": "The names of the allowed tools.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Annotation": {
+        "description": "Citation information for model-generated content.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlCitation",
+                "description": "A URL citation annotation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_citation"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A URL citation annotation."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileCitation",
+                "description": "A file citation annotation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_citation"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A file citation annotation."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlaceCitation",
+                "description": "A place citation annotation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "place_citation"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A place citation annotation."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WordInfo",
+                "description": "Word information annotation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "word_info"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Word information annotation."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SpeechAnnotation",
+                "description": "Speech synthesis annotation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "speech_metadata"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Speech synthesis annotation."
+          }
+        ],
+        "type": "object"
+      },
+      "ArgumentsDelta": {
+        "description": "An incremental tool-call arguments update.",
+        "properties": {
+          "arguments": {
+            "description": "The incremental arguments string.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AudioContent": {
+        "description": "An audio content block.",
+        "properties": {
+          "channels": {
+            "description": "The number of audio channels.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "data": {
+            "description": "The audio content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/AudioMimeType",
+            "description": "The mime type of the audio."
+          },
+          "sample_rate": {
+            "description": "The sample rate of the audio.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "uri": {
+            "description": "The URI of the audio.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AudioDelta": {
+        "description": "An incremental audio update.",
+        "properties": {
+          "channels": {
+            "description": "The number of audio channels.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "data": {
+            "description": "The audio content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/AudioMimeType",
+            "description": "The mime type of the audio."
+          },
+          "rate": {
+            "deprecated": true,
+            "description": "The sample rate of the audio. The value is ignored.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "sample_rate": {
+            "description": "The sample rate of the audio.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "uri": {
+            "description": "The URI of the audio.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "AudioMimeType": {
+        "description": "The mime type of an audio block.",
+        "enum": [
+          "audio/wav",
+          "audio/mp3",
+          "audio/aiff",
+          "audio/aac",
+          "audio/ogg",
+          "audio/flac",
+          "audio/mpeg",
+          "audio/m4a",
+          "audio/l16",
+          "audio/opus",
+          "audio/alaw",
+          "audio/mulaw",
+          "audio/webm"
+        ],
+        "type": "string"
+      },
+      "AudioOutputMimeType": {
+        "description": "The MIME type of an audio output.",
+        "enum": [
+          "audio/mp3",
+          "audio/ogg_opus",
+          "audio/l16",
+          "audio/wav",
+          "audio/alaw",
+          "audio/mulaw"
+        ],
+        "type": "string"
+      },
+      "AudioResponseFormat": {
+        "description": "Configuration for audio output format.",
+        "properties": {
+          "bit_rate": {
+            "description": "Bit rate in bits per second (bps). Only applicable for compressed formats (MP3, Opus).",
+            "format": "int32",
+            "type": "integer"
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/Delivery",
+            "description": "The delivery mode for the audio output."
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/AudioOutputMimeType",
+            "description": "The MIME type of the audio output."
+          },
+          "sample_rate": {
+            "description": "Sample rate in Hz.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "CodeExecution": {
+        "description": "A tool that can be used by the model to execute code.",
+        "type": "object"
+      },
+      "CodeExecutionCallArguments": {
+        "description": "The arguments to pass to a code execution tool call.",
+        "properties": {
+          "code": {
+            "description": "The code to be executed.",
+            "type": "string"
+          },
+          "language": {
+            "$ref": "#/components/schemas/CodeLanguage",
+            "description": "Programming language of the `code`."
+          }
+        },
+        "type": "object"
+      },
+      "CodeExecutionCallDelta": {
+        "description": "A streamed code execution call.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/CodeExecutionCallArguments",
+            "description": "The arguments to pass to the code execution."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments"
+        ],
+        "type": "object"
+      },
+      "CodeExecutionCallStep": {
+        "description": "A code execution tool call step.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/CodeExecutionCallArguments",
+            "description": "The arguments to pass to the code execution."
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id"
+        ],
+        "type": "object"
+      },
+      "CodeExecutionResult": {
+        "description": "The output of the code execution.",
+        "oneOf": [
+          {
+            "description": "The contents of the list.",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            },
+            "type": "array"
+          },
+          {
+            "description": "Single text string.",
+            "type": "string"
+          }
+        ]
+      },
+      "CodeExecutionResultDelta": {
+        "description": "A streamed code execution result.",
+        "properties": {
+          "is_error": {
+            "description": "Whether the code execution resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "description": "The output of the code execution.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "CodeExecutionResultStep": {
+        "description": "The result of a code execution tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "is_error": {
+            "description": "Whether the code execution resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CodeExecutionResult",
+            "description": "The output of the code execution."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "CodeLanguage": {
+        "description": "Programming language of executed code.",
+        "enum": [
+          "python",
+          "bash"
+        ],
+        "type": "string"
+      },
+      "ComputerUse": {
+        "description": "A tool that can be used by the model to interact with the computer.",
+        "properties": {
+          "disabled_safety_policies": {
+            "description": "Disabled safety policies for computer use.",
+            "items": {
+              "$ref": "#/components/schemas/ComputerUseSafetyPolicy"
+            },
+            "type": "array"
+          },
+          "enable_prompt_injection_detection": {
+            "description": "Whether to enable the prompt injection detection check on computer-use requests.",
+            "type": "boolean"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/ComputerUseEnvironment",
+            "description": "The environment being operated."
+          },
+          "excluded_predefined_functions": {
+            "description": "The list of predefined functions that are excluded from the model call.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ComputerUseEnvironment": {
+        "description": "The environment a computer use tool operates in.",
+        "enum": [
+          "browser",
+          "mobile",
+          "desktop"
+        ],
+        "type": "string"
+      },
+      "ComputerUseSafetyPolicy": {
+        "description": "A safety policy that can be disabled for computer use.",
+        "enum": [
+          "financial_transactions",
+          "sensitive_data_modification",
+          "communication_tool",
+          "account_creation",
+          "data_modification",
+          "user_consent_management",
+          "legal_terms_and_agreements"
+        ],
+        "type": "string"
+      },
+      "Content": {
+        "description": "A content block within a message.\n\nContent is discriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TextContent",
+                "description": "A text content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "text"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A text content block."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageContent",
+                "description": "An image content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "image"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An image content block."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioContent",
+                "description": "An audio content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "audio"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An audio content block."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoContent",
+                "description": "A video content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "video"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A video content block."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DocumentContent",
+                "description": "A document content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "document"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A document content block."
+          }
+        ],
+        "type": "object"
+      },
+      "CreateAgentInteractionParams": {
+        "description": "Parameters for creating an agent interaction.",
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/KnownAgent",
+            "description": "The name of the `Agent` used for generating the interaction."
+          },
+          "agent_config": {
+            "$ref": "#/components/schemas/AgentConfig",
+            "description": "Configuration parameters for the agent interaction."
+          },
+          "background": {
+            "description": "Whether to run the agent interaction in the background.",
+            "type": "boolean"
+          },
+          "continuation_token": {
+            "description": "Opaque token to resume a long decode. Pass the latest token back unchanged to continue\ndecoding.",
+            "format": "byte",
+            "type": "string"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment",
+            "description": "The environment the interaction runs in."
+          },
+          "input": {
+            "$ref": "#/components/schemas/InteractionsInput",
+            "description": "The input for the interaction."
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "previous_interaction_id": {
+            "description": "The ID of the previous interaction, if any.",
+            "type": "string"
+          },
+          "response_format": {
+            "$ref": "#/components/schemas/ResponseFormats",
+            "description": "The response format(s) enforced on the generated response."
+          },
+          "response_mime_type": {
+            "deprecated": true,
+            "description": "The mime type of the response (deprecated; use `response_format`).",
+            "type": "string"
+          },
+          "response_modalities": {
+            "deprecated": true,
+            "description": "The requested modalities of the response.",
+            "items": {
+              "$ref": "#/components/schemas/ResponseModality"
+            },
+            "type": "array"
+          },
+          "safety_settings": {
+            "description": "Safety settings for the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/SafetySetting"
+            },
+            "type": "array"
+          },
+          "service_tier": {
+            "$ref": "#/components/schemas/ServiceTier",
+            "description": "The service tier to serve the interaction on."
+          },
+          "store": {
+            "description": "Whether to store the response and request for later retrieval.",
+            "type": "boolean"
+          },
+          "stream": {
+            "description": "Whether the interaction will be streamed.",
+            "type": "boolean"
+          },
+          "system_instruction": {
+            "description": "System instruction for the interaction.",
+            "type": "string"
+          },
+          "tools": {
+            "description": "A list of tool declarations the model may call during the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/Tool"
+            },
+            "type": "array"
+          },
+          "webhook_config": {
+            "$ref": "#/components/schemas/WebhookConfig",
+            "description": "Where to deliver notifications when the interaction completes."
+          }
+        },
+        "required": [
+          "agent",
+          "input"
+        ]
+      },
+      "CreateInteractionRequest": {
+        "description": "The body of a request to create an interaction.\n\nAn interaction is created either against a [`ModelOption`] (a raw Gemini model) or an\n[`AgentOption`] (a managed agent).",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreateAgentInteractionParams",
+            "description": "Parameters for creating an agent interaction."
+          },
+          {
+            "$ref": "#/components/schemas/CreateModelInteractionParams",
+            "description": "Parameters for creating a model interaction."
+          }
+        ]
+      },
+      "CreateModelInteractionParams": {
+        "description": "Parameters for creating a model interaction.",
+        "properties": {
+          "background": {
+            "description": "Whether to run the model interaction in the background.",
+            "type": "boolean"
+          },
+          "continuation_token": {
+            "description": "Opaque token to resume a long decode. Pass the latest token back unchanged to continue\ndecoding.",
+            "format": "byte",
+            "type": "string"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment",
+            "description": "The environment the interaction runs in."
+          },
+          "generation_config": {
+            "$ref": "#/components/schemas/GenerationConfig",
+            "description": "Configuration parameters for the model interaction."
+          },
+          "input": {
+            "$ref": "#/components/schemas/InteractionsInput",
+            "description": "The input for the interaction."
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "model": {
+            "$ref": "#/components/schemas/KnownModel",
+            "description": "The name of the `Model` used for generating the interaction."
+          },
+          "previous_interaction_id": {
+            "description": "The ID of the previous interaction, if any.",
+            "type": "string"
+          },
+          "response_format": {
+            "$ref": "#/components/schemas/ResponseFormats",
+            "description": "The response format(s) enforced on the generated response."
+          },
+          "response_mime_type": {
+            "deprecated": true,
+            "description": "The mime type of the response (deprecated; use `response_format`).",
+            "type": "string"
+          },
+          "response_modalities": {
+            "deprecated": true,
+            "description": "The requested modalities of the response.",
+            "items": {
+              "$ref": "#/components/schemas/ResponseModality"
+            },
+            "type": "array"
+          },
+          "safety_settings": {
+            "description": "Safety settings for the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/SafetySetting"
+            },
+            "type": "array"
+          },
+          "service_tier": {
+            "$ref": "#/components/schemas/ServiceTier",
+            "description": "The service tier to serve the interaction on."
+          },
+          "store": {
+            "description": "Whether to store the response and request for later retrieval.",
+            "type": "boolean"
+          },
+          "stream": {
+            "description": "Whether the interaction will be streamed.",
+            "type": "boolean"
+          },
+          "system_instruction": {
+            "description": "System instruction for the interaction.",
+            "type": "string"
+          },
+          "tools": {
+            "description": "A list of tool declarations the model may call during the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/Tool"
+            },
+            "type": "array"
+          },
+          "webhook_config": {
+            "$ref": "#/components/schemas/WebhookConfig",
+            "description": "Where to deliver notifications when the interaction completes."
+          }
+        },
+        "required": [
+          "model",
+          "input"
+        ]
+      },
+      "Delivery": {
+        "description": "The delivery mode for a generated media output.",
+        "enum": [
+          "inline",
+          "uri"
+        ],
+        "type": "string"
+      },
+      "DocumentContent": {
+        "description": "A document content block.",
+        "properties": {
+          "data": {
+            "description": "The document content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/DocumentMimeType",
+            "description": "The mime type of the document."
+          },
+          "uri": {
+            "description": "The URI of the document.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DocumentDelta": {
+        "description": "An incremental document update.",
+        "properties": {
+          "data": {
+            "description": "The document content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/DocumentMimeType",
+            "description": "The mime type of the document."
+          },
+          "uri": {
+            "description": "The URI of the document.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DocumentMimeType": {
+        "description": "The mime type of a document block.",
+        "enum": [
+          "application/pdf",
+          "text/csv",
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+          "application/vnd.ms-powerpoint",
+          "application/vnd.oasis.opendocument.presentation",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+          "application/vnd.oasis.opendocument.text",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "application/vnd.ms-excel",
+          "application/vnd.oasis.opendocument.spreadsheet"
+        ],
+        "type": "string"
+      },
+      "EgressAllowlist": {
+        "description": "The value of an egress allowlist: a list of rules, or `\"disabled\"`.",
+        "oneOf": [
+          {
+            "description": "The domains the environment may reach. Only requests to listed domains are permitted.",
+            "items": {
+              "$ref": "#/components/schemas/EgressRule"
+            },
+            "type": "array"
+          },
+          {
+            "$ref": "#/components/schemas/NetworkDisabled",
+            "description": "No network access."
+          }
+        ]
+      },
+      "EgressRule": {
+        "description": "A single domain allowlist rule, with optional header injection.",
+        "properties": {
+          "credential": {
+            "description": "The ID of a server-managed `Credential` resource to use for this domain.",
+            "type": "string"
+          },
+          "domain": {
+            "description": "The domain to allow outbound requests to. Supports wildcards, for example\n`*.googleapis.com`; `*` allows every domain.",
+            "type": "string"
+          },
+          "transform": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "type": "object"
+      },
+      "EnvVar": {
+        "description": "An environment variable to set in the execution environment.",
+        "properties": {
+          "credential": {
+            "description": "The ID of a server-managed `Credential` resource to take the value from.",
+            "type": "string"
+          },
+          "value": {
+            "description": "The value of a plain environment variable.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Environment": {
+        "description": "The environment an interaction runs in.\n\nEither a configuration for an environment to create or update, or the ID of one that\nalready exists.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/EnvironmentConfig",
+            "description": "A configuration for the environment."
+          },
+          {
+            "description": "The ID of an existing environment.",
+            "type": "string"
+          }
+        ]
+      },
+      "EnvironmentConfig": {
+        "description": "Configuration for a custom environment.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RemoteEnvironment",
+                "description": "An environment hosted by the API."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "remote"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An environment hosted by the API."
+          }
+        ]
+      },
+      "EnvironmentNetwork": {
+        "description": "Outbound networking configuration for an environment.\n\nEither an allowlist restricting which domains the environment may reach, or `\"disabled\"`,\nwhich turns all network access off. Omitted entirely, all outbound traffic is allowed.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/EnvironmentNetworkEgressAllowlist",
+            "description": "The domains the environment may reach."
+          },
+          {
+            "$ref": "#/components/schemas/NetworkDisabled",
+            "description": "No network access."
+          }
+        ]
+      },
+      "EnvironmentNetworkEgressAllowlist": {
+        "description": "The domains an environment may reach.",
+        "properties": {
+          "allowlist": {
+            "$ref": "#/components/schemas/EgressAllowlist",
+            "description": "The allowed outbound domains, or `\"disabled\"` to block all network egress."
+          }
+        },
+        "type": "object"
+      },
+      "EnvironmentVariables": {
+        "description": "Environment variables to set in an environment.\n\nThe API accepts either a mapping of variable names to their definitions or a string.",
+        "oneOf": [
+          {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/EnvVar"
+            },
+            "description": "A mapping of variable names to their definitions.",
+            "type": "object"
+          },
+          {
+            "description": "A string.",
+            "type": "string"
+          }
+        ]
+      },
+      "ErrorEvent": {
+        "description": "Emitted when an error occurs during streaming.",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage",
+            "description": "The error that occurred."
+          },
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorMessage": {
+        "description": "Error message returned from an interaction.",
+        "properties": {
+          "code": {
+            "description": "A URI that identifies the error type.",
+            "type": "string"
+          },
+          "message": {
+            "description": "A human-readable error message.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "description": "The body of an error response (`4XX`/`5XX`), wrapping an [`ErrorMessage`].",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorMessage",
+            "description": "The error details."
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "FileCitation": {
+        "description": "A file citation annotation.",
+        "properties": {
+          "custom_metadata": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "document_uri": {
+            "description": "The URI of the file.",
+            "type": "string"
+          },
+          "end_index": {
+            "description": "End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "file_name": {
+            "description": "The name of the file.",
+            "type": "string"
+          },
+          "media_id": {
+            "description": "Media ID in-case of image citations, if applicable.",
+            "type": "string"
+          },
+          "page_number": {
+            "description": "Page number of the cited document, if applicable.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "source": {
+            "description": "Source attributed for a portion of the text.",
+            "type": "string"
+          },
+          "start_index": {
+            "description": "Start of segment of the response that is attributed to this source, in bytes.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "FileSearch": {
+        "description": "A tool that can be used by the model to search files.",
+        "properties": {
+          "file_search_store_names": {
+            "description": "The file search store names to search.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "metadata_filter": {
+            "description": "Metadata filter to apply to the semantic retrieval documents and chunks.",
+            "type": "string"
+          },
+          "top_k": {
+            "description": "The number of semantic retrieval chunks to retrieve.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "FileSearchCallDelta": {
+        "description": "A streamed file search call.",
+        "properties": {
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FileSearchCallStep": {
+        "description": "A file search tool call step.",
+        "properties": {
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "FileSearchResultDelta": {
+        "description": "A streamed file search result.",
+        "properties": {
+          "result": {
+            "description": "The results of the file search.",
+            "items": {
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "FileSearchResultStep": {
+        "description": "The result of a file search tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id"
+        ],
+        "type": "object"
+      },
+      "Function": {
+        "description": "A user-defined function the model may call.",
+        "properties": {
+          "description": {
+            "description": "A description of the function.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the function.",
+            "type": "string"
+          },
+          "parameters": {
+            "description": "The JSON Schema for the function's parameters."
+          }
+        },
+        "type": "object"
+      },
+      "FunctionCallStep": {
+        "description": "A function tool call step.",
+        "properties": {
+          "arguments": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the tool to call.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id",
+          "name"
+        ],
+        "type": "object"
+      },
+      "FunctionResultDelta": {
+        "description": "A streamed function result.",
+        "properties": {
+          "is_error": {
+            "description": "Whether the tool call resulted in an error.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "The name of the tool that was called.",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/FunctionResultValue",
+            "description": "The result of the tool call."
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "FunctionResultStep": {
+        "description": "The result of a function tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "is_error": {
+            "description": "Whether the tool call resulted in an error.",
+            "type": "boolean"
+          },
+          "name": {
+            "description": "The name of the tool that was called.",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/FunctionResultValue",
+            "description": "The result of the tool call."
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "FunctionResultSubContent": {
+        "description": "A content block within a function result.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TextContent",
+                "description": "A text content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "text"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A text content block."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageContent",
+                "description": "An image content block."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "image"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An image content block."
+          }
+        ]
+      },
+      "FunctionResultValue": {
+        "description": "The result of a function tool call.\n\nA function result may be plain text, a list of content blocks, or an arbitrary JSON\nobject.",
+        "oneOf": [
+          {
+            "items": {
+              "$ref": "#/components/schemas/FunctionResultSubContent"
+            },
+            "type": "array"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "GenerationConfig": {
+        "description": "Configuration parameters for model interactions.",
+        "properties": {
+          "image_config": {
+            "$ref": "#/components/schemas/ImageConfig",
+            "description": "Configuration for image generation."
+          },
+          "max_output_tokens": {
+            "description": "The maximum number of tokens to include in the response.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "seed": {
+            "description": "Seed used in decoding for reproducibility.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "stop_sequences": {
+            "description": "A list of character sequences that will stop output interaction.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "structured_speech_config": {
+            "description": "Configuration for speech generation, one entry per speaker.",
+            "oneOf": [
+              {
+                "description": "Speaker or speech configuration.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SpeakerConfig",
+                    "description": "Speaker configuration."
+                  },
+                  {
+                    "description": "Speech configuration.",
+                    "items": {
+                      "$ref": "#/components/schemas/SpeechConfig"
+                    },
+                    "type": "array"
+                  }
+                ]
+              }
+            ]
+          },
+          "temperature": {
+            "deprecated": true,
+            "description": "Controls the randomness of the output.",
+            "format": "float",
+            "type": "number"
+          },
+          "thinking_level": {
+            "$ref": "#/components/schemas/ThinkingLevel",
+            "description": "The level of thought tokens that the model should generate."
+          },
+          "thinking_summaries": {
+            "$ref": "#/components/schemas/ThinkingSummaries",
+            "description": "Whether to include thought summaries in the response."
+          },
+          "tool_choice": {
+            "$ref": "#/components/schemas/ToolChoice",
+            "description": "The tool choice configuration."
+          },
+          "top_p": {
+            "deprecated": true,
+            "description": "The maximum cumulative probability of tokens to consider when sampling.",
+            "format": "float",
+            "type": "number"
+          },
+          "transcription_config": {
+            "$ref": "#/components/schemas/TranscriptionConfig",
+            "description": "Configuration for speech recognition. Transcription is enabled when it is set."
+          },
+          "video_config": {
+            "$ref": "#/components/schemas/VideoConfig",
+            "description": "Configuration for video generation."
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMaps": {
+        "description": "A tool that can be used by the model to call Google Maps.",
+        "properties": {
+          "enable_widget": {
+            "description": "Whether to return a widget context token in the tool call result of the response.",
+            "type": "boolean"
+          },
+          "latitude": {
+            "description": "The latitude of the user's location.",
+            "format": "double",
+            "type": "number"
+          },
+          "longitude": {
+            "description": "The longitude of the user's location.",
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMapsCallArguments": {
+        "description": "The arguments to pass to a Google Maps tool call.",
+        "properties": {
+          "queries": {
+            "description": "The queries to be executed.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMapsCallDelta": {
+        "description": "A streamed Google Maps call.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/GoogleMapsCallArguments",
+            "description": "The arguments to pass to the Google Maps tool."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMapsCallStep": {
+        "description": "A Google Maps tool call step.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/GoogleMapsCallArguments",
+            "description": "The arguments to pass to the Google Maps tool."
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "GoogleMapsResult": {
+        "description": "The result of a Google Maps tool call.",
+        "properties": {
+          "places": {
+            "description": "The places that were found.",
+            "items": {
+              "$ref": "#/components/schemas/Places"
+            },
+            "type": "array"
+          },
+          "widget_context_token": {
+            "description": "Resource name of the Google Maps widget context token.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMapsResultDelta": {
+        "description": "A streamed Google Maps result.",
+        "properties": {
+          "result": {
+            "description": "The results of the Google Maps call.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleMapsResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleMapsResultStep": {
+        "description": "The result of a Google Maps tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "result": {
+            "description": "The results of the Google Maps call.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleMapsResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "GoogleSearch": {
+        "description": "A tool that can be used by the model to search Google.",
+        "properties": {
+          "search_types": {
+            "description": "The types of search grounding to enable.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleSearchType"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleSearchCallArguments": {
+        "description": "The arguments to pass to a Google Search tool call.",
+        "properties": {
+          "queries": {
+            "description": "Web search queries for the follow-up web search.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleSearchCallDelta": {
+        "description": "A streamed Google Search call.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/GoogleSearchCallArguments",
+            "description": "The arguments to pass to Google Search."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments"
+        ],
+        "type": "object"
+      },
+      "GoogleSearchCallStep": {
+        "description": "A Google Search tool call step.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/GoogleSearchCallArguments",
+            "description": "The arguments to pass to Google Search."
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "search_type": {
+            "$ref": "#/components/schemas/GoogleSearchType",
+            "description": "The type of search grounding enabled."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id"
+        ],
+        "type": "object"
+      },
+      "GoogleSearchResult": {
+        "description": "The result of a Google Search tool call.",
+        "properties": {
+          "search_suggestions": {
+            "description": "Web content snippet that can be embedded in a web page or an app webview.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "GoogleSearchResultDelta": {
+        "description": "A streamed Google Search result.",
+        "properties": {
+          "is_error": {
+            "description": "Whether the Google Search resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "description": "The results of the Google Search.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleSearchResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "GoogleSearchResultStep": {
+        "description": "The result of a Google Search tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "is_error": {
+            "description": "Whether the Google Search resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "description": "The results of the Google Search.",
+            "items": {
+              "$ref": "#/components/schemas/GoogleSearchResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "GoogleSearchType": {
+        "description": "The type of search grounding to enable.",
+        "enum": [
+          "web_search",
+          "image_search"
+        ],
+        "type": "string"
+      },
+      "GroundingToolCount": {
+        "description": "The number of grounding tool counts for a given grounding tool type.",
+        "properties": {
+          "count": {
+            "description": "The number of grounding tool counts.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "type": {
+            "$ref": "#/components/schemas/GroundingToolType",
+            "description": "The grounding tool type associated with the count."
+          }
+        },
+        "type": "object"
+      },
+      "GroundingToolType": {
+        "description": "The grounding tool type associated with a [`GroundingToolCount`].",
+        "enum": [
+          "google_search",
+          "google_maps"
+        ],
+        "type": "string"
+      },
+      "HarmBlockMethod": {
+        "description": "The method by which harm is scored when deciding whether to block content.",
+        "enum": [
+          "severity",
+          "probability"
+        ],
+        "type": "string"
+      },
+      "HarmBlockThreshold": {
+        "description": "Block at and beyond a specified harm probability.",
+        "enum": [
+          "block_low_and_above",
+          "block_medium_and_above",
+          "block_only_high",
+          "off"
+        ],
+        "type": "string"
+      },
+      "HarmCategory": {
+        "description": "The category of harm a [`SafetySetting`] applies to.\n\nThese categories cover various kinds of harms that developers may wish to adjust.",
+        "enum": [
+          "hate_speech",
+          "dangerous_content",
+          "harassment",
+          "sexually_explicit",
+          "jailbreak"
+        ],
+        "type": "string"
+      },
+      "ImageAspectRatio": {
+        "description": "The aspect ratio for an image output.",
+        "enum": [
+          "1:1",
+          "2:3",
+          "3:2",
+          "3:4",
+          "4:3",
+          "4:5",
+          "5:4",
+          "9:16",
+          "16:9",
+          "21:9",
+          "1:8",
+          "8:1",
+          "1:4",
+          "4:1"
+        ],
+        "type": "string"
+      },
+      "ImageConfig": {
+        "deprecated": true,
+        "description": "Configuration for image generation.\n\nDeprecated in favour of an image [`ResponseFormat`](super::ResponseFormat).",
+        "properties": {
+          "aspect_ratio": {
+            "description": "The aspect ratio of the generated image.",
+            "type": "string"
+          },
+          "image_size": {
+            "description": "The size of the generated image.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImageContent": {
+        "description": "An image content block.",
+        "properties": {
+          "data": {
+            "description": "The image content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/ImageMimeType",
+            "description": "The mime type of the image."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media."
+          },
+          "uri": {
+            "description": "The URI of the image.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImageDelta": {
+        "description": "An incremental image update.",
+        "properties": {
+          "data": {
+            "description": "The image content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/ImageMimeType",
+            "description": "The mime type of the image."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media."
+          },
+          "uri": {
+            "description": "The URI of the image.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImageMimeType": {
+        "description": "The mime type of an image.",
+        "enum": [
+          "image/png",
+          "image/jpeg",
+          "image/webp",
+          "image/heic",
+          "image/heif",
+          "image/gif",
+          "image/bmp",
+          "image/tiff"
+        ],
+        "type": "string"
+      },
+      "ImageOutputMimeType": {
+        "description": "The MIME type of an image output.",
+        "enum": [
+          "image/jpeg"
+        ],
+        "type": "string"
+      },
+      "ImageResponseFormat": {
+        "description": "Configuration for image output format.",
+        "properties": {
+          "aspect_ratio": {
+            "$ref": "#/components/schemas/ImageAspectRatio",
+            "description": "The aspect ratio for the image output."
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/Delivery",
+            "description": "The delivery mode for the image output."
+          },
+          "image_size": {
+            "$ref": "#/components/schemas/ImageSize",
+            "description": "The size of the image output."
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/ImageOutputMimeType",
+            "description": "The MIME type of the image output."
+          }
+        },
+        "type": "object"
+      },
+      "ImageSize": {
+        "description": "The size of an image output.",
+        "enum": [
+          "512",
+          "1K",
+          "2K",
+          "4K"
+        ],
+        "type": "string"
+      },
+      "Interaction": {
+        "description": "The Interaction resource.\n\nAn interaction is the stateful, step-based unit of the Interactions API. It is returned\nwhen creating, retrieving, or cancelling an interaction.",
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/KnownAgent",
+            "description": "The name of the `Agent` used for generating the interaction."
+          },
+          "agent_config": {
+            "$ref": "#/components/schemas/AgentConfig",
+            "description": "Configuration parameters for the agent interaction."
+          },
+          "continuation_token": {
+            "description": "Opaque token to resume a long decode when the status is `requires_continuation`. Pass it\nback unchanged in the next create request to continue decoding.",
+            "format": "byte",
+            "type": "string"
+          },
+          "created": {
+            "description": "The time at which the response was created, in ISO 8601 format.",
+            "type": "string"
+          },
+          "environment": {
+            "$ref": "#/components/schemas/Environment",
+            "description": "The environment the interaction runs in."
+          },
+          "environment_id": {
+            "description": "The ID of the environment the interaction ran in, if the request set an environment.",
+            "type": "string"
+          },
+          "errors": {
+            "description": "Diagnostic faults and platform errors recorded on the interaction (output only).",
+            "items": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            },
+            "type": "array"
+          },
+          "generation_config": {
+            "$ref": "#/components/schemas/GenerationConfig",
+            "description": "Configuration parameters for the model interaction (input only)."
+          },
+          "id": {
+            "description": "A unique identifier for the interaction.",
+            "type": "string"
+          },
+          "input": {
+            "$ref": "#/components/schemas/InteractionsInput",
+            "description": "The input for the interaction."
+          },
+          "labels": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "max_total_tokens": {
+            "description": "The maximum number of tokens the interaction may use in total.",
+            "format": "int64",
+            "type": "string"
+          },
+          "model": {
+            "$ref": "#/components/schemas/KnownModel",
+            "description": "The name of the `Model` used for generating the interaction."
+          },
+          "previous_interaction_id": {
+            "description": "The ID of the previous interaction, if any.",
+            "type": "string"
+          },
+          "response_format": {
+            "$ref": "#/components/schemas/ResponseFormats",
+            "description": "The response format(s) enforced on the generated response."
+          },
+          "response_mime_type": {
+            "deprecated": true,
+            "description": "The mime type of the response (deprecated; use `response_format`).",
+            "type": "string"
+          },
+          "response_modalities": {
+            "deprecated": true,
+            "description": "The requested modalities of the response.",
+            "items": {
+              "$ref": "#/components/schemas/ResponseModality"
+            },
+            "type": "array"
+          },
+          "safety_settings": {
+            "description": "Safety settings for the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/SafetySetting"
+            },
+            "type": "array"
+          },
+          "service_tier": {
+            "$ref": "#/components/schemas/ServiceTier",
+            "description": "The service tier the interaction is served on."
+          },
+          "status": {
+            "$ref": "#/components/schemas/InteractionStatus",
+            "description": "The status of the interaction."
+          },
+          "steps": {
+            "description": "The steps that make up the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array"
+          },
+          "system_instruction": {
+            "description": "System instruction for the interaction.",
+            "type": "string"
+          },
+          "tools": {
+            "description": "A list of tool declarations the model may call during the interaction.",
+            "items": {
+              "$ref": "#/components/schemas/Tool"
+            },
+            "type": "array"
+          },
+          "updated": {
+            "description": "The time at which the response was last updated, in ISO 8601 format.",
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Statistics on the interaction request's token usage."
+          },
+          "webhook_config": {
+            "$ref": "#/components/schemas/WebhookConfig",
+            "description": "Where to deliver notifications when the interaction completes."
+          }
+        },
+        "required": [
+          "created",
+          "id",
+          "status",
+          "steps",
+          "updated"
+        ]
+      },
+      "InteractionCompletedEvent": {
+        "description": "Emitted at the end of the stream with the completed interaction.",
+        "properties": {
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "interaction": {
+            "$ref": "#/components/schemas/InteractionSseEventInteraction",
+            "description": "The partial completed interaction resource emitted at the end of the stream."
+          }
+        },
+        "required": [
+          "interaction"
+        ],
+        "type": "object"
+      },
+      "InteractionCreatedEvent": {
+        "description": "Emitted when the interaction is created.",
+        "properties": {
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "interaction": {
+            "$ref": "#/components/schemas/InteractionSseEventInteraction",
+            "description": "The partial interaction resource emitted when the stream is created."
+          }
+        },
+        "required": [
+          "interaction"
+        ],
+        "type": "object"
+      },
+      "InteractionSseEvent": {
+        "description": "A server-sent event emitted while streaming an interaction.\n\nDiscriminated by its `event_type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InteractionCreatedEvent",
+                "description": "Emitted when the interaction is created."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "interaction.created"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted when the interaction is created."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InteractionCompletedEvent",
+                "description": "Emitted at the end of the stream with the completed interaction."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "interaction.completed"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted at the end of the stream with the completed interaction."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InteractionStatusUpdate",
+                "description": "Emitted when the interaction status changes."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "interaction.status_update"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted when the interaction status changes."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ErrorEvent",
+                "description": "Emitted when an error occurs during streaming."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "error"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted when an error occurs during streaming."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StepStart",
+                "description": "Emitted when a step starts."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "step.start"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted when a step starts."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StepDelta",
+                "description": "Emitted with an incremental update to a step."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "step.delta"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted with an incremental update to a step."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StepStop",
+                "description": "Emitted when a step stops."
+              },
+              {
+                "properties": {
+                  "event_type": {
+                    "const": "step.stop"
+                  }
+                },
+                "required": [
+                  "event_type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Emitted when a step stops."
+          }
+        ],
+        "type": "object"
+      },
+      "InteractionSseEventInteraction": {
+        "description": "A partial interaction resource emitted by interaction lifecycle SSE events.\n\nStreaming lifecycle payloads may omit fields that are only available on full,\nnon-streaming [`Interaction`](super::Interaction) responses.",
+        "properties": {
+          "agent": {
+            "description": "The agent used to interact.",
+            "type": "string"
+          },
+          "continuation_token": {
+            "description": "Opaque token to resume a long decode when the status is `incomplete`.",
+            "format": "byte",
+            "readOnly": true,
+            "type": "string"
+          },
+          "created": {
+            "description": "The time at which the response was created, in ISO 8601 format.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "id": {
+            "description": "A unique identifier for the interaction.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "model": {
+            "description": "The model that will complete the prompt.",
+            "type": "string"
+          },
+          "object": {
+            "description": "The name of the resource, always `interaction`.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "service_tier": {
+            "$ref": "#/components/schemas/ServiceTier",
+            "description": "The service tier the interaction is served on."
+          },
+          "status": {
+            "description": "[`InteractionStatus`] without `\"budget_exceeded\"` or `\"queued\"` variant.",
+            "enum": [
+              "in_progress",
+              "requires_action",
+              "completed",
+              "failed",
+              "cancelled",
+              "incomplete"
+            ],
+            "readOnly": true,
+            "type": "string"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "readOnly": true,
+            "type": "array"
+          },
+          "updated": {
+            "description": "The time at which the response was last updated, in ISO 8601 format.",
+            "readOnly": true,
+            "type": "string"
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Statistics on the interaction request's token usage."
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "InteractionSseStreamEvent": {
+        "description": "The wire envelope for a single interaction SSE event (`{ \"data\": ... }`).",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/InteractionSseEvent",
+            "description": "The event payload."
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "type": "object"
+      },
+      "InteractionStatus": {
+        "description": "The status of an interaction.",
+        "enum": [
+          "in_progress",
+          "requires_action",
+          "completed",
+          "failed",
+          "cancelled",
+          "incomplete",
+          "budget_exceeded",
+          "requires_continuation"
+        ],
+        "type": "string"
+      },
+      "InteractionStatusUpdate": {
+        "description": "Emitted when the interaction status changes.",
+        "properties": {
+          "continuation_token": {
+            "description": "An opaque token to resume decoding from the latest checkpoint after a disconnected\nstream.",
+            "format": "byte",
+            "type": "string"
+          },
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "interaction_id": {
+            "description": "The ID of the interaction whose status changed.",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InteractionStatus",
+            "description": "The new status of the interaction."
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Model usage statistics up to this checkpoint."
+          }
+        },
+        "required": [
+          "interaction_id",
+          "status"
+        ],
+        "type": "object"
+      },
+      "InteractionsInput": {
+        "description": "The input for an interaction.\n\nThe API accepts a bare string, a single [`Content`] block, a list of [`Content`] blocks, or a\nlist of [`Step`]s.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Content",
+            "description": "A single content block."
+          },
+          {
+            "description": "An ordered list of steps (for multi-turn conversations).",
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "title": "StepList",
+            "type": "array"
+          },
+          {
+            "description": "A list of content blocks.",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            },
+            "title": "ContentList",
+            "type": "array"
+          },
+          {
+            "type": "string"
+          }
+        ]
+      },
+      "KnownAgent": {
+        "description": "Agents known to this crate at build time.",
+        "enum": [
+          "deep-research-preview-04-2026",
+          "deep-research-max-preview-04-2026",
+          "antigravity-preview-05-2026"
+        ],
+        "type": "string"
+      },
+      "KnownModel": {
+        "description": "Models known to this crate at build time.",
+        "enum": [
+          "gemini-pro-latest",
+          "gemini-flash-latest",
+          "gemini-flash-lite-latest",
+          "gemini-2.5-pro",
+          "gemini-2.5-flash",
+          "gemini-2.5-flash-lite",
+          "gemini-3.1-flash-lite",
+          "gemini-3.5-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-3.6-flash",
+          "gemini-3.7-flash",
+          "gemini-3.8-flash",
+          "gemini-3.8-flash-tts",
+          "gemini-3.8-flash-lite-tts",
+          "gemini-2.5-flash-image",
+          "gemini-3.1-flash-image",
+          "gemini-3.1-flash-lite-image",
+          "gemini-3-pro-image",
+          "gemini-nano-banana-2.1",
+          "lyria-3.5",
+          "gemini-omni-1.1-flash"
+        ],
+        "type": "string"
+      },
+      "McpServer": {
+        "description": "A server that can be called by the model to perform actions.",
+        "properties": {
+          "allowed_tools": {
+            "description": "The allowed tools.",
+            "items": {
+              "$ref": "#/components/schemas/AllowedTools"
+            },
+            "type": "array"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "description": "The name of the server.",
+            "type": "string"
+          },
+          "url": {
+            "description": "The full URL for the server endpoint, for example `https://api.example.com/mcp`.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "McpServerToolCallDelta": {
+        "description": "A streamed MCP server tool call.",
+        "properties": {
+          "arguments": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "name": {
+            "description": "The name of the tool which was called.",
+            "type": "string"
+          },
+          "server_name": {
+            "description": "The name of the used MCP server.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "name",
+          "server_name"
+        ],
+        "type": "object"
+      },
+      "McpServerToolCallStep": {
+        "description": "An MCP server tool call step.",
+        "properties": {
+          "arguments": {
+            "additionalProperties": {},
+            "type": "object"
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "name": {
+            "description": "The name of the tool which was called.",
+            "type": "string"
+          },
+          "server_name": {
+            "description": "The name of the used MCP server.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id",
+          "name",
+          "server_name"
+        ],
+        "type": "object"
+      },
+      "McpServerToolResultDelta": {
+        "description": "A streamed MCP server tool result.",
+        "properties": {
+          "name": {
+            "description": "Name of the tool which is called for this specific tool call.",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/FunctionResultValue",
+            "description": "The output from the MCP server call."
+          },
+          "server_name": {
+            "description": "The name of the used MCP server.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "McpServerToolResultStep": {
+        "description": "The result of a MCP server tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Name of the tool which is called for this specific tool call.",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/FunctionResultValue",
+            "description": "The output from the MCP server call."
+          },
+          "server_name": {
+            "description": "The name of the used MCP server.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "MediaProcessing": {
+        "description": "How the model processes a media block.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StaticMediaProcessing",
+                "description": "Fixed-rate frame extraction."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Fixed-rate frame extraction."
+          }
+        ]
+      },
+      "MediaResolution": {
+        "description": "The resolution of media input.",
+        "enum": [
+          "low",
+          "medium",
+          "high",
+          "ultra_high"
+        ],
+        "type": "string"
+      },
+      "ModalityTokens": {
+        "description": "The token count for a single response modality.",
+        "properties": {
+          "modality": {
+            "$ref": "#/components/schemas/ResponseModality",
+            "description": "The modality associated with the token count."
+          },
+          "tokens": {
+            "description": "Number of tokens for the modality.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "ModelOutputStep": {
+        "description": "Output generated by the model.",
+        "properties": {
+          "content": {
+            "description": "The content blocks that make up the model output.",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "NetworkDisabled": {
+        "description": "Turns all network access off.",
+        "enum": [
+          "disabled"
+        ],
+        "type": "string"
+      },
+      "PlaceCitation": {
+        "description": "A place citation annotation.",
+        "properties": {
+          "end_index": {
+            "description": "End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Title of the place.",
+            "type": "string"
+          },
+          "place_id": {
+            "description": "The ID of the place, in `places/{place_id}` format.",
+            "type": "string"
+          },
+          "review_snippets": {
+            "description": "Snippets of reviews used to generate answers about the features of a given place.",
+            "items": {
+              "$ref": "#/components/schemas/ReviewSnippet"
+            },
+            "type": "array"
+          },
+          "start_index": {
+            "description": "Start of segment of the response that is attributed to this source, in bytes.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "url": {
+            "description": "URI reference of the place.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Places": {
+        "description": "A place returned by the Google Maps tool.",
+        "properties": {
+          "name": {
+            "description": "Title of the place.",
+            "type": "string"
+          },
+          "place_id": {
+            "description": "The ID of the place, in `places/{place_id}` format.",
+            "type": "string"
+          },
+          "review_snippets": {
+            "description": "Snippets of reviews used to generate answers about the features of a given place.",
+            "items": {
+              "$ref": "#/components/schemas/ReviewSnippet"
+            },
+            "type": "array"
+          },
+          "url": {
+            "description": "URI reference of the place.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProcessingCallDelta": {
+        "description": "A streamed server-initiated media processing step.",
+        "properties": {
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProcessingCallStep": {
+        "description": "A server-initiated processing step for media analysis (e.g. video understanding).",
+        "properties": {
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "ProcessingResultDelta": {
+        "description": "The streamed result of a server-initiated media processing step.",
+        "properties": {
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProcessingResultStep": {
+        "description": "The result of a server-initiated media processing step.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the processing call block.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id"
+        ],
+        "type": "object"
+      },
+      "RemoteEnvironment": {
+        "description": "An environment hosted by the API.",
+        "properties": {
+          "env": {
+            "$ref": "#/components/schemas/EnvironmentVariables",
+            "description": "Environment variables to set in the environment."
+          },
+          "environment_id": {
+            "description": "The ID of an environment to update instead of creating a new one.",
+            "type": "string"
+          },
+          "network": {
+            "$ref": "#/components/schemas/EnvironmentNetwork",
+            "description": "Network configuration for the environment."
+          },
+          "sources": {
+            "description": "The sources mounted into the environment.",
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ResponseFormat": {
+        "description": "Configuration for a single response output format.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TextResponseFormat",
+                "description": "Configuration for text output format."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "text"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Configuration for text output format."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageResponseFormat",
+                "description": "Configuration for image output format."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "image"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Configuration for image output format."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioResponseFormat",
+                "description": "Configuration for audio output format."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "audio"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Configuration for audio output format."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoResponseFormat",
+                "description": "Configuration for video output format."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "video"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Configuration for video output format."
+          },
+          {
+            "description": "A response format specified by an arbitrary JSON object.",
+            "oneOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              }
+            ]
+          }
+        ],
+        "type": "object"
+      },
+      "ResponseFormats": {
+        "description": "One or more [`ResponseFormat`]s.\n\nThe API accepts either a single response format or a list of them.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ResponseFormat",
+            "description": "A single response format."
+          },
+          {
+            "description": "A list of response formats.",
+            "items": {
+              "$ref": "#/components/schemas/ResponseFormat"
+            },
+            "title": "ResponseFormatList",
+            "type": "array"
+          }
+        ]
+      },
+      "ResponseModality": {
+        "description": "A response output modality.",
+        "enum": [
+          "text",
+          "image",
+          "audio",
+          "video",
+          "document"
+        ],
+        "type": "string"
+      },
+      "ReviewSnippet": {
+        "description": "A snippet of a user review that answers a question about the features of a specific\nplace in Google Maps.",
+        "properties": {
+          "review_id": {
+            "description": "The ID of the review snippet.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Title of the review.",
+            "type": "string"
+          },
+          "url": {
+            "description": "A link that corresponds to the user review on Google Maps.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SafetySetting": {
+        "description": "Safety setting, affecting the safety-blocking behavior.\n\nPassing a safety setting for a category changes the allowed probability that content\nis blocked.",
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/HarmBlockMethod",
+            "description": "The method for blocking content.\n\nIf unset, the default behaviour is to use the probability score."
+          },
+          "threshold": {
+            "$ref": "#/components/schemas/HarmBlockThreshold",
+            "description": "Controls the probability threshold at which harm is blocked."
+          },
+          "type": {
+            "$ref": "#/components/schemas/HarmCategory",
+            "description": "The category of harm to be blocked.\n\nSent as `type` on the wire."
+          }
+        },
+        "required": [
+          "threshold",
+          "type"
+        ],
+        "type": "object"
+      },
+      "ServiceTier": {
+        "description": "The service tier an interaction is served on.",
+        "enum": [
+          "flex",
+          "standard",
+          "priority"
+        ],
+        "type": "string"
+      },
+      "SmartTranscriptionMode": {
+        "description": "Additional options for smart transcription mode.",
+        "properties": {
+          "source_text": {
+            "description": "The source text to be edited or rewritten via voice instructions.\n\nWhen provided, the model performs voice-driven editing and outputs the finalized\nreplacement text.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Source": {
+        "description": "A source mounted into an environment.",
+        "properties": {
+          "content": {
+            "description": "The inline content, when the source type is `inline`.",
+            "type": "string"
+          },
+          "encoding": {
+            "description": "The encoding of the inline content, for example `base64`.",
+            "type": "string"
+          },
+          "source": {
+            "description": "The source to mount: a GCS path, a GitHub path, and so on.",
+            "type": "string"
+          },
+          "target": {
+            "description": "Where the source should appear in the environment.",
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/SourceType",
+            "description": "The type of the source."
+          }
+        },
+        "type": "object"
+      },
+      "SourceType": {
+        "description": "The type of a source mounted into an environment.",
+        "enum": [
+          "gcs",
+          "inline",
+          "repository"
+        ],
+        "type": "string"
+      },
+      "SpeakerConfig": {
+        "description": "Configuration for multi-speaker and speech generation.",
+        "properties": {
+          "speakers": {
+            "description": "Individual speaker configurations.",
+            "items": {
+              "$ref": "#/components/schemas/SpeechConfig"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "SpeechAnnotation": {
+        "description": "Speech annotation for text content.",
+        "properties": {
+          "end_index": {
+            "description": "End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "speaker": {
+            "description": "The speaker to associate with this turn.",
+            "type": "string"
+          },
+          "start_index": {
+            "description": "Start of segment of the response that is attributed to this source, in bytes.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "style": {
+            "description": "Style instruction for the speech synthesis.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SpeechConfig": {
+        "description": "The configuration for speech interaction.",
+        "properties": {
+          "language": {
+            "description": "The language of the speech.",
+            "type": "string"
+          },
+          "speaker": {
+            "description": "The speaker's name, matching the speaker named in the prompt.",
+            "type": "string"
+          },
+          "voice": {
+            "description": "The voice of the speaker.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "StaticMediaProcessing": {
+        "description": "Fixed-rate frame extraction, optionally over a segment of the media.",
+        "properties": {
+          "end_offset": {
+            "description": "Segment end time, as a decimal number of seconds with an `s` suffix (e.g. `\"30s\"`).\n\nMust be non-negative, and greater than `start_offset` when that is set.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "fps": {
+            "description": "Video frame-rate sampling density.",
+            "format": "double",
+            "type": "number"
+          },
+          "start_offset": {
+            "description": "Segment start time, as a decimal number of seconds with an `s` suffix (e.g. `\"10.5s\"`).\n\nMust be non-negative.",
+            "format": "google-duration",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "Step": {
+        "description": "A single step in an interaction.\n\nSteps are discriminated by their `type` field. An interaction is an ordered sequence\nof steps: user input, model output, thoughts, tool calls, and tool results.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserInputStep",
+                "description": "Input provided by the user."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "user_input"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Input provided by the user."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ModelOutputStep",
+                "description": "Output generated by the model."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "model_output"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Output generated by the model."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThoughtStep",
+                "description": "A thought produced by a thinking model."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "thought"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A thought produced by a thinking model."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCallStep",
+                "description": "A function tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "function_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A function tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeExecutionCallStep",
+                "description": "A code execution tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "code_execution_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A code execution tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlContextCallStep",
+                "description": "A URL context tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_context_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A URL context tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleSearchCallStep",
+                "description": "A Google Search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Search tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileSearchCallStep",
+                "description": "A file search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A file search tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsCallStep",
+                "description": "A Google Maps tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_maps_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Maps tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/McpServerToolCallStep",
+                "description": "An MCP server tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "mcp_server_tool_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An MCP server tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionResultStep",
+                "description": "The result of a function tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "function_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a function tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeExecutionResultStep",
+                "description": "The result of a code execution tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "code_execution_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a code execution tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlContextResultStep",
+                "description": "The result of a URL context tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_context_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a URL context tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleSearchResultStep",
+                "description": "The result of a Google Search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a Google Search tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileSearchResultStep",
+                "description": "The result of a file search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a file search tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsResultStep",
+                "description": "The result of a Google Maps tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_maps_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a Google Maps tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/McpServerToolResultStep",
+                "description": "The result of a MCP server tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "mcp_server_tool_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a MCP server tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessingCallStep",
+                "description": "A server-initiated media processing step."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "processing_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A server-initiated media processing step."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessingResultStep",
+                "description": "The result of a server-initiated media processing step."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "processing_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a server-initiated media processing step."
+          }
+        ],
+        "type": "object"
+      },
+      "StepDelta": {
+        "description": "Emitted with an incremental update to a step.",
+        "properties": {
+          "delta": {
+            "$ref": "#/components/schemas/StepDeltaData",
+            "description": "The incremental step data."
+          },
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "index": {
+            "description": "The index of the step.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/StepDeltaMetadata",
+            "description": "Metadata accompanying this step delta."
+          }
+        },
+        "required": [
+          "delta",
+          "index"
+        ],
+        "type": "object"
+      },
+      "StepDeltaData": {
+        "description": "The delta data for a step, streamed incrementally.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TextDelta",
+                "description": "An incremental text update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "text"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental text update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ImageDelta",
+                "description": "An incremental image update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "image"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental image update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioDelta",
+                "description": "An incremental audio update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "audio"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental audio update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoDelta",
+                "description": "An incremental video update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "video"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental video update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DocumentDelta",
+                "description": "An incremental document update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "document"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental document update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThoughtSummaryDelta",
+                "description": "An incremental thought-summary update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "thought_summary"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental thought-summary update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ThoughtSignatureDelta",
+                "description": "A thought signature."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "thought_signature"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A thought signature."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TextAnnotationDelta",
+                "description": "A text annotation update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "text_annotation_delta"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A text annotation update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ArgumentsDelta",
+                "description": "An incremental tool-call arguments update."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "arguments_delta"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An incremental tool-call arguments update."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeExecutionCallDelta",
+                "description": "A code execution call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "code_execution_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A code execution call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlContextCallDelta",
+                "description": "A URL context call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_context_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A URL context call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleSearchCallDelta",
+                "description": "A Google Search call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Search call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileSearchCallDelta",
+                "description": "A file search call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A file search call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsCallDelta",
+                "description": "A Google Maps call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_maps_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Maps call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/McpServerToolCallDelta",
+                "description": "An MCP server tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "mcp_server_tool_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An MCP server tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessingCallDelta",
+                "description": "A processing call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "processing_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A processing call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeExecutionResultDelta",
+                "description": "A code execution result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "code_execution_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A code execution result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlContextResultDelta",
+                "description": "A URL context result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_context_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A URL context result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleSearchResultDelta",
+                "description": "A Google Search result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Search result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileSearchResultDelta",
+                "description": "A file search result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A file search result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMapsResultDelta",
+                "description": "A Google Maps result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_maps_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A Google Maps result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FunctionResultDelta",
+                "description": "A function result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "function_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A function result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/McpServerToolResultDelta",
+                "description": "An MCP server tool result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "mcp_server_tool_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "An MCP server tool result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProcessingResultDelta",
+                "description": "A processing result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "processing_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A processing result."
+          }
+        ],
+        "type": "object"
+      },
+      "StepDeltaMetadata": {
+        "description": "Optional metadata accompanying a streamed step-delta event.",
+        "properties": {
+          "total_usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Statistics on the interaction request's token usage."
+          }
+        },
+        "type": "object"
+      },
+      "StepStart": {
+        "description": "Emitted when a step starts.",
+        "properties": {
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "index": {
+            "description": "The index of the step.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "step": {
+            "$ref": "#/components/schemas/Step",
+            "description": "The step that is starting."
+          }
+        },
+        "required": [
+          "index",
+          "step"
+        ],
+        "type": "object"
+      },
+      "StepStop": {
+        "description": "Emitted when a step stops.",
+        "properties": {
+          "event_id": {
+            "description": "The event ID token used to resume the interaction stream from this event.",
+            "type": "string"
+          },
+          "index": {
+            "description": "The index of the step.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "step_usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Model usage stats for this specific step."
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage",
+            "description": "Cumulative model usage stats from the start of the session."
+          }
+        },
+        "required": [
+          "index"
+        ],
+        "type": "object"
+      },
+      "TextAnnotationDelta": {
+        "description": "A streamed text annotation update.",
+        "properties": {
+          "annotations": {
+            "description": "Citation information for model-generated content.",
+            "items": {
+              "$ref": "#/components/schemas/Annotation"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TextContent": {
+        "description": "A text content block.",
+        "properties": {
+          "annotations": {
+            "description": "Citation information for model-generated content.",
+            "items": {
+              "$ref": "#/components/schemas/Annotation"
+            },
+            "type": "array"
+          },
+          "text": {
+            "description": "The text content.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "TextDelta": {
+        "description": "An incremental text update.",
+        "properties": {
+          "text": {
+            "description": "The incremental text.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "TextOutputMimeType": {
+        "description": "The MIME type of a text output.",
+        "enum": [
+          "application/json",
+          "text/plain"
+        ],
+        "type": "string"
+      },
+      "TextResponseFormat": {
+        "description": "Configuration for text output format.",
+        "properties": {
+          "mime_type": {
+            "$ref": "#/components/schemas/TextOutputMimeType",
+            "description": "The MIME type of the text output."
+          },
+          "schema": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ThinkingLevel": {
+        "description": "The level of thought tokens that the model should generate.",
+        "enum": [
+          "minimal",
+          "low",
+          "medium",
+          "high"
+        ],
+        "type": "string"
+      },
+      "ThinkingSummaries": {
+        "description": "Whether to include thought summaries in the response.",
+        "enum": [
+          "auto",
+          "none"
+        ],
+        "type": "string"
+      },
+      "ThoughtSignatureDelta": {
+        "description": "A thought signature.",
+        "properties": {
+          "signature": {
+            "description": "Signature to match the backend source to be part of the generation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ThoughtStep": {
+        "description": "A thought produced by a thinking model.",
+        "properties": {
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          },
+          "summary": {
+            "description": "A summary of the thought.",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ThoughtSummaryDelta": {
+        "description": "An incremental thought-summary update.",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/Content",
+            "description": "A new summary item to be added to the thought."
+          }
+        },
+        "type": "object"
+      },
+      "Tool": {
+        "description": "A tool that the model may use during an interaction.\n\nTools are discriminated by their `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Function",
+                "description": "A user-defined function the model may call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "function"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A user-defined function the model may call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CodeExecution",
+                "description": "Enables the model to execute code as part of generation."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "code_execution"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to execute code as part of generation."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UrlContext",
+                "description": "Enables the model to fetch URL context."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "url_context"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to fetch URL context."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleSearch",
+                "description": "Enables the model to ground responses with Google Search."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_search"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to ground responses with Google Search."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FileSearch",
+                "description": "Enables the model to retrieve knowledge from file search stores."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "file_search"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to retrieve knowledge from file search stores."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoogleMaps",
+                "description": "Enables the model to ground responses with Google Maps."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "google_maps"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to ground responses with Google Maps."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ComputerUse",
+                "description": "Enables the model to interact with a computer."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "computer_use"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to interact with a computer."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/McpServer",
+                "description": "Enables the model to call tools hosted on an MCP server."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "mcp_server"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to call tools hosted on an MCP server."
+          }
+        ],
+        "type": "object"
+      },
+      "ToolChoice": {
+        "description": "The tool choice configuration.\n\nEither a simple [`ToolMode`] or a detailed [`ToolChoiceConfig`].",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ToolMode"
+          },
+          {
+            "$ref": "#/components/schemas/ToolChoiceConfig",
+            "description": "A detailed tool-choice configuration listing the allowed tools."
+          }
+        ]
+      },
+      "ToolChoiceConfig": {
+        "description": "The tool choice configuration containing allowed tools.",
+        "properties": {
+          "allowed_tools": {
+            "$ref": "#/components/schemas/AllowedTools",
+            "description": "The allowed tools."
+          }
+        },
+        "type": "object"
+      },
+      "ToolMode": {
+        "description": "The mode governing how the model may use tools.",
+        "enum": [
+          "auto",
+          "any",
+          "none",
+          "validated"
+        ],
+        "type": "string"
+      },
+      "TranscriptionConfig": {
+        "description": "Configuration for speech recognition (transcription).",
+        "properties": {
+          "adaptation_phrases": {
+            "deprecated": true,
+            "description": "Phrases to bias the recognition model towards.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "custom_vocabulary": {
+            "description": "Phrases to bias the recognition model towards recognizing specific terms.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "diarization_mode": {
+            "description": "The speaker diarization mode. `speaker` is supported.",
+            "type": "string"
+          },
+          "language_codes": {
+            "description": "BCP-47 language codes hinting at the languages present in the audio. Left empty, the\nlanguage is detected automatically.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/TranscriptionConfigMode",
+            "description": "Discriminated transcription mode options or enum."
+          },
+          "timestamp_granularities": {
+            "description": "The granularity of the timestamps in the transcription. `word` is supported; left\nempty, no timestamps are generated.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "TranscriptionConfigMode": {
+        "description": "Discriminated transcription mode options or enum.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/TranscriptionMode",
+            "description": "The transcription mode with additional options."
+          },
+          {
+            "description": "Plain transcription mode.",
+            "enum": [
+              "smart",
+              "verbatim"
+            ],
+            "type": "string"
+          }
+        ]
+      },
+      "TranscriptionMode": {
+        "description": "The transcription mode with additional options.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SmartTranscriptionMode",
+                "description": "Smart transcription mode with options."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "smart"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Smart transcription mode with options."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VerbatimTranscriptionMode",
+                "description": "Verbatim transcription mode with options."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "verbatim"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Verbatim transcription mode with options."
+          }
+        ]
+      },
+      "UrlCitation": {
+        "description": "A URL citation annotation.",
+        "properties": {
+          "end_index": {
+            "description": "End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "start_index": {
+            "description": "Start of segment of the response that is attributed to this source, in bytes.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "title": {
+            "description": "The title of the URL.",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UrlContext": {
+        "description": "A tool that can be used by the model to fetch URL context.",
+        "type": "object"
+      },
+      "UrlContextCallArguments": {
+        "description": "The arguments to pass to a URL context tool call.",
+        "properties": {
+          "urls": {
+            "description": "The URLs to fetch.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "UrlContextCallDelta": {
+        "description": "A streamed URL context call.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/UrlContextCallArguments",
+            "description": "The arguments to pass to the URL context tool."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments"
+        ],
+        "type": "object"
+      },
+      "UrlContextCallStep": {
+        "description": "A URL context tool call step.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/UrlContextCallArguments",
+            "description": "The arguments to pass to the URL context tool."
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id"
+        ],
+        "type": "object"
+      },
+      "UrlContextResult": {
+        "description": "The result of a URL context tool call.",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/UrlRetrievalStatus",
+            "description": "The status of the URL retrieval."
+          },
+          "url": {
+            "description": "The URL that was fetched.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UrlContextResultDelta": {
+        "description": "A streamed URL context result.",
+        "properties": {
+          "is_error": {
+            "description": "Whether the URL context resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "description": "The results of the URL context.",
+            "items": {
+              "$ref": "#/components/schemas/UrlContextResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "UrlContextResultStep": {
+        "description": "The result of a URL context tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the function call block.",
+            "type": "string"
+          },
+          "is_error": {
+            "description": "Whether the URL context resulted in an error.",
+            "type": "boolean"
+          },
+          "result": {
+            "description": "The results of the URL context.",
+            "items": {
+              "$ref": "#/components/schemas/UrlContextResult"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "result"
+        ],
+        "type": "object"
+      },
+      "UrlRetrievalStatus": {
+        "description": "The status of a URL retrieval.",
+        "enum": [
+          "success",
+          "error",
+          "paywall",
+          "unsafe"
+        ],
+        "type": "string"
+      },
+      "Usage": {
+        "description": "Statistics on the interaction request's token usage.",
+        "properties": {
+          "cached_tokens_by_modality": {
+            "description": "A breakdown of cached token usage by modality.",
+            "items": {
+              "$ref": "#/components/schemas/ModalityTokens"
+            },
+            "type": "array"
+          },
+          "grounding_tool_count": {
+            "description": "Grounding tool count.",
+            "items": {
+              "$ref": "#/components/schemas/GroundingToolCount"
+            },
+            "type": "array"
+          },
+          "initial_input_tokens": {
+            "description": "Number of input tokens used in the first turn of this interaction.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "input_tokens_by_modality": {
+            "description": "A breakdown of input token usage by modality.",
+            "items": {
+              "$ref": "#/components/schemas/ModalityTokens"
+            },
+            "type": "array"
+          },
+          "output_tokens_by_modality": {
+            "description": "A breakdown of output token usage by modality.",
+            "items": {
+              "$ref": "#/components/schemas/ModalityTokens"
+            },
+            "type": "array"
+          },
+          "tool_use_tokens_by_modality": {
+            "description": "A breakdown of tool-use token usage by modality.",
+            "items": {
+              "$ref": "#/components/schemas/ModalityTokens"
+            },
+            "type": "array"
+          },
+          "total_cached_tokens": {
+            "description": "Number of tokens in the cached part of the prompt (the cached content).",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_input_tokens": {
+            "description": "Number of tokens in the prompt (context).",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_output_tokens": {
+            "description": "Total number of tokens across all the generated responses.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_thought_tokens": {
+            "description": "Number of tokens of thoughts for thinking models.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_tokens": {
+            "description": "Total token count for the interaction request (prompt + responses + other internal\ntokens).",
+            "format": "int32",
+            "type": "integer"
+          },
+          "total_tool_use_tokens": {
+            "description": "Number of tokens present in tool-use prompt(s).",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "UserInputStep": {
+        "description": "Input provided by the user.",
+        "properties": {
+          "content": {
+            "description": "The content blocks that make up the user input.",
+            "items": {
+              "$ref": "#/components/schemas/Content"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "VerbatimTranscriptionMode": {
+        "description": "Additional options for verbatim transcription mode.",
+        "properties": {
+          "diarization_mode": {
+            "description": "Configures speaker diarization. Supported values: \\\"speaker\\\".",
+            "type": "string"
+          },
+          "timestamp_granularities": {
+            "description": "The granularity of timestamps to include in the transcription output. Supported values:\n`\"word\\\"` If empty, no timestamps are generated.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "VideoAspectRatio": {
+        "description": "The aspect ratio for a video output.",
+        "enum": [
+          "16:9",
+          "9:16"
+        ],
+        "type": "string"
+      },
+      "VideoConfig": {
+        "description": "Configuration for video generation.",
+        "properties": {
+          "task": {
+            "$ref": "#/components/schemas/VideoTask",
+            "description": "The task mode for the generation. Left unset, the model determines the mode from the\nprompt and the input media."
+          }
+        },
+        "type": "object"
+      },
+      "VideoContent": {
+        "description": "A video content block.",
+        "properties": {
+          "data": {
+            "description": "The video content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/VideoMimeType",
+            "description": "The mime type of the video."
+          },
+          "name": {
+            "description": "A user-defined name for this content block, which the model can reference in its final\nresponse.",
+            "type": "string"
+          },
+          "processing": {
+            "$ref": "#/components/schemas/VideoProcessing",
+            "description": "How the model processes this video for understanding."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media."
+          },
+          "uri": {
+            "description": "The URI of the video.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoDelta": {
+        "description": "An incremental video update.",
+        "properties": {
+          "data": {
+            "description": "The video content bytes.",
+            "format": "byte",
+            "type": "string"
+          },
+          "mime_type": {
+            "$ref": "#/components/schemas/VideoDeltaMimeType",
+            "description": "The mime type of the video."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media."
+          },
+          "uri": {
+            "description": "The URI of the video.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoDeltaMimeType": {
+        "description": "The mime type of a video block.",
+        "enum": [
+          "video/mp4",
+          "video/mpeg",
+          "video/mpg",
+          "video/mov",
+          "video/avi",
+          "video/x-flv",
+          "video/webm",
+          "video/wmv",
+          "video/3gpp",
+          "video/jpeg2000"
+        ],
+        "type": "string"
+      },
+      "VideoMimeType": {
+        "description": "The mime type of a video block.",
+        "enum": [
+          "video/mp4",
+          "video/mpeg",
+          "video/mpg",
+          "video/mov",
+          "video/avi",
+          "video/x-flv",
+          "video/webm",
+          "video/wmv",
+          "video/3gpp"
+        ],
+        "type": "string"
+      },
+      "VideoProcessing": {
+        "description": "How the model processes a video for understanding.\n\nThe API accepts either a bare [`VideoProcessingMode`] or a [`MediaProcessing`] configuration.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VideoProcessingMode",
+            "description": "A processing mode, taking the defaults of that mode."
+          },
+          {
+            "$ref": "#/components/schemas/MediaProcessing",
+            "description": "A processing configuration."
+          }
+        ]
+      },
+      "VideoProcessingMode": {
+        "description": "A way the model processes a video for understanding.",
+        "enum": [
+          "static",
+          "agentic"
+        ],
+        "type": "string"
+      },
+      "VideoResolution": {
+        "description": "The resolution for a video output.",
+        "enum": [
+          "360p",
+          "720p",
+          "1080p",
+          "4k"
+        ],
+        "type": "string"
+      },
+      "VideoResponseFormat": {
+        "description": "Configuration for video output format.",
+        "properties": {
+          "aspect_ratio": {
+            "$ref": "#/components/schemas/VideoAspectRatio",
+            "description": "The aspect ratio for the video output."
+          },
+          "delivery": {
+            "$ref": "#/components/schemas/Delivery",
+            "description": "The delivery mode for the video output."
+          },
+          "duration": {
+            "description": "The duration for the video output.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/VideoResolution",
+            "description": "The video output resolution. Defaults to 720p."
+          }
+        },
+        "type": "object"
+      },
+      "VideoTask": {
+        "description": "The task mode for video generation.",
+        "enum": [
+          "text_to_video",
+          "image_to_video",
+          "reference_to_video",
+          "edit",
+          "extend"
+        ],
+        "type": "string"
+      },
+      "WebhookConfig": {
+        "description": "Where to deliver notifications about an interaction.",
+        "properties": {
+          "uris": {
+            "description": "The webhook URIs to use for this interaction, in place of the registered webhooks.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "user_metadata": {
+            "additionalProperties": {},
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "WordInfo": {
+        "description": "Word-level timing and speaker information for a transcribed audio segment.",
+        "properties": {
+          "end_index": {
+            "description": "End of the attributed segment, exclusive.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "end_offset": {
+            "description": "End offset in time of the word relative to the start of the audio.\n\nPresent when `timestamp_granularities` contains `\"word\"`.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "speaker": {
+            "description": "Speaker label for this word (e.g. `\"spk_1\"`, `\"spk_2\"`).\n\nPresent when `diarization_mode` is set in `TranscriptionConfig`.",
+            "type": "string"
+          },
+          "start_index": {
+            "description": "Start of segment of the response that is attributed to this source, in bytes.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "start_offset": {
+            "description": "Start offset in time of the word relative to the start of the audio.\n\nPresent when `timestamp_granularities` contains `\"word\"`.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "text": {
+            "description": "The transcribed word.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "googleGenAIAuth": {
+        "description": "An OAuth access token sent as a bearer `Authorization` header, or a Gemini API key sent as `x-goog-api-key`.",
+        "scheme": "bearer",
+        "type": "http"
+      }
+    }
+  },
+  "info": {
+    "description": "OpenAPI description of the Gemini Interactions API as modelled by the `gemini-interactions` crate.",
+    "license": {
+      "identifier": "MIT OR Apache-2.0",
+      "name": "MIT OR Apache-2.0"
+    },
+    "title": "Gemini Interactions API",
+    "version": "0.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/{api_version}/interactions": {
+      "post": {
+        "operationId": "CreateInteraction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInteractionRequest"
+              }
+            }
+          },
+          "description": "The request body.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Interaction"
+                }
+              },
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/InteractionSseStreamEvent"
+                }
+              }
+            },
+            "description": "Successful operation"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error creating interaction"
+          },
+          "5XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error creating interaction"
+          }
+        },
+        "summary": "Creates a new interaction.",
+        "tags": [
+          "interactions"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Global Endpoint",
+      "url": "https://generativelanguage.googleapis.com"
+    }
+  ],
+  "tags": [
+    {
+      "description": "The Interactions API.",
+      "name": "interactions"
+    }
+  ]
+}

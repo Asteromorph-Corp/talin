@@ -1,0 +1,10 @@
+[combat_http]
+system_prompt = "{{config.DND_SYSTEM}}"
+user_prompt = "{{config.DND_USER}}"
+tools = ["mcp.dice_http/*"]
+
+# Same as `combat_http`, but the dice server is spawned locally over stdio.
+[combat_stdio]
+system_prompt = "{{config.DND_SYSTEM}}"
+user_prompt = "{{config.DND_USER}}"
+tools = ["mcp.dice_stdio/*"]

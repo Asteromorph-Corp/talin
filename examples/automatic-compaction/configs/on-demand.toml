@@ -1,0 +1,19 @@
+archive_rows = 180
+
+[claude]
+threshold = 1800
+retain_tokens = 1000
+max_tokens = 4096
+instructions = "Summarize the project state for continuation. Preserve the exact codename, integer launch port, recovery phrase, region, and archive revision. Preserve the pending user task. Omit routine inventory entries. Produce only a short summary; do not call tools."
+
+[openai]
+threshold = 1800
+retain_tokens = 1000
+instructions = "Preserve the exact codename, integer launch port, recovery phrase, region, and archive revision, along with the pending task. Omit routine inventory entries."
+
+[custom]
+instructions = "Summarize the project state in this conversation. Preserve the exact codename, integer launch port, recovery phrase, region, and archive revision. Preserve any pending task. Omit routine inventory entries. Write only the summary, without calling tools."
+
+[message_count]
+threshold = 5
+retain_messages = 2

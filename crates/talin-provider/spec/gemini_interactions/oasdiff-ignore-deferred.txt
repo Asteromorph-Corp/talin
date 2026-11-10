@@ -1,0 +1,15 @@
+# Deferred breaking changes for gemini_interactions.
+#
+# These are temporary ignores that will be addressed in a future breaking release.
+# Each entry block starts with a metadata line (#@) followed by the ignore lines.
+#
+# Metadata format:
+#   #@ <version> <action>
+#
+# - version: The version where this deferral expires (must be addressed before releasing).
+# - action: (Optional) A short description of the action to take.
+#
+# When the current version reaches or exceeds the specified version, CI will fail until the entry is addressed.
+# See spec/README.md for more information.
+
+# --- No deferred entries at this time ---

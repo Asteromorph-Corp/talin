@@ -1,0 +1,39 @@
+# Reports that say nothing about the difference between this crate and the API.
+# Passed to both --err-ignore and --warn-ignore, which take one severity each.
+
+# Models the API offers that this crate has taken no `KnownModel` variant for.
+#
+# 4.5 models referenced by their release date.
+#
+post /v1/messages added the new `claude-haiku-4-5-20251001` enum value to the `model/oneOf[subschema #1]/` response property for the response status `200` (media type: application/json)
+post /v1/messages added the new `claude-haiku-4-5-20251001` enum value to the `oneOf[subschema #1: message_start]/message/model/oneOf[subschema #1]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages added the new `claude-opus-4-5-20251101` enum value to the `model/oneOf[subschema #1]/` response property for the response status `200` (media type: application/json)
+post /v1/messages added the new `claude-opus-4-5-20251101` enum value to the `oneOf[subschema #1: message_start]/message/model/oneOf[subschema #1]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages added the new `claude-sonnet-4-5-20250929` enum value to the `model/oneOf[subschema #1]/` response property for the response status `200` (media type: application/json)
+post /v1/messages added the new `claude-sonnet-4-5-20250929` enum value to the `oneOf[subschema #1: message_start]/message/model/oneOf[subschema #1]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages removed the enum value `claude-haiku-4-5-20251001` of the request property `model/oneOf[subschema #1]/`
+post /v1/messages removed the enum value `claude-opus-4-5-20251101` of the request property `model/oneOf[subschema #1]/`
+post /v1/messages removed the enum value `claude-sonnet-4-5-20250929` of the request property `model/oneOf[subschema #1]/`
+# Preview models
+#
+post /v1/messages added the new `claude-mythos-preview` enum value to the `model/oneOf[subschema #1]/` response property for the response status `200` (media type: application/json)
+post /v1/messages added the new `claude-mythos-preview` enum value to the `oneOf[subschema #1: message_start]/message/model/oneOf[subschema #1]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages removed the enum value `claude-mythos-preview` of the request property `model/oneOf[subschema #1]/`
+
+# Compaction beta extensions absent from the standard Messages description.
+# https://platform.claude.com/docs/en/api/http/beta/messages
+post /v1/messages removed `subschema #17: compaction` from the `messages/items/oneOf[subschema #1: user]/content/oneOf[subschema #2]/items/` request property `oneOf` list
+post /v1/messages removed `subschema #17: compaction` from the `messages/items/oneOf[subschema #2: assistant]/content/oneOf[subschema #2]/items/` request property `oneOf` list
+post /v1/messages removed the request property `compaction`
+post /v1/messages removed the request property `context_management`
+post /v1/messages removed the optional property `oneOf[subschema #1: message_start]/message/usage/iterations` from the response with the `200` status (media type: text/event-stream)
+post /v1/messages removed the optional property `oneOf[subschema #2: message_delta]/usage/iterations` from the response with the `200` status (media type: text/event-stream)
+post /v1/messages removed the optional property `usage/iterations` from the response with the `200` status (media type: application/json)
+
+post /v1/messages added `subschema #13: compaction` to the `oneOf[subschema #4: content_block_start]/content_block` response property `oneOf` list for the response status `200` (media type: text/event-stream)
+post /v1/messages added `subschema #13: compaction` to the `content/items/` response property `oneOf` list for the response status `200` (media type: application/json)
+post /v1/messages added `subschema #13: compaction` to the `oneOf[subschema #1: message_start]/message/content/items/` response property `oneOf` list for the response status `200` (media type: text/event-stream)
+post /v1/messages added `subschema #6: compaction_delta` to the `oneOf[subschema #5: content_block_delta]/delta` response property `oneOf` list for the response status `200` (media type: text/event-stream)
+post /v1/messages added the new `compaction` enum value to the `oneOf[subschema #1: message_start]/message/stop_reason/oneOf[subschema #2: StopReason]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages added the new `compaction` enum value to the `oneOf[subschema #2: message_delta]/delta/stop_reason/oneOf[subschema #2: StopReason]/` response property for the response status `200` (media type: text/event-stream)
+post /v1/messages added the new `compaction` enum value to the `stop_reason/oneOf[subschema #2: StopReason]/` response property for the response status `200` (media type: application/json)

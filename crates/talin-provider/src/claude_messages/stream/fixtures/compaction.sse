@@ -1,0 +1,21 @@
+event: message_start
+data: {"type":"message_start","message":{"model":"claude-sonnet-5-5","id":"msg_011Cfja9zmyd2g36B4FYsTZR","type":"message","role":"assistant","content":[],"container":null,"stop_reason":null,"stop_sequence":null,"stop_details":null,"usage":{"input_tokens":82,"cache_creation_input_tokens":56316,"cache_read_input_tokens":700,"cache_creation":{"ephemeral_5m_input_tokens":56316,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard","inference_geo":"global"},"diagnostics":null,"context_management":null}    }
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"compaction","content":null}}
+
+event: ping
+data: {"type": "ping"}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"compaction_delta","content":"**Project state summary**\n\n- **Codename:** project-aa60e8bc-09f6-40b5-85c3-a99f3a97b13a\n- **Launch port:** 50196\n- **Recovery phrase:** 643ab54d-aa81-4990-a089-cd10e0d93988\n- **Region:** region-e4a8afc9-14f5-4805-ba36-d37fd0c58fcc\n- **Archive revision:** 467a6228-4767-4837-9bc7-63cd4502e92f\n\n**Archive status:** I called LoadArchive once and it loaded successfully. It held 2,200 entries (0–2199), all routine inventory checks. None of them changed a project decision or the facts above.\n\n**Pending user task:** There is nothing outstanding. The original instruction was to load the archive once, remember the revision, and reply only \"READY\". The archive load and revision capture are done. This summary request came before I sent that reply. I'm treating the summary as the current deliverable, and no further tool calls are needed."}   }
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0               }
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"compaction","stop_sequence":null,"stop_details":null,"container":null},"usage":{"input_tokens":0,"output_tokens":0,"iterations":[{"input_tokens":82,"output_tokens":477,"cache_read_input_tokens":700,"cache_creation_input_tokens":56316,"cache_creation":{"ephemeral_5m_input_tokens":56316,"ephemeral_1h_input_tokens":0},"type":"compaction"}]},"context_management":{"applied_edits":[]}   }
+
+event: message_stop
+data: {"type":"message_stop"     }
+

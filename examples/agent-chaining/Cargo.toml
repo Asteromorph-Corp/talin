@@ -1,0 +1,13 @@
+[package]
+edition.workspace = true
+name = "agent-chaining"
+version = "0.1.0"
+
+[dependencies]
+dotenvy.workspace = true
+env_logger.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+talin.workspace = true
+
+[build-dependencies]
+talin-build.workspace = true

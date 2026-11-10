@@ -1,0 +1,11 @@
+# Settings for the comparison check.sh runs.
+exclude-elements:
+  - description
+  - examples
+  - title
+  - summary
+  - extensions
+match-path: '^/\{api_version\}/interactions$'
+err-ignore: oasdiff-ignore.txt
+warn-ignore: oasdiff-ignore.txt
+fail-on: WARN

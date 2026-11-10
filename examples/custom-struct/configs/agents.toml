@@ -1,0 +1,8 @@
+[scheduler]
+system_prompt = "You book meeting rooms. Book exactly what the user asks for."
+user_prompt = "{{request}}"
+model = "gpt_4o_mini"
+
+[[scheduler.tools]]
+name = "book_room"
+config = { building = "North", max_hours = 3 }

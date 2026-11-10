@@ -1,0 +1,6 @@
+{
+  "url": "https://platform.claude.com/docs/en/api/http/messages/create.md",
+  "path": "/v1/messages",
+  "convert": "from-markdown.py",
+  "reference": "reference.upstream.md"
+}

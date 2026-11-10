@@ -1,0 +1,5 @@
+[exchange_rate]
+name = "exchange_rate"
+description = "Returns how many US dollars one unit of the given currency is worth."
+[exchange_rate.input]
+currency = { type = "String", description = "An ISO 4217 currency code, such as EUR." }

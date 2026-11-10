@@ -1,0 +1,171 @@
+name: Spec sync
+
+# Refreshes the committed copy of each provider's published API description, as a pull request per
+# provider.
+
+on:
+  schedule:
+    - cron: "17 6 * * MON"
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "The provider to sync."
+        type: choice
+        options:
+          - all
+          - claude_messages
+          - gemini_interactions
+          - xai_responses
+        default: all
+      upstream-url:
+        description: "Fetch from here instead of the published description, to exercise this workflow. Needs a provider."
+        default: ""
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sync:
+    name: sync / ${{ matrix.provider }}
+    runs-on: ubuntu-latest
+    if: github.repository == 'Asteromorph-Corp/talin'
+    defaults:
+      run:
+        working-directory: crates/talin-provider
+
+    strategy:
+      fail-fast: false
+      matrix:
+        provider: ${{ fromJSON(inputs.provider && inputs.provider != 'all' && format('["{0}"]', inputs.provider) || '["claude_messages", "gemini_interactions", "xai_responses"]') }}
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.provider }}
+      cancel-in-progress: false
+
+    env:
+      PROVIDER: ${{ matrix.provider }}
+      BRANCH: chore/spec-sync/${{ matrix.provider }}
+      SPEC_DIR: crates/talin-provider/spec/${{ matrix.provider }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the inputs
+        if: inputs.upstream-url != '' && inputs.provider == 'all'
+        run: |
+          echo "upstream-url fetches one provider's description, so it needs a provider." >&2
+          exit 1
+
+      # This rebuilds its branch from the base on every run, so syncing while a sync is open would
+      # discard whatever had been pushed onto it to resolve the drift. See spec/README.md.
+      - name: Look for an open sync
+        id: open
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: prs } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              // The API wants the branch qualified by its owner, unlike `gh pr list --head`.
+              head: `${context.repo.owner}:${process.env.BRANCH}`,
+              state: "open",
+            });
+            core.setOutput("count", prs.length);
+            if (prs.length > 0) {
+              await core.summary.addRaw(`A sync of ${process.env.PROVIDER} is already open; standing down.`).write();
+            }
+
+      # For the providers whose `upstream.json` names a `convert` script.
+      - name: Install Python
+        if: steps.open.outputs.count == '0'
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Fetch the published description
+        id: fetch
+        if: steps.open.outputs.count == '0'
+        env:
+          URL: ${{ inputs.upstream-url }}
+        run: |
+          set -euo pipefail
+          spec/sync.sh "$PROVIDER" ${URL:+"$URL"}
+          if git diff --quiet -- "spec/$PROVIDER/openapi.upstream.json"; then
+            echo "status=unchanged" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=changed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install oasdiff
+        if: steps.fetch.outputs.status == 'changed'
+        uses: ./.github/actions/oasdiff
+
+      - name: Describe the drift
+        id: drift
+        if: steps.fetch.outputs.status == 'changed'
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          status=0
+          spec/check.sh "$PROVIDER" --format markdown > "$RUNNER_TEMP/report.md" || status=$?
+          # 1 is drift, and anything higher is a check script error.
+          if (( status > 1 )); then
+            cat "$RUNNER_TEMP/report.md"
+            exit "$status"
+          fi
+
+          {
+            if (( status == 1 )); then
+              cat <<'EOF'
+          Changes were detected in the upstream API that require a crate update.
+          Push the required changes to this pull request until the drift check passes. Once it passes, the pull request can be merged.
+
+          EOF
+              cat "$RUNNER_TEMP/report.md"
+            else
+              cat <<'EOF'
+          Changes were detected in the upstream API, but no crate update is required.
+          This pull request can be merged as is.
+          EOF
+            fi
+            printf '\n---\nOpened by [`Spec sync`](%s).\n' "$RUN_URL"
+          } > "$RUNNER_TEMP/body.md"
+
+          echo "drifted=$(( status == 1 ))" >> "$GITHUB_OUTPUT"
+          cat "$RUNNER_TEMP/body.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Mint a token
+        id: app-token
+        if: steps.fetch.outputs.status == 'changed'
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RUST_CICD_APP_ID }}
+          private-key: ${{ secrets.RUST_CICD_APP_PRIVATE_KEY }}
+
+      - name: Open a pull request
+        if: steps.fetch.outputs.status == 'changed'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          branch: ${{ env.BRANCH }}
+          delete-branch: true
+          # What `sync.sh` writes: the description, and the page it was converted from, if any.
+          add-paths: ${{ env.SPEC_DIR }}/*.upstream.*
+          title: "chore(spec): sync ${{ matrix.provider }}'s published description"
+          commit-message: |
+            chore(spec): sync ${{ matrix.provider }}'s published description
+
+            Fetched by the `Spec sync` workflow.
+          body-path: ${{ runner.temp }}/body.md
+          labels: spec-sync
+
+      # After the pull request exists, so the run that reports the drift is the one that files it.
+      - name: Report the drift as a failure
+        if: steps.drift.outputs.drifted == '1'
+        working-directory: .
+        run: |
+          echo "The API's description has moved on from this crate's; see the pull request." >&2
+          exit 1
