@@ -42,6 +42,7 @@ pub(super) fn input_new(input_symbol: &syn::Ident, variables: &Variables<'_>) ->
     parse_quote! {
         impl #maybe_lifetime #input_symbol #maybe_lifetime {
             /// Create a new instance of the input struct.
+            #[allow(clippy::too_many_arguments)]
             pub fn new(#(#args),*) -> Self {
                 Self {
                     #(#field_initializers),*
