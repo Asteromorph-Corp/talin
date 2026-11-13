@@ -1,5 +1,6 @@
 impl<'a> MyAgentInput<'a> {
     /// Create a new instance of the input struct.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         audio: impl Into<std::borrow::Cow<'a, [::talin::schemas::AudioContent]>>,
         document: impl Into<std::borrow::Cow<'a, [::talin::schemas::DocumentContent]>>,
