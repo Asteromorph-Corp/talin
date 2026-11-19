@@ -38,10 +38,10 @@ Alternatively, add the dependencies manually in your `Cargo.toml`:
 ```toml
 # Cargo.toml
 [dependencies]
-talin = "0.6"
+talin = "0.1"
 
 [build-dependencies]
-talin-build = "0.6"
+talin-build = "0.1"
 ```
 
 ## Example
