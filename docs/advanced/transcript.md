@@ -194,7 +194,8 @@ let values = HashMap::from([("job_status".to_string(), "complete".to_string())])
 session.transcript.apply_edits(&Interpolate(&values)).await?;
 ```
 
-> ⚠️ `Interpolate` is meant to be applied **ephemerally**, as a projection.
+> [!WARNING]
+> `Interpolate` is meant to be applied **ephemerally**, as a projection.
 > Applying it permanently substitutes the value into the stored transcript, so the placeholder is gone and cannot be re-rendered against a newer value.
 
 When implementing a custom `EntryEditScheme`, override `scope()` to restrict which entries `edit` sees; entries outside it pass through unchanged. It defaults to `Scope::full()`.

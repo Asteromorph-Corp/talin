@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 description = "A minimal, type-safe framework for defining LLM agents using TOML."
 repository.workspace = true
+readme.workspace = true
 license.workspace = true
 keywords.workspace = true
 categories.workspace = true

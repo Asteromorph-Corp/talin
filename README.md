@@ -38,10 +38,10 @@ Alternatively, add the dependencies manually in your `Cargo.toml`:
 ```toml
 # Cargo.toml
 [dependencies]
-talin = "0.6"
+talin = "0.1"
 
 [build-dependencies]
-talin-build = "0.6"
+talin-build = "0.1"
 ```
 
 ## Example
@@ -76,13 +76,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-> ⚠️ `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
+> [!IMPORTANT]
+> `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
 
 This parses the various TOML files and generates the corresponding Rust code in `OUT_DIR`, which consists of:
 
 - The agent struct, e.g. `GuesserAgent`
 - Input struct automatically derived from the prompt variables, e.g.`GuesserAgentInput`
-- Additional codes discussed in [detailed guide](#detailed-usage-guide)
 
 The generated code must then be imported into your application code using the appropriate macro.
 
@@ -112,15 +112,11 @@ async fn main() {
 }
 ```
 
-## Detailed Usage Guide
+## Documentation
 
-- [Setup config files](/docs/configs.md)
-
-- [Define](/docs/agents.md) and [use](/docs/agents_api.md) agents
-
-- [Implement tools for agents](/docs/tools.md)
-
-- [Configure Model parameters](/docs/models.md)
+- [Guides and reference](https://github.com/Asteromorph-Corp/talin/blob/main/docs/README.md): configuration, agents, tools, models, and advanced topics
+- [Cheatsheet](https://github.com/Asteromorph-Corp/talin/blob/main/docs/cheatsheet.md): complete `agents.toml`, `tools.toml` and `models.toml` examples
+- [Examples](https://github.com/Asteromorph-Corp/talin/blob/main/examples/README.md): runnable code, from a minimal agent to a full CLI assistant
 
 ## Debugging & Logging
 

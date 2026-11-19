@@ -38,7 +38,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-> ⚠️ `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
+> [!IMPORTANT]
+> `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
 
 ### Step 3: Import the Agents
 
@@ -59,7 +60,8 @@ This will give you:
 
   - Note that if the agent name already contains the substring `"agent"` (case insensitive), the suffix is not added.
 
-> ⚠️ **You must manually import all tools used by agents** in the file where `include_agents` is used.
+> [!IMPORTANT]
+> **You must manually import all tools used by agents** in the file where `include_agents` is used.
 
 ### Step 4: Run the Agent
 
@@ -238,7 +240,8 @@ prompts = {}
 Any unspecified fields will fall back to the base agent configuration.
 
 In system and user prompts, you can reference the base prompts using `{{base.system_prompt}}` or `{{base.user_prompt}}`.
-> ❗ The agent uses the same input and output structs regardless of model type. Prompt overrides therefore **cannot introduce new input variables**.
+> [!IMPORTANT]
+> The agent uses the same input and output structs regardless of model type. Prompt overrides therefore **cannot introduce new input variables**.
 
 A common use case for this feature is providing built-in tools.
 Built-in tools are specific to each LLM provider, and each provider exposes different APIs for tools with similar functionality.

@@ -34,7 +34,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-> ⚠️ `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
+> [!IMPORTANT]
+> `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
 
 ### Step 3: Import the Models
 
@@ -87,7 +88,8 @@ model = "gpt-4o-mini"
   - Values are inline strings, or `{ env = "VAR" }` to read an environment variable when the model is created.
   - Headers managed by the library (`authorization`, `x-api-key`, `x-goog-api-key`, `content-type`, `content-length`, `host`, `anthropic-version`) are rejected. Use `api_key` for authentication.
 
-> 🔐 **Security Tip**: For self-hosted models, use environment variable for `api_base` instead of hardcoding the API endpoint directly.
+> [!TIP]
+> For self-hosted models, use environment variable for `api_base` instead of hardcoding the API endpoint directly.
 
 ## Model Type
 
@@ -134,7 +136,8 @@ Every `model_type` is named `<provider>_<api>`, after the provider and the speci
 Which media kinds a model accepts depends on the API it speaks, so support is listed per `model_type`.
 Supplying an unsupported kind fails before the request is sent.
 
-> ⚠️ The table below is not extensively tested and may change over time.
+> [!NOTE]
+> The table below is not extensively tested and may change over time.
 > A kind listed as supported may still fail depending on the mime type. 
 > (e.g. `gemini_interactions` support `.mp4` / `.mpeg` and `.webm` videos, but not `.ogg` videos)
 
@@ -307,13 +310,15 @@ system_is_assistant = true
 
 With this option enabled, system prompts in your `agents.toml` is treated as assistant messages.
 
-> ✅ Tip: Make sure to write prompts for these models using first-person pronouns.
+> [!TIP]
+> Make sure to write prompts for these models using first-person pronouns.
 >
-> 🔁 Instead of: `"You are an helpful assistant, ..."`
+> Instead of: `"You are an helpful assistant, ..."`
 >
-> ✅ Use: `"I am an helpful assistant, ..."`
+> Use: `"I am an helpful assistant, ..."`
 
-> ℹ️ Available for `model_type = "generic_chat"` only.
+> [!NOTE]
+> Available for `model_type = "generic_chat"` only.
 
 #### Preserving the 'thought' part of LLM responses.
 
@@ -342,7 +347,8 @@ model = "gemma-3-4b-it"
 drop_thought = false
 ```
 
-> ℹ️ Available for `model_type = "generic_chat"`, `"openai_chat"` and `"sglang_generate"`.
+> [!NOTE]
+> Available for `model_type = "generic_chat"`, `"openai_chat"` and `"sglang_generate"`.
 > The other types preserve the reasoning natively.
 
 #### Pricing

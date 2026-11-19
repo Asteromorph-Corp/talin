@@ -13,6 +13,7 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.95.0"
 repository = "https://github.com/Asteromorph-Corp/talin"
+readme = "README.md"
 license = "MIT OR Apache-2.0"
 keywords = ["llm", "ai", "agents", "openai", "anthropic"]
 categories = ["artificial-intelligence", "api-bindings", "asynchronous"]

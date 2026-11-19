@@ -80,58 +80,14 @@ impl AdditionTool {
 }
 ```
 
-> 🔔 **Note**: Due to how availability is computed, editing the transcript may affect the tool's availability.
-> For example, if a call cap is written with [`count_tool_calls`] (e.g. `count_tool_calls(transcript) < N`), dropping old calls from the transcript may make the tool available again even after `N` calls have been made.
-> If a tool requires a strict call cap, it should be implemented in the tool itself, e.g. with an internal counter.
-
-#### Dynamic `name` and `description`
-
-By default, the tool's name and description come from `tools.toml`. If they should depend on the tool's own state or configuration (e.g. a search tool that mentions its domain or language), define `name` and/or `description` in the `#[tool]` block.
-If a field is defined in the TOML file, it is also available as the constant `TOOL_NAME` or `TOOL_DESCRIPTION`, so you can use it as a base:
-
-```rust
-#[tool]
-impl WebSearchTool {
-    fn description(&self) -> String {
-        format!(
-            "{TOOL_DESCRIPTION} Searches for articles about {} written in {}.",
-            self.domain, self.language,
-        )
-    }
-
-    // `name` can be overridden the same way
-    // fn name(&self) -> String { ... }
-
-    // ...
-}
-```
-
-Both methods take `&self`, and the results are evaluated whenever the tool spec is built.
-You can choose to omit `name` and `description` from `tools.toml`, but if you do so, the `#[tool]` block for the tool has to define the `name` and `description` methods.
-
-> 🔔 **Note**: You get a generated `[ToolName]ToolInput` struct with the fields specified in toml. 
+> [!NOTE]
+> You get a generated `[ToolName]ToolInput` struct with the fields specified in toml.
 > This is the type of `Self::Input`
 
-#### The `Output` type
-
-`Self::Output` may be any type implementing `Into<ToolOutput>`:
-
-```rust
-pub struct ToolOutput {
-    pub content: Vec<ContentPart>,
-    pub summary: Option<String>,
-}
-
-pub enum ContentPart {
-    Text(String),
-    Image(ImageContent),
-    Audio(AudioContent),
-    Video(VideoContent),
-    Document(DocumentContent),
-}
-```
-
-Blanket impls in the crate cover any type implementing `Into<ContentPart>` (such as the `i64` above) and `Vec<impl Into<ContentPart>>`, so you only need to build a full `ToolOutput` when you want to set a `summary` or mix content parts.
+> [!NOTE]
+> Due to how availability is computed, editing the transcript may affect the tool's availability.
+> For example, if a call cap is written with [`count_tool_calls`] (e.g. `count_tool_calls(transcript) < N`), dropping old calls from the transcript may make the tool available again even after `N` calls have been made.
+> If a tool requires a strict call cap, it should be implemented in the tool itself, e.g. with an internal counter.
 
 ### Step 5. Use the Tool in `agents.toml`
 
@@ -150,7 +106,37 @@ use crate::tools::AdditionTool; // You need to import the tool struct where you 
 talin::include_agents!();
 ```
 
-## Custom Tool Output
+### Dynamic `name` and `description`
+
+By default, the tool's name and description come from `tools.toml`, and are static for each tool.
+However, if you want to generate them dynamically based on the tool's state or configuration, you can override the `name` and `description` methods in the `#[tool]` block.
+
+```rust
+#[tool]
+impl WebSearchTool {
+    fn description(&self) -> String {
+        format!(
+            "{TOOL_DESCRIPTION} Searches for articles about {} written in {}.",
+            self.domain, self.language,
+        )
+    }
+
+    // `name` can be overridden the same way
+    // fn name(&self) -> String { ... }
+
+    // ...
+}
+```
+
+The methods are evaluated independently for each requests, so you can change the tool's description mid-conversation to reflect the tool's state or configuration.
+(It is also possible to change the name, but that is not recommended as it may confuse the model.)
+
+If the fields `name` and `description` is defined in the TOML file, they are available as the constants `TOOL_NAME` or `TOOL_DESCRIPTION`.
+You can use them as a base for your implementation.
+Alternatively, you can choose to omit `name` and `description` from `tools.toml`.
+If you do so, it is required to implement the `name` and `description` methods in the `#[tool]` block.
+
+### Function Tool Output
 
 The `Output` type of a custom tool may be any type that implements `Into<ToolOutput>`:
 
@@ -172,7 +158,8 @@ pub enum ContentPart {
 For any type `T` that implements `Into<ContentPart>`, blanket impls in the crate provide an implementation of `Into<ToolOutput>` for both `T` and `Vec<T>`, so these types can be used as an output type as well.
 You may also return the full `ToolOutput` struct if you want to set a `summary` or mix different content parts.
 
-> ⚠️ Most models only support text and image as tool result, and unsupported content will fail the agent loop at runtime.
+> [!WARNING]
+> Most models only support text and image as tool result, and unsupported content will fail the agent loop at runtime.
 > See [modality support](/docs/models.md#modality-support) for which content types are supported by which models.
 
 > `summary` is currently unused, but may be used in the future for compaction / summarization of tool outputs.
