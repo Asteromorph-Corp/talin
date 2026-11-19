@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 description = "Build-time code generation for talin agents from TOML configuration files"
 repository.workspace = true
+readme.workspace = true
 license.workspace = true
 keywords.workspace = true
 categories.workspace = true

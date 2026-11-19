@@ -113,9 +113,9 @@ async fn main() {
 
 ## Documentation
 
-- [Guides and reference](/docs/README.md): configuration, agents, tools, models, and advanced topics
-- [Cheatsheet](/docs/cheatsheet.md): complete `agents.toml`, `tools.toml` and `models.toml` examples
-- [Examples](/examples/README.md): runnable code, from a minimal agent to a full CLI assistant
+- [Guides and reference](https://github.com/Asteromorph-Corp/talin/blob/main/docs/README.md): configuration, agents, tools, models, and advanced topics
+- [Cheatsheet](https://github.com/Asteromorph-Corp/talin/blob/main/docs/cheatsheet.md): complete `agents.toml`, `tools.toml` and `models.toml` examples
+- [Examples](https://github.com/Asteromorph-Corp/talin/blob/main/examples/README.md): runnable code, from a minimal agent to a full CLI assistant
 
 ## Debugging & Logging
 

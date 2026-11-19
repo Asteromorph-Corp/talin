@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 description = "A strongly-typed Rust client and type definitions for LLM provider APIs"
 repository.workspace = true
+readme.workspace = true
 license.workspace = true
 keywords.workspace = true
 categories.workspace = true
