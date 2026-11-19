@@ -82,7 +82,6 @@ This parses the various TOML files and generates the corresponding Rust code in 
 
 - The agent struct, e.g. `GuesserAgent`
 - Input struct automatically derived from the prompt variables, e.g.`GuesserAgentInput`
-- Additional codes discussed in [detailed guide](#detailed-usage-guide)
 
 The generated code must then be imported into your application code using the appropriate macro.
 
@@ -112,15 +111,11 @@ async fn main() {
 }
 ```
 
-## Detailed Usage Guide
+## Documentation
 
-- [Setup config files](/docs/configs.md)
-
-- [Define](/docs/agents.md) and [use](/docs/agents_api.md) agents
-
-- [Implement tools for agents](/docs/tools.md)
-
-- [Configure Model parameters](/docs/models.md)
+- [Guides and reference](/docs/README.md): configuration, agents, tools, models, and advanced topics
+- [Cheatsheet](/docs/cheatsheet.md): complete `agents.toml`, `tools.toml` and `models.toml` examples
+- [Examples](/examples/README.md): runnable code, from a minimal agent to a full CLI assistant
 
 ## Debugging & Logging
 
