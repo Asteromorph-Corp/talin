@@ -62,7 +62,8 @@ let mut session = GuesserAgent::session(Models::gpt_4o_mini()).await;
 An `Agent` is a stateless bundle of configuration.
 Eacn call to it spawns a single session without retaining any history from previous calls.
 
-> ⚠️ **Changed in v0.4.** Agents no longer remember previous turns across calls.
+> [!WARNING]
+> Agents no longer remember previous turns across calls.
 > If you need conversation history, open a [session](#sessions).
 
 ### Running
@@ -204,7 +205,8 @@ This lets you switch the system prompt, tools, model, or output type mid-convers
 
   Equivalently, `prev_session.continue_with_migrated(&agent)` is available as a session method.
 
-  > ⚠️ Migration is lossy.
+  > [!WARNING]
+  > Migration is lossy.
   > It drops any provider-specific fields that can't be expressed in the canonical message.
   > Furthermore, message/tool-call id formats may differ between providers, and you may need to edit the transcript afterward to fix inconsistencies.
   > The conversion may also fail outright if the transcript includes multimodal content (images, audio, etc.) that the new provider doesn't support.

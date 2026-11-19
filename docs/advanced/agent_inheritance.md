@@ -26,7 +26,8 @@ extends = "researcher"
 user_prompt = "Research about {{topic}} and answer in three sentences."
 ```
 
-> ⚠️ Avoid deep inheritance chains, as they make it harder to track where fields are defined and inherited. Although there is no strict limit on inheritance depth, aim for a single level whenever possible and avoid going over two levels deep.
+> [!WARNING]
+> Avoid deep inheritance chains, as they make it harder to track where fields are defined and inherited. Although there is no strict limit on inheritance depth, aim for a single level whenever possible and avoid going over two levels deep.
 
 ## Abstract Agents
 

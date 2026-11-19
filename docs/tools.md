@@ -80,10 +80,12 @@ impl AdditionTool {
 }
 ```
 
-> 🔔 **Note**: You get a generated `[ToolName]ToolInput` struct with the fields specified in toml. 
+> [!NOTE]
+> You get a generated `[ToolName]ToolInput` struct with the fields specified in toml.
 > This is the type of `Self::Input`
 
-> 🔔 **Note**: Due to how availability is computed, editing the transcript may affect the tool's availability.
+> [!NOTE]
+> Due to how availability is computed, editing the transcript may affect the tool's availability.
 > For example, if a call cap is written with [`count_tool_calls`] (e.g. `count_tool_calls(transcript) < N`), dropping old calls from the transcript may make the tool available again even after `N` calls have been made.
 > If a tool requires a strict call cap, it should be implemented in the tool itself, e.g. with an internal counter.
 
@@ -156,7 +158,8 @@ pub enum ContentPart {
 For any type `T` that implements `Into<ContentPart>`, blanket impls in the crate provide an implementation of `Into<ToolOutput>` for both `T` and `Vec<T>`, so these types can be used as an output type as well.
 You may also return the full `ToolOutput` struct if you want to set a `summary` or mix different content parts.
 
-> ⚠️ Most models only support text and image as tool result, and unsupported content will fail the agent loop at runtime.
+> [!WARNING]
+> Most models only support text and image as tool result, and unsupported content will fail the agent loop at runtime.
 > See [modality support](/docs/models.md#modality-support) for which content types are supported by which models.
 
 > `summary` is currently unused, but may be used in the future for compaction / summarization of tool outputs.

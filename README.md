@@ -76,7 +76,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 ```
 
-> ⚠️ `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
+> [!IMPORTANT]
+> `build.rs` must be placed in your **project root** (alongside `Cargo.toml`) and not within `src`.
 
 This parses the various TOML files and generates the corresponding Rust code in `OUT_DIR`, which consists of:
 
