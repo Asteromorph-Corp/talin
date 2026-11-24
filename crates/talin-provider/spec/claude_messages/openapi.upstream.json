@@ -205,7 +205,7 @@
       "BashCodeExecutionToolResultBlockContent": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/BashCodeExecutionToolResultError"
+            "$ref": "#/components/schemas/BashCodeExecutionToolResultErrorObject"
           },
           {
             "$ref": "#/components/schemas/BashCodeExecutionResultBlock"
@@ -256,7 +256,17 @@
           }
         ]
       },
-      "BashCodeExecutionToolResultError": {
+      "BashCodeExecutionToolResultErrorCode": {
+        "enum": [
+          "invalid_tool_input",
+          "unavailable",
+          "too_many_requests",
+          "execution_time_exceeded",
+          "output_file_too_large"
+        ],
+        "type": "string"
+      },
+      "BashCodeExecutionToolResultErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/BashCodeExecutionToolResultErrorCode"
@@ -274,16 +284,6 @@
           "error_code"
         ],
         "type": "object"
-      },
-      "BashCodeExecutionToolResultErrorCode": {
-        "enum": [
-          "invalid_tool_input",
-          "unavailable",
-          "too_many_requests",
-          "execution_time_exceeded",
-          "output_file_too_large"
-        ],
-        "type": "string"
       },
       "BashCodeExecutionToolResultErrorParam": {
         "properties": {
@@ -2470,7 +2470,7 @@
       "CodeExecutionToolResultBlockContent": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/CodeExecutionToolResultError"
+            "$ref": "#/components/schemas/CodeExecutionToolResultErrorObject"
           },
           {
             "$ref": "#/components/schemas/CodeExecutionResultBlock"
@@ -2527,7 +2527,16 @@
           }
         ]
       },
-      "CodeExecutionToolResultError": {
+      "CodeExecutionToolResultErrorCode": {
+        "enum": [
+          "invalid_tool_input",
+          "unavailable",
+          "too_many_requests",
+          "execution_time_exceeded"
+        ],
+        "type": "string"
+      },
+      "CodeExecutionToolResultErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/CodeExecutionToolResultErrorCode"
@@ -2545,15 +2554,6 @@
           "error_code"
         ],
         "type": "object"
-      },
-      "CodeExecutionToolResultErrorCode": {
-        "enum": [
-          "invalid_tool_input",
-          "unavailable",
-          "too_many_requests",
-          "execution_time_exceeded"
-        ],
-        "type": "string"
       },
       "CodeExecutionToolResultErrorParam": {
         "properties": {
@@ -4030,6 +4030,8 @@
         "oneOf": [
           {
             "enum": [
+              "claude-fable-5-2",
+              "claude-mythos-5-2",
               "claude-haiku-5-5",
               "claude-sonnet-5-5",
               "claude-fable-5-1",
@@ -5011,7 +5013,7 @@
       "TextEditorCodeExecutionToolResultBlockContent": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/TextEditorCodeExecutionToolResultError"
+            "$ref": "#/components/schemas/TextEditorCodeExecutionToolResultErrorObject"
           },
           {
             "$ref": "#/components/schemas/TextEditorCodeExecutionViewResultBlock"
@@ -5074,7 +5076,17 @@
           }
         ]
       },
-      "TextEditorCodeExecutionToolResultError": {
+      "TextEditorCodeExecutionToolResultErrorCode": {
+        "enum": [
+          "invalid_tool_input",
+          "unavailable",
+          "too_many_requests",
+          "execution_time_exceeded",
+          "file_not_found"
+        ],
+        "type": "string"
+      },
+      "TextEditorCodeExecutionToolResultErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/TextEditorCodeExecutionToolResultErrorCode"
@@ -5099,16 +5111,6 @@
           "error_message"
         ],
         "type": "object"
-      },
-      "TextEditorCodeExecutionToolResultErrorCode": {
-        "enum": [
-          "invalid_tool_input",
-          "unavailable",
-          "too_many_requests",
-          "execution_time_exceeded",
-          "file_not_found"
-        ],
-        "type": "string"
       },
       "TextEditorCodeExecutionToolResultErrorParam": {
         "properties": {
@@ -5920,7 +5922,7 @@
       "ToolSearchToolResultBlockContent": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ToolSearchToolResultError"
+            "$ref": "#/components/schemas/ToolSearchToolResultErrorObject"
           },
           {
             "$ref": "#/components/schemas/ToolSearchToolSearchResultBlock"
@@ -5971,7 +5973,16 @@
           }
         ]
       },
-      "ToolSearchToolResultError": {
+      "ToolSearchToolResultErrorCode": {
+        "enum": [
+          "invalid_tool_input",
+          "unavailable",
+          "too_many_requests",
+          "execution_time_exceeded"
+        ],
+        "type": "string"
+      },
+      "ToolSearchToolResultErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/ToolSearchToolResultErrorCode"
@@ -5996,15 +6007,6 @@
           "error_message"
         ],
         "type": "object"
-      },
-      "ToolSearchToolResultErrorCode": {
-        "enum": [
-          "invalid_tool_input",
-          "unavailable",
-          "too_many_requests",
-          "execution_time_exceeded"
-        ],
-        "type": "string"
       },
       "ToolSearchToolResultErrorParam": {
         "properties": {
@@ -7762,7 +7764,7 @@
         ],
         "type": "object"
       },
-      "WebSearchToolRequestError": {
+      "WebSearchToolRequestErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/WebSearchToolResultErrorCode"
@@ -7825,7 +7827,7 @@
       "WebSearchToolResultBlockContent": {
         "oneOf": [
           {
-            "$ref": "#/components/schemas/WebSearchToolResultError"
+            "$ref": "#/components/schemas/WebSearchToolResultErrorObject"
           },
           {
             "items": {
@@ -7957,11 +7959,22 @@
             "$ref": "#/components/schemas/WebSearchToolResultBlockItem"
           },
           {
-            "$ref": "#/components/schemas/WebSearchToolRequestError"
+            "$ref": "#/components/schemas/WebSearchToolRequestErrorObject"
           }
         ]
       },
-      "WebSearchToolResultError": {
+      "WebSearchToolResultErrorCode": {
+        "enum": [
+          "invalid_tool_input",
+          "unavailable",
+          "max_uses_exceeded",
+          "too_many_requests",
+          "query_too_long",
+          "request_too_large"
+        ],
+        "type": "string"
+      },
+      "WebSearchToolResultErrorObject": {
         "properties": {
           "error_code": {
             "$ref": "#/components/schemas/WebSearchToolResultErrorCode"
@@ -7979,17 +7992,6 @@
           "error_code"
         ],
         "type": "object"
-      },
-      "WebSearchToolResultErrorCode": {
-        "enum": [
-          "invalid_tool_input",
-          "unavailable",
-          "max_uses_exceeded",
-          "too_many_requests",
-          "query_too_long",
-          "request_too_large"
-        ],
-        "type": "string"
       }
     },
     "securitySchemes": {
