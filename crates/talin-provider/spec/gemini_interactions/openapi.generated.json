@@ -915,6 +915,14 @@
           }
         ]
       },
+      "EnvironmentMode": {
+        "description": "The compute lifecycle mode of an environment.",
+        "enum": [
+          "on_demand",
+          "self_hosted"
+        ],
+        "type": "string"
+      },
       "EnvironmentNetwork": {
         "description": "Outbound networking configuration for an environment.\n\nEither an allowlist restricting which domains the environment may reach, or `\"disabled\"`,\nwhich turns all network access off. Omitted entirely, all outbound traffic is allowed.",
         "oneOf": [
@@ -2661,6 +2669,10 @@
       "RemoteEnvironment": {
         "description": "An environment hosted by the API.",
         "properties": {
+          "custom_config": {
+            "additionalProperties": {},
+            "type": "object"
+          },
           "env": {
             "$ref": "#/components/schemas/EnvironmentVariables",
             "description": "Environment variables to set in the environment."
@@ -2668,6 +2680,10 @@
           "environment_id": {
             "description": "The ID of an environment to update instead of creating a new one.",
             "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/EnvironmentMode",
+            "description": "The compute lifecycle mode for this environment."
           },
           "network": {
             "$ref": "#/components/schemas/EnvironmentNetwork",

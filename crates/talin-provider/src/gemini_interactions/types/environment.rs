@@ -38,6 +38,11 @@ tagged_enum! {
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct RemoteEnvironment {
+    /// Arbitrary customer-defined JSON configuration passed through to the self-hosted
+    /// environment poller. Only supported when `mode` is [`EnvironmentMode::SelfHosted`].
+    #[cfg_attr(test, schema(schema_with = crate::gemini_interactions::spec::schema::object_schema, nullable = false))]
+    pub custom_config: Option<serde_json::Value>,
+
     /// The ID of an environment to update instead of creating a new one.
     #[cfg_attr(test, schema(nullable = false))]
     pub environment_id: Option<String>,
@@ -46,6 +51,10 @@ pub struct RemoteEnvironment {
     #[cfg_attr(test, schema(nullable = false))]
     pub env: Option<EnvironmentVariables>,
 
+    /// The compute lifecycle mode for this environment.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub mode: Option<EnvironmentMode>,
+
     /// Network configuration for the environment.
     #[cfg_attr(test, schema(nullable = false))]
     pub network: Option<EnvironmentNetwork>,
@@ -53,6 +62,18 @@ pub struct RemoteEnvironment {
     /// The sources mounted into the environment.
     #[cfg_attr(test, schema(nullable = false))]
     pub sources: Option<Vec<Source>>,
+}
+
+string_enum! {
+    /// The compute lifecycle mode of an environment.
+    #[serde(rename_all = "snake_case")]
+    pub enum EnvironmentMode {
+        /// The environment is provisioned on demand.
+        OnDemand,
+
+        /// The environment is self-hosted.
+        SelfHosted,
+    }
 }
 
 /// Environment variables to set in an environment.
@@ -198,6 +219,18 @@ impl RemoteEnvironment {
     /// Creates a new, empty remote environment configuration.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Sets the custom configuration passed through to the self-hosted environment poller.
+    pub fn with_custom_config(mut self, custom_config: serde_json::Value) -> Self {
+        self.custom_config = Some(custom_config);
+        self
+    }
+
+    /// Sets the compute lifecycle mode.
+    pub fn with_mode(mut self, mode: EnvironmentMode) -> Self {
+        self.mode = Some(mode);
+        self
     }
 
     /// Sets the ID of the environment to update.
