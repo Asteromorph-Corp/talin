@@ -63,6 +63,18 @@ pub enum KnownModel {
     /// Gemini 3.8 Flash
     #[serde(rename = "gemini-3.8-flash")]
     Gemini38Flash,
+    /// Gemini 4 Argon, a frontier model built to solve the hardest problems with depth and
+    /// precision across real-world software engineering and knowledge work.
+    #[serde(rename = "gemini-4-argon")]
+    Gemini4Argon,
+    /// Gemini 4 Carbon, a reasoning model built for sustained agentic coding, multimodal
+    /// knowledge work, scientific discovery, and cybersecurity defense.
+    #[serde(rename = "gemini-4-carbon")]
+    Gemini4Carbon,
+    /// Gemini 4 Hydrogen, a model with frontier-level intelligence, built for fast, dependable
+    /// execution across coding, agentic workflows, and multimodal knowledge work.
+    #[serde(rename = "gemini-4-hydrogen")]
+    Gemini4Hydrogen,
 
     /// A text-to-speech model of the Gemini 3.8 generation.
     #[serde(rename = "gemini-3.8-flash-tts")]
@@ -70,6 +82,10 @@ pub enum KnownModel {
     /// A cost-efficient text-to-speech model of the Gemini 3.8 generation.
     #[serde(rename = "gemini-3.8-flash-lite-tts")]
     Gemini38FlashLiteTts,
+    /// A low-latency speech-to-text model with utterance-based language detection, speaker
+    /// diarization, word-level timestamps, and custom vocabulary biasing.
+    #[serde(rename = "gemini-3.5-transcribe")]
+    Gemini35Transcribe,
 
     /// A native image generation model, optimized for speed, flexibility, and contextual
     /// understanding.
@@ -92,6 +108,10 @@ pub enum KnownModel {
     /// structural coherence.
     #[serde(rename = "lyria-3.5")]
     Lyria35,
+    /// The latest multimodal model for fast, conversational video generation, editing, and
+    /// cinematic control.
+    #[serde(rename = "gemini-omni-1.2-flash")]
+    GeminiOmni12Flash,
     /// A high-performance multimodal model designed for fast, conversational video generation,
     /// editing, and cinematic control.
     #[serde(rename = "gemini-omni-1.1-flash")]
@@ -129,6 +149,10 @@ pub enum KnownAgent {
     /// file operations, and tool use.
     #[serde(rename = "antigravity-preview-05-2026")]
     AntigravityPreview052026,
+    /// Use the Antigravity managed agent to perform multi-step tasks that require reasoning,
+    /// file operations, and tool use.
+    #[serde(rename = "antigravity-preview-09-2026")]
+    AntigravityPreview092026,
 }
 
 /// Configuration parameters for an agent interaction.

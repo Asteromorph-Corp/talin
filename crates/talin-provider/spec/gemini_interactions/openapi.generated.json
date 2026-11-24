@@ -2304,7 +2304,8 @@
         "enum": [
           "deep-research-preview-04-2026",
           "deep-research-max-preview-04-2026",
-          "antigravity-preview-05-2026"
+          "antigravity-preview-05-2026",
+          "antigravity-preview-09-2026"
         ],
         "type": "string"
       },
@@ -2323,14 +2324,19 @@
           "gemini-3.6-flash",
           "gemini-3.7-flash",
           "gemini-3.8-flash",
+          "gemini-4-argon",
+          "gemini-4-carbon",
+          "gemini-4-hydrogen",
           "gemini-3.8-flash-tts",
           "gemini-3.8-flash-lite-tts",
+          "gemini-3.5-transcribe",
           "gemini-2.5-flash-image",
           "gemini-3.1-flash-image",
           "gemini-3.1-flash-lite-image",
           "gemini-3-pro-image",
           "gemini-nano-banana-2.1",
           "lyria-3.5",
+          "gemini-omni-1.2-flash",
           "gemini-omni-1.1-flash"
         ],
         "type": "string"
