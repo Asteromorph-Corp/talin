@@ -29,6 +29,14 @@ pub enum KnownModel {
     #[serde(rename = "claude-sonnet-5-5")]
     ClaudeSonnet55,
 
+    /// `"claude-fable-5-2"`
+    #[serde(rename = "claude-fable-5-2")]
+    ClaudeFable52,
+
+    /// `"claude-mythos-5-2"`
+    #[serde(rename = "claude-mythos-5-2")]
+    ClaudeMythos52,
+
     /// `"claude-fable-5-1"`
     #[serde(rename = "claude-fable-5-1")]
     ClaudeFable51,
@@ -102,6 +110,8 @@ impl KnownModel {
         match self {
             KnownModel::ClaudeHaiku55 => "claude-haiku-5-5",
             KnownModel::ClaudeSonnet55 => "claude-sonnet-5-5",
+            KnownModel::ClaudeFable52 => "claude-fable-5-2",
+            KnownModel::ClaudeMythos52 => "claude-mythos-5-2",
             KnownModel::ClaudeFable51 => "claude-fable-5-1",
             KnownModel::ClaudeMythos51 => "claude-mythos-5-1",
             KnownModel::ClaudeSonnet5 => "claude-sonnet-5",
