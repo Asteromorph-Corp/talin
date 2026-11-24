@@ -122,6 +122,10 @@ pub struct AudioContent {
     #[cfg_attr(test, schema(nullable = false))]
     pub mime_type: Option<AudioMimeType>,
 
+    /// How the model processes this audio for understanding.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub processing: Option<AudioProcessing>,
+
     /// The sample rate of the audio.
     #[cfg_attr(test, schema(nullable = false))]
     pub sample_rate: Option<i32>,
@@ -209,6 +213,10 @@ tagged_enum! {
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct StaticMediaProcessing {
+    /// Content layers to extract from the video.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub content_layers: Option<Vec<VideoContentLayer>>,
+
     /// Segment end time, as a decimal number of seconds with an `s` suffix (e.g. `"30s"`).
     ///
     /// Must be non-negative, and greater than `start_offset` when that is set.
@@ -238,6 +246,199 @@ string_enum! {
     }
 }
 
+string_enum! {
+    /// A content layer to extract from a video.
+    #[serde(rename_all = "snake_case")]
+    pub enum VideoContentLayer {
+        /// Frames of the video.
+        Frames,
+
+        /// Audio of the video.
+        Audio,
+
+        /// Transcript of the audio track.
+        Transcript,
+    }
+}
+
+/// How the model processes an audio block for understanding.
+///
+/// The API accepts either a bare [`AudioProcessingMode`] or an [`AudioMediaProcessing`]
+/// configuration.
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum AudioProcessing {
+    /// A processing mode, taking the defaults of that mode.
+    Mode(AudioProcessingMode),
+    /// A processing configuration.
+    Config(AudioMediaProcessing),
+}
+
+tagged_enum! {
+    /// How the model processes an audio block.
+    ///
+    /// Discriminated by its `type` field.
+    #[derive(Serialize, Deserialize, Debug, Clone)]
+    #[serde(tag = "type", rename_all = "snake_case")]
+    pub enum AudioMediaProcessing {
+        /// All audio placed in context, optionally over a segment.
+        Static(AudioStaticMediaProcessing),
+    }
+}
+
+/// All audio placed in context, optionally over a segment of the audio.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct AudioStaticMediaProcessing {
+    /// Segment end time, relative to the start of the audio stream, as a decimal number of
+    /// seconds with an `s` suffix (e.g. `"30s"`).
+    ///
+    /// Must be positive, and greater than `start_offset` when that is set.
+    #[cfg_attr(test, schema(nullable = false, format = "google-duration"))]
+    pub end_offset: Option<String>,
+
+    /// Segment start time, relative to the start of the audio stream, as a decimal number of
+    /// seconds with an `s` suffix (e.g. `"10.5s"`).
+    ///
+    /// Must be non-negative.
+    #[cfg_attr(test, schema(nullable = false, format = "google-duration"))]
+    pub start_offset: Option<String>,
+}
+
+string_enum! {
+    /// A way the model processes audio for understanding.
+    #[serde(rename_all = "snake_case")]
+    pub enum AudioProcessingMode {
+        /// All audio placed in context.
+        Static,
+    }
+}
+
+/// How the model processes a document for understanding.
+///
+/// The API accepts either a bare [`DocumentProcessingMode`] or a [`DocumentMediaProcessing`]
+/// configuration.
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(untagged)]
+#[non_exhaustive]
+pub enum DocumentProcessing {
+    /// A processing mode, taking the defaults of that mode.
+    Mode(DocumentProcessingMode),
+    /// A processing configuration.
+    Config(DocumentMediaProcessing),
+}
+
+tagged_enum! {
+    /// How the model processes a document block.
+    ///
+    /// Discriminated by its `type` field.
+    #[derive(Serialize, Deserialize, Debug, Clone)]
+    #[serde(tag = "type", rename_all = "snake_case")]
+    pub enum DocumentMediaProcessing {
+        /// Extracted pages placed in context.
+        Static(DocumentStaticMediaProcessing),
+    }
+}
+
+/// Extracted pages placed in context, with options per kind of document.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct DocumentStaticMediaProcessing {
+    /// Options for paginated documents. Only valid for paginated document MIME types (e.g.
+    /// PDF, Office documents, and presentations).
+    #[cfg_attr(test, schema(nullable = false))]
+    pub page_options: Option<PageProcessingOptions>,
+
+    /// Options for spreadsheets. Only valid for spreadsheet MIME types (`.xlsx`, `.xls`,
+    /// `.ods`).
+    #[cfg_attr(test, schema(nullable = false))]
+    pub spreadsheet_options: Option<SpreadsheetProcessingOptions>,
+}
+
+/// Processing options for paginated documents, such as PDFs, Office documents, and
+/// presentations.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct PageProcessingOptions {
+    /// Content layers to extract from a paginated document.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub content_layers: Option<Vec<PageContentLayer>>,
+
+    /// 1-indexed end page, inclusive. Must be >= `start_page` if `start_page` is set.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub end_page: Option<i32>,
+
+    /// 1-indexed start page, inclusive.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub start_page: Option<i32>,
+}
+
+/// Processing options for spreadsheets.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct SpreadsheetProcessingOptions {
+    /// Content layers to extract from a spreadsheet.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub content_layers: Option<Vec<SpreadsheetContentLayer>>,
+
+    /// The 1-indexed index of the sheet to extract, in workbook order. If not set, all sheets
+    /// are extracted.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub sheet_index: Option<i32>,
+
+    /// The range of cells to extract, in A1 notation (e.g. `"A1:D10"`). If not set, the full
+    /// occupied area of the sheet is used.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub visible_cells: Option<String>,
+}
+
+string_enum! {
+    /// A content layer to extract from a paginated document.
+    #[serde(rename_all = "snake_case")]
+    pub enum PageContentLayer {
+        /// A rendered image of the page.
+        PageImage,
+
+        /// The text of the page.
+        PageText,
+    }
+}
+
+string_enum! {
+    /// A content layer to extract from a spreadsheet.
+    #[serde(rename_all = "snake_case")]
+    pub enum SpreadsheetContentLayer {
+        /// A rendered image of the sheet.
+        Visual,
+
+        /// Cell values, merges, and formats.
+        Data,
+
+        /// Formula expressions and their computed results.
+        Formulas,
+    }
+}
+
+string_enum! {
+    /// A way the model processes a document for understanding.
+    #[serde(rename_all = "snake_case")]
+    pub enum DocumentProcessingMode {
+        /// All extracted pages placed in context.
+        Static,
+    }
+}
+
 /// A document content block.
 #[skip_serializing_none]
 #[serde_as]
@@ -253,6 +454,15 @@ pub struct DocumentContent {
     /// The mime type of the document.
     #[cfg_attr(test, schema(nullable = false))]
     pub mime_type: Option<DocumentMimeType>,
+
+    /// How the model processes this document for understanding.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub processing: Option<DocumentProcessing>,
+
+    /// The resolution of the media. Applicable when [`PageContentLayer::PageImage`] is
+    /// selected in the page options' content layers.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub resolution: Option<MediaResolution>,
 
     /// The URI of the document.
     #[cfg_attr(test, schema(nullable = false))]
@@ -666,6 +876,7 @@ impl Content {
             channels: None,
             data: Some(data),
             mime_type: Some(mime_type),
+            processing: None,
             sample_rate: None,
             uri: None,
             extra: BTreeMap::new(),
@@ -689,6 +900,7 @@ impl Content {
             channels: None,
             data: None,
             mime_type: Some(mime_type),
+            processing: None,
             sample_rate: None,
             uri: Some(uri.into()),
             extra: BTreeMap::new(),
@@ -726,6 +938,8 @@ impl Content {
         Content::Document(DocumentContent {
             data: Some(data),
             mime_type: Some(mime_type),
+            processing: None,
+            resolution: None,
             uri: None,
             extra: BTreeMap::new(),
         })
@@ -736,6 +950,8 @@ impl Content {
         Content::Document(DocumentContent {
             data: None,
             mime_type: Some(mime_type),
+            processing: None,
+            resolution: None,
             uri: Some(uri.into()),
             extra: BTreeMap::new(),
         })
@@ -822,6 +1038,12 @@ impl AudioContent {
         self
     }
 
+    /// Sets how the model processes the audio.
+    pub fn with_processing(mut self, processing: impl Into<AudioProcessing>) -> Self {
+        self.processing = Some(processing.into());
+        self
+    }
+
     /// Sets the sample rate of the audio.
     pub fn with_sample_rate(mut self, sample_rate: i32) -> Self {
         self.sample_rate = Some(sample_rate);
@@ -884,6 +1106,12 @@ impl StaticMediaProcessing {
         Self::default()
     }
 
+    /// Sets the content layers to extract from the video.
+    pub fn with_content_layers(mut self, content_layers: Vec<VideoContentLayer>) -> Self {
+        self.content_layers = Some(content_layers);
+        self
+    }
+
     /// Sets the segment end time.
     pub fn with_end_offset(mut self, end_offset: impl Into<String>) -> Self {
         self.end_offset = Some(end_offset.into());
@@ -903,6 +1131,97 @@ impl StaticMediaProcessing {
     }
 }
 
+impl AudioStaticMediaProcessing {
+    /// Creates a new, empty static audio processing configuration.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the segment end time.
+    pub fn with_end_offset(mut self, end_offset: impl Into<String>) -> Self {
+        self.end_offset = Some(end_offset.into());
+        self
+    }
+
+    /// Sets the segment start time.
+    pub fn with_start_offset(mut self, start_offset: impl Into<String>) -> Self {
+        self.start_offset = Some(start_offset.into());
+        self
+    }
+}
+
+impl DocumentStaticMediaProcessing {
+    /// Creates a new, empty static document processing configuration.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the options for paginated documents.
+    pub fn with_page_options(mut self, page_options: PageProcessingOptions) -> Self {
+        self.page_options = Some(page_options);
+        self
+    }
+
+    /// Sets the options for spreadsheets.
+    pub fn with_spreadsheet_options(
+        mut self,
+        spreadsheet_options: SpreadsheetProcessingOptions,
+    ) -> Self {
+        self.spreadsheet_options = Some(spreadsheet_options);
+        self
+    }
+}
+
+impl PageProcessingOptions {
+    /// Creates a new, empty set of page processing options.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the content layers to extract.
+    pub fn with_content_layers(mut self, content_layers: Vec<PageContentLayer>) -> Self {
+        self.content_layers = Some(content_layers);
+        self
+    }
+
+    /// Sets the 1-indexed end page, inclusive.
+    pub fn with_end_page(mut self, end_page: i32) -> Self {
+        self.end_page = Some(end_page);
+        self
+    }
+
+    /// Sets the 1-indexed start page, inclusive.
+    pub fn with_start_page(mut self, start_page: i32) -> Self {
+        self.start_page = Some(start_page);
+        self
+    }
+}
+
+impl SpreadsheetProcessingOptions {
+    /// Creates a new, empty set of spreadsheet processing options.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the content layers to extract.
+    pub fn with_content_layers(mut self, content_layers: Vec<SpreadsheetContentLayer>) -> Self {
+        self.content_layers = Some(content_layers);
+        self
+    }
+
+    /// Sets the 1-indexed sheet to extract.
+    pub fn with_sheet_index(mut self, sheet_index: i32) -> Self {
+        self.sheet_index = Some(sheet_index);
+        self
+    }
+
+    /// Sets the range of cells to extract, in A1 notation.
+    pub fn with_visible_cells(mut self, visible_cells: impl Into<String>) -> Self {
+        self.visible_cells = Some(visible_cells.into());
+        self
+    }
+}
+
 impl DocumentContent {
     /// Creates a new, empty document content block.
     pub fn new() -> Self {
@@ -918,6 +1237,18 @@ impl DocumentContent {
     /// Sets the mime type of the document.
     pub fn with_mime_type(mut self, mime_type: DocumentMimeType) -> Self {
         self.mime_type = Some(mime_type);
+        self
+    }
+
+    /// Sets how the model processes the document.
+    pub fn with_processing(mut self, processing: impl Into<DocumentProcessing>) -> Self {
+        self.processing = Some(processing.into());
+        self
+    }
+
+    /// Sets the media resolution.
+    pub fn with_resolution(mut self, resolution: MediaResolution) -> Self {
+        self.resolution = Some(resolution);
         self
     }
 
@@ -1224,6 +1555,42 @@ impl From<StaticMediaProcessing> for VideoProcessing {
 impl From<VideoProcessingMode> for VideoProcessing {
     fn from(value: VideoProcessingMode) -> Self {
         VideoProcessing::Mode(value)
+    }
+}
+
+impl From<AudioMediaProcessing> for AudioProcessing {
+    fn from(value: AudioMediaProcessing) -> Self {
+        AudioProcessing::Config(value)
+    }
+}
+
+impl From<AudioStaticMediaProcessing> for AudioProcessing {
+    fn from(value: AudioStaticMediaProcessing) -> Self {
+        AudioProcessing::Config(AudioMediaProcessing::Static(value))
+    }
+}
+
+impl From<AudioProcessingMode> for AudioProcessing {
+    fn from(value: AudioProcessingMode) -> Self {
+        AudioProcessing::Mode(value)
+    }
+}
+
+impl From<DocumentMediaProcessing> for DocumentProcessing {
+    fn from(value: DocumentMediaProcessing) -> Self {
+        DocumentProcessing::Config(value)
+    }
+}
+
+impl From<DocumentStaticMediaProcessing> for DocumentProcessing {
+    fn from(value: DocumentStaticMediaProcessing) -> Self {
+        DocumentProcessing::Config(DocumentMediaProcessing::Static(value))
+    }
+}
+
+impl From<DocumentProcessingMode> for DocumentProcessing {
+    fn from(value: DocumentProcessingMode) -> Self {
+        DocumentProcessing::Mode(value)
     }
 }
 

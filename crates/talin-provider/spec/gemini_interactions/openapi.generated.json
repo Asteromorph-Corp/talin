@@ -166,6 +166,10 @@
             "$ref": "#/components/schemas/AudioMimeType",
             "description": "The mime type of the audio."
           },
+          "processing": {
+            "$ref": "#/components/schemas/AudioProcessing",
+            "description": "How the model processes this audio for understanding."
+          },
           "sample_rate": {
             "description": "The sample rate of the audio.",
             "format": "int32",
@@ -213,6 +217,31 @@
         },
         "type": "object"
       },
+      "AudioMediaProcessing": {
+        "description": "How the model processes an audio block.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioStaticMediaProcessing",
+                "description": "All audio placed in context, optionally over a segment."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "All audio placed in context, optionally over a segment."
+          }
+        ]
+      },
       "AudioMimeType": {
         "description": "The mime type of an audio block.",
         "enum": [
@@ -244,6 +273,26 @@
         ],
         "type": "string"
       },
+      "AudioProcessing": {
+        "description": "How the model processes an audio block for understanding.\n\nThe API accepts either a bare [`AudioProcessingMode`] or an [`AudioMediaProcessing`]\nconfiguration.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AudioProcessingMode",
+            "description": "A processing mode, taking the defaults of that mode."
+          },
+          {
+            "$ref": "#/components/schemas/AudioMediaProcessing",
+            "description": "A processing configuration."
+          }
+        ]
+      },
+      "AudioProcessingMode": {
+        "description": "A way the model processes audio for understanding.",
+        "enum": [
+          "static"
+        ],
+        "type": "string"
+      },
       "AudioResponseFormat": {
         "description": "Configuration for audio output format.",
         "properties": {
@@ -264,6 +313,22 @@
             "description": "Sample rate in Hz.",
             "format": "int32",
             "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AudioStaticMediaProcessing": {
+        "description": "All audio placed in context, optionally over a segment of the audio.",
+        "properties": {
+          "end_offset": {
+            "description": "Segment end time, relative to the start of the audio stream, as a decimal number of\nseconds with an `s` suffix (e.g. `\"30s\"`).\n\nMust be positive, and greater than `start_offset` when that is set.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "start_offset": {
+            "description": "Segment start time, relative to the start of the audio stream, as a decimal number of\nseconds with an `s` suffix (e.g. `\"10.5s\"`).\n\nMust be non-negative.",
+            "format": "google-duration",
+            "type": "string"
           }
         },
         "type": "object"
@@ -335,6 +400,7 @@
             "items": {
               "$ref": "#/components/schemas/Content"
             },
+            "title": "ContentList",
             "type": "array"
           },
           {
@@ -779,6 +845,14 @@
             "$ref": "#/components/schemas/DocumentMimeType",
             "description": "The mime type of the document."
           },
+          "processing": {
+            "$ref": "#/components/schemas/DocumentProcessing",
+            "description": "How the model processes this document for understanding."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media. Applicable when [`PageContentLayer::PageImage`] is\nselected in the page options' content layers."
+          },
           "uri": {
             "description": "The URI of the document.",
             "type": "string"
@@ -805,6 +879,31 @@
         },
         "type": "object"
       },
+      "DocumentMediaProcessing": {
+        "description": "How the model processes a document block.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DocumentStaticMediaProcessing",
+                "description": "Extracted pages placed in context."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Extracted pages placed in context."
+          }
+        ]
+      },
       "DocumentMimeType": {
         "description": "The mime type of a document block.",
         "enum": [
@@ -822,6 +921,40 @@
           "application/vnd.oasis.opendocument.spreadsheet"
         ],
         "type": "string"
+      },
+      "DocumentProcessing": {
+        "description": "How the model processes a document for understanding.\n\nThe API accepts either a bare [`DocumentProcessingMode`] or a [`DocumentMediaProcessing`]\nconfiguration.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DocumentProcessingMode",
+            "description": "A processing mode, taking the defaults of that mode."
+          },
+          {
+            "$ref": "#/components/schemas/DocumentMediaProcessing",
+            "description": "A processing configuration."
+          }
+        ]
+      },
+      "DocumentProcessingMode": {
+        "description": "A way the model processes a document for understanding.",
+        "enum": [
+          "static"
+        ],
+        "type": "string"
+      },
+      "DocumentStaticMediaProcessing": {
+        "description": "Extracted pages placed in context, with options per kind of document.",
+        "properties": {
+          "page_options": {
+            "$ref": "#/components/schemas/PageProcessingOptions",
+            "description": "Options for paginated documents. Only valid for paginated document MIME types (e.g.\nPDF, Office documents, and presentations)."
+          },
+          "spreadsheet_options": {
+            "$ref": "#/components/schemas/SpreadsheetProcessingOptions",
+            "description": "Options for spreadsheets. Only valid for spreadsheet MIME types (`.xlsx`, `.xls`,\n`.ods`)."
+          }
+        },
+        "type": "object"
       },
       "EgressAllowlist": {
         "description": "The value of an egress allowlist: a list of rules, or `\"disabled\"`.",
@@ -913,6 +1046,14 @@
             "description": "An environment hosted by the API."
           }
         ]
+      },
+      "EnvironmentMode": {
+        "description": "The compute lifecycle mode of an environment.",
+        "enum": [
+          "on_demand",
+          "self_hosted"
+        ],
+        "type": "string"
       },
       "EnvironmentNetwork": {
         "description": "Outbound networking configuration for an environment.\n\nEither an allowlist restricting which domains the environment may reach, or `\"disabled\"`,\nwhich turns all network access off. Omitted entirely, all outbound traffic is allowed.",
@@ -1128,6 +1269,10 @@
       "Function": {
         "description": "A user-defined function the model may call.",
         "properties": {
+          "defer_loading": {
+            "description": "If true, the function's loading is deferred.",
+            "type": "boolean"
+          },
           "description": {
             "description": "A description of the function.",
             "type": "string"
@@ -1138,6 +1283,10 @@
           },
           "parameters": {
             "description": "The JSON Schema for the function's parameters."
+          },
+          "short_description": {
+            "description": "\"A brief description of the function, shown to the model as a short summary of functions\nwith `defer_loading` set to true.",
+            "type": "string"
           }
         },
         "type": "object"
@@ -2295,7 +2444,8 @@
         "enum": [
           "deep-research-preview-04-2026",
           "deep-research-max-preview-04-2026",
-          "antigravity-preview-05-2026"
+          "antigravity-preview-05-2026",
+          "antigravity-preview-09-2026"
         ],
         "type": "string"
       },
@@ -2314,14 +2464,19 @@
           "gemini-3.6-flash",
           "gemini-3.7-flash",
           "gemini-3.8-flash",
+          "gemini-4-argon",
+          "gemini-4-carbon",
+          "gemini-4-hydrogen",
           "gemini-3.8-flash-tts",
           "gemini-3.8-flash-lite-tts",
+          "gemini-3.5-transcribe",
           "gemini-2.5-flash-image",
           "gemini-3.1-flash-image",
           "gemini-3.1-flash-lite-image",
           "gemini-3-pro-image",
           "gemini-nano-banana-2.1",
           "lyria-3.5",
+          "gemini-omni-1.2-flash",
           "gemini-omni-1.1-flash"
         ],
         "type": "string"
@@ -2335,6 +2490,10 @@
               "$ref": "#/components/schemas/AllowedTools"
             },
             "type": "array"
+          },
+          "defer_loading": {
+            "description": "If true, loading of tools on this MCP server is deferred.",
+            "type": "boolean"
           },
           "headers": {
             "additionalProperties": {
@@ -2521,6 +2680,37 @@
         ],
         "type": "string"
       },
+      "PageContentLayer": {
+        "description": "A content layer to extract from a paginated document.",
+        "enum": [
+          "page_image",
+          "page_text"
+        ],
+        "type": "string"
+      },
+      "PageProcessingOptions": {
+        "description": "Processing options for paginated documents, such as PDFs, Office documents, and\npresentations.",
+        "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from a paginated document.",
+            "items": {
+              "$ref": "#/components/schemas/PageContentLayer"
+            },
+            "type": "array"
+          },
+          "end_page": {
+            "description": "1-indexed end page, inclusive. Must be >= `start_page` if `start_page` is set.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "start_page": {
+            "description": "1-indexed start page, inclusive.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "PlaceCitation": {
         "description": "A place citation annotation.",
         "properties": {
@@ -2642,6 +2832,10 @@
       "RemoteEnvironment": {
         "description": "An environment hosted by the API.",
         "properties": {
+          "custom_config": {
+            "additionalProperties": {},
+            "type": "object"
+          },
           "env": {
             "$ref": "#/components/schemas/EnvironmentVariables",
             "description": "Environment variables to set in the environment."
@@ -2649,6 +2843,10 @@
           "environment_id": {
             "description": "The ID of an environment to update instead of creating a new one.",
             "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/EnvironmentMode",
+            "description": "The compute lifecycle mode for this environment."
           },
           "network": {
             "$ref": "#/components/schemas/EnvironmentNetwork",
@@ -2936,9 +3134,47 @@
         },
         "type": "object"
       },
+      "SpreadsheetContentLayer": {
+        "description": "A content layer to extract from a spreadsheet.",
+        "enum": [
+          "visual",
+          "data",
+          "formulas"
+        ],
+        "type": "string"
+      },
+      "SpreadsheetProcessingOptions": {
+        "description": "Processing options for spreadsheets.",
+        "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from a spreadsheet.",
+            "items": {
+              "$ref": "#/components/schemas/SpreadsheetContentLayer"
+            },
+            "type": "array"
+          },
+          "sheet_index": {
+            "description": "The 1-indexed index of the sheet to extract, in workbook order. If not set, all sheets\nare extracted.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "visible_cells": {
+            "description": "The range of cells to extract, in A1 notation (e.g. `\"A1:D10\"`). If not set, the full\noccupied area of the sheet is used.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "StaticMediaProcessing": {
         "description": "Fixed-rate frame extraction, optionally over a segment of the media.",
         "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from the video.",
+            "items": {
+              "$ref": "#/components/schemas/VideoContentLayer"
+            },
+            "type": "array"
+          },
           "end_offset": {
             "description": "Segment end time, as a decimal number of seconds with an `s` suffix (e.g. `\"30s\"`).\n\nMust be non-negative, and greater than `start_offset` when that is set.",
             "format": "google-duration",
@@ -3339,6 +3575,46 @@
               }
             ],
             "description": "The result of a server-initiated media processing step."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ToolSearchCallStep",
+                "description": "A tool search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "tool_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A tool search tool call."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ToolSearchResultStep",
+                "description": "The result of a tool search tool call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "tool_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "The result of a tool search tool call."
           }
         ],
         "type": "object"
@@ -3696,6 +3972,26 @@
           {
             "allOf": [
               {
+                "$ref": "#/components/schemas/ToolSearchCallDelta",
+                "description": "A tool search call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "tool_search_call"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A tool search call."
+          },
+          {
+            "allOf": [
+              {
                 "$ref": "#/components/schemas/CodeExecutionResultDelta",
                 "description": "A code execution result."
               },
@@ -3852,6 +4148,26 @@
               }
             ],
             "description": "A processing result."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ToolSearchResultDelta",
+                "description": "A tool search result."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "tool_search_result"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A tool search result."
           }
         ],
         "type": "object"
@@ -3989,7 +4305,8 @@
           "minimal",
           "low",
           "medium",
-          "high"
+          "high",
+          "xhigh"
         ],
         "type": "string"
       },
@@ -4202,6 +4519,26 @@
               }
             ],
             "description": "Enables the model to call tools hosted on an MCP server."
+          },
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ToolSearch",
+                "description": "Enables the model to search for and load tools on demand."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "tool_search"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Enables the model to search for and load tools on demand."
           }
         ],
         "type": "object"
@@ -4237,6 +4574,154 @@
           "validated"
         ],
         "type": "string"
+      },
+      "ToolSearch": {
+        "description": "A tool that allows the model to dynamically search for and load tools into the model's\ncontext on demand.\n\nThis allows clients to avoid loading all tool definitions up front and may help reduce\noverall token usage and cost.",
+        "properties": {
+          "description": {
+            "description": "A description of the function. To be set only for client-side execution.",
+            "type": "string"
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ToolSearchExecution",
+            "description": "The execution mode of the tool search."
+          },
+          "name": {
+            "description": "The name of the function. To be set only for client-side execution.",
+            "type": "string"
+          },
+          "parameters": {
+            "description": "The JSON Schema for the function's parameters. To be set only for client-side execution."
+          }
+        },
+        "type": "object"
+      },
+      "ToolSearchCallDelta": {
+        "description": "A streamed tool search call.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/ToolSearchCallStepArguments",
+            "description": "The arguments for tool search."
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ToolSearchCallStep": {
+        "description": "A tool search tool call step.",
+        "properties": {
+          "arguments": {
+            "$ref": "#/components/schemas/ToolSearchCallStepArguments",
+            "description": "The arguments for tool search."
+          },
+          "id": {
+            "description": "A unique ID for this specific tool call.",
+            "type": "string"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "id"
+        ],
+        "type": "object"
+      },
+      "ToolSearchCallStepArguments": {
+        "description": "The arguments for a tool search tool call.",
+        "properties": {
+          "function_names": {
+            "description": "List of function names to load explicitly.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ToolSearchExecution": {
+        "description": "The execution mode of the tool search.",
+        "enum": [
+          "server",
+          "client"
+        ],
+        "type": "string"
+      },
+      "ToolSearchResultDelta": {
+        "description": "A streamed tool search result.",
+        "properties": {
+          "result": {
+            "description": "The retrieved function definitions.",
+            "items": {
+              "$ref": "#/components/schemas/ToolSearchResultTool"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ToolSearchResultStep": {
+        "description": "The result of a tool search tool call.",
+        "properties": {
+          "call_id": {
+            "description": "ID to match the ID from the tool search call step.",
+            "type": "string"
+          },
+          "result": {
+            "description": "The retrieved function definitions.",
+            "items": {
+              "$ref": "#/components/schemas/ToolSearchResultTool"
+            },
+            "type": "array"
+          },
+          "signature": {
+            "description": "A signature hash for backend validation.",
+            "format": "byte",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id"
+        ],
+        "type": "object"
+      },
+      "ToolSearchResultTool": {
+        "description": "The result of the tool search tool.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Function",
+                "description": "A user-defined function the model may call."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "function"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "A user-defined function the model may call."
+          }
+        ]
       },
       "TranscriptionConfig": {
         "description": "Configuration for speech recognition (transcription).",
@@ -4658,6 +5143,15 @@
           }
         },
         "type": "object"
+      },
+      "VideoContentLayer": {
+        "description": "A content layer to extract from a video.",
+        "enum": [
+          "frames",
+          "audio",
+          "transcript"
+        ],
+        "type": "string"
       },
       "VideoDelta": {
         "description": "An incremental video update.",

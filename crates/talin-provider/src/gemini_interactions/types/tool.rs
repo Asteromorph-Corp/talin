@@ -32,6 +32,8 @@ tagged_enum! {
         ComputerUse(ComputerUse),
         /// Enables the model to call tools hosted on an MCP server.
         McpServer(McpServer),
+        /// Enables the model to search for and load tools on demand.
+        ToolSearch(ToolSearch),
     }
 }
 
@@ -52,6 +54,15 @@ pub struct Function {
     /// The JSON Schema for the function's parameters.
     #[cfg_attr(test, schema(value_type = Value))]
     pub parameters: Option<schemars::Schema>,
+
+    /// If true, the function's loading is deferred.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub defer_loading: Option<bool>,
+
+    /// "A brief description of the function, shown to the model as a short summary of functions
+    /// with `defer_loading` set to true.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub short_description: Option<String>,
 }
 
 /// A tool that can be used by the model to execute code.
@@ -213,6 +224,49 @@ pub struct McpServer {
     /// The full URL for the server endpoint, for example `https://api.example.com/mcp`.
     #[cfg_attr(test, schema(nullable = false))]
     pub url: Option<String>,
+
+    /// If true, loading of tools on this MCP server is deferred.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub defer_loading: Option<bool>,
+}
+
+/// A tool that allows the model to dynamically search for and load tools into the model's
+/// context on demand.
+///
+/// This allows clients to avoid loading all tool definitions up front and may help reduce
+/// overall token usage and cost.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct ToolSearch {
+    /// A description of the function. To be set only for client-side execution.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub description: Option<String>,
+
+    /// The execution mode of the tool search.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub execution: Option<ToolSearchExecution>,
+
+    /// The name of the function. To be set only for client-side execution.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub name: Option<String>,
+
+    /// The JSON Schema for the function's parameters. To be set only for client-side execution.
+    #[cfg_attr(test, schema(value_type = Value))]
+    pub parameters: Option<schemars::Schema>,
+}
+
+string_enum! {
+    /// The execution mode of the tool search.
+    #[serde(rename_all = "snake_case")]
+    pub enum ToolSearchExecution {
+        /// Server-side execution mode. Default.
+        Server,
+
+        /// Client-side execution mode.
+        Client,
+    }
 }
 
 /// Configuration for Exa AI Search.
@@ -396,6 +450,8 @@ impl Tool {
             description: None,
             name: Some(name.into()),
             parameters: None,
+            defer_loading: None,
+            short_description: None,
         })
     }
 
@@ -437,6 +493,11 @@ impl Tool {
     pub fn mcp_server(name: impl Into<String>, url: impl Into<String>) -> Self {
         Tool::McpServer(McpServer::new(name, url))
     }
+
+    /// Creates a tool search tool.
+    pub fn tool_search() -> Self {
+        Tool::ToolSearch(ToolSearch::default())
+    }
 }
 
 impl Function {
@@ -446,6 +507,8 @@ impl Function {
             description: None,
             name: Some(name.into()),
             parameters: None,
+            defer_loading: None,
+            short_description: None,
         }
     }
 
@@ -464,6 +527,19 @@ impl Function {
     /// Sets the JSON Schema for the function's parameters.
     pub fn with_parameters(mut self, parameters: schemars::Schema) -> Self {
         self.parameters = Some(parameters);
+        self
+    }
+
+    /// Sets whether the function's loading is deferred.
+    pub fn with_defer_loading(mut self, defer_loading: bool) -> Self {
+        self.defer_loading = Some(defer_loading);
+        self
+    }
+
+    /// Sets a brief description of the function, shown to the model as a short summary of functions
+    /// with `defer_loading` set to true.
+    pub fn with_short_description(mut self, short_description: impl Into<String>) -> Self {
+        self.short_description = Some(short_description.into());
         self
     }
 }
@@ -586,6 +662,7 @@ impl McpServer {
             headers: None,
             name: Some(name.into()),
             url: Some(url.into()),
+            defer_loading: None,
         }
     }
 
@@ -598,6 +675,43 @@ impl McpServer {
     /// Sets the headers sent to the server endpoint.
     pub fn with_headers(mut self, headers: BTreeMap<String, String>) -> Self {
         self.headers = Some(headers);
+        self
+    }
+
+    /// Sets whether loading of tools on this MCP server is deferred.
+    pub fn with_defer_loading(mut self, defer_loading: bool) -> Self {
+        self.defer_loading = Some(defer_loading);
+        self
+    }
+}
+
+impl ToolSearch {
+    /// Creates a new tool search configuration.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the description of the function. Only for client-side execution.
+    pub fn with_description(mut self, description: impl Into<String>) -> Self {
+        self.description = Some(description.into());
+        self
+    }
+
+    /// Sets the execution mode of the tool search.
+    pub fn with_execution(mut self, execution: ToolSearchExecution) -> Self {
+        self.execution = Some(execution);
+        self
+    }
+
+    /// Sets the name of the function. Only for client-side execution.
+    pub fn with_name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
+    }
+
+    /// Sets the JSON Schema for the function's parameters. Only for client-side execution.
+    pub fn with_parameters(mut self, parameters: schemars::Schema) -> Self {
+        self.parameters = Some(parameters);
         self
     }
 }

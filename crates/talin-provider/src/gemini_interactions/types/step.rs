@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::base64::Base64;
 use serde_with::{serde_as, skip_serializing_none};
 
-use super::{Content, ReviewSnippet};
+use super::{Content, Function, ReviewSnippet};
 use crate::gemini_interactions::types::FunctionResultSubContent;
 use crate::gemini_interactions::types::utils::impl_extra_accessors;
 use crate::utils::{string_enum, tagged_enum};
@@ -55,6 +55,10 @@ tagged_enum! {
         ProcessingCall(ProcessingCallStep),
         /// The result of a server-initiated media processing step.
         ProcessingResult(ProcessingResultStep),
+        /// A tool search tool call.
+        ToolSearchCall(ToolSearchCallStep),
+        /// The result of a tool search tool call.
+        ToolSearchResult(ToolSearchResultStep),
     }
 }
 
@@ -367,6 +371,7 @@ pub struct CodeExecutionResultStep {
 #[serde(untagged)]
 pub enum CodeExecutionResult {
     /// The contents of the list.
+    #[cfg_attr(test, schema(title = "ContentList"))]
     ContentList(Vec<Content>),
     /// Single text string.
     Text(String),
@@ -550,6 +555,79 @@ pub struct ProcessingResultStep {
     #[serde(flatten)]
     #[cfg_attr(test, schema(ignore))]
     extra: BTreeMap<String, serde_json::Value>,
+}
+
+/// A tool search tool call step.
+#[skip_serializing_none]
+#[serde_as]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[non_exhaustive]
+pub struct ToolSearchCallStep {
+    /// The arguments for tool search.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub arguments: ToolSearchCallStepArguments,
+
+    /// A unique ID for this specific tool call.
+    pub id: String,
+
+    /// A signature hash for backend validation.
+    #[serde_as(as = "Option<Base64>")]
+    #[cfg_attr(test, schema(value_type = String, format = Byte))]
+    pub signature: Option<Vec<u8>>,
+
+    /// Additional fields the server returned that this crate does not model; captured so
+    /// they round-trip back to the API verbatim.
+    #[serde(flatten)]
+    #[cfg_attr(test, schema(ignore))]
+    extra: BTreeMap<String, serde_json::Value>,
+}
+
+/// The result of a tool search tool call.
+#[skip_serializing_none]
+#[serde_as]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[non_exhaustive]
+pub struct ToolSearchResultStep {
+    /// ID to match the ID from the tool search call step.
+    pub call_id: String,
+
+    /// The retrieved function definitions.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub result: Option<Vec<ToolSearchResultTool>>,
+
+    /// A signature hash for backend validation.
+    #[serde_as(as = "Option<Base64>")]
+    #[cfg_attr(test, schema(value_type = String, format = Byte))]
+    pub signature: Option<Vec<u8>>,
+
+    /// Additional fields the server returned that this crate does not model; captured so
+    /// they round-trip back to the API verbatim.
+    #[serde(flatten)]
+    #[cfg_attr(test, schema(ignore))]
+    extra: BTreeMap<String, serde_json::Value>,
+}
+
+/// The arguments for a tool search tool call.
+#[skip_serializing_none]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct ToolSearchCallStepArguments {
+    /// List of function names to load explicitly.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub function_names: Option<Vec<String>>,
+}
+
+tagged_enum! {
+    /// The result of the tool search tool.
+    #[derive(Serialize, Deserialize, Debug, Clone)]
+    #[serde(tag = "type", rename_all = "snake_case")]
+    pub enum ToolSearchResultTool {
+        /// A user-defined function the model may call.
+        Function(Function),
+    }
 }
 
 /// The arguments to pass to a code execution tool call.
@@ -1154,6 +1232,65 @@ impl ProcessingResultStep {
     }
 }
 
+impl ToolSearchCallStep {
+    /// Creates a tool search call step with the given tool call ID and arguments.
+    pub fn new(id: impl Into<String>, arguments: ToolSearchCallStepArguments) -> Self {
+        Self {
+            arguments,
+            id: id.into(),
+            signature: None,
+            extra: BTreeMap::new(),
+        }
+    }
+
+    /// Sets the backend validation signature.
+    pub fn with_signature(mut self, signature: Vec<u8>) -> Self {
+        self.signature = Some(signature);
+        self
+    }
+}
+
+impl ToolSearchResultStep {
+    /// Creates a tool search result step for the given call ID.
+    pub fn new(call_id: impl Into<String>) -> Self {
+        Self {
+            call_id: call_id.into(),
+            result: None,
+            signature: None,
+            extra: BTreeMap::new(),
+        }
+    }
+
+    /// Sets the retrieved function definitions.
+    pub fn with_result(mut self, result: Vec<Function>) -> Self {
+        let result = result
+            .into_iter()
+            .map(ToolSearchResultTool::Function)
+            .collect();
+        self.result = Some(result);
+        self
+    }
+
+    /// Sets the backend validation signature.
+    pub fn with_signature(mut self, signature: Vec<u8>) -> Self {
+        self.signature = Some(signature);
+        self
+    }
+}
+
+impl ToolSearchCallStepArguments {
+    /// Creates a new, empty set of tool search arguments.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Sets the names of the functions to load explicitly.
+    pub fn with_function_names(mut self, function_names: Vec<String>) -> Self {
+        self.function_names = Some(function_names);
+        self
+    }
+}
+
 impl CodeExecutionCallArguments {
     /// Creates a new, empty set of code execution arguments.
     pub fn new() -> Self {
@@ -1398,6 +1535,18 @@ impl From<ProcessingResultStep> for Step {
     }
 }
 
+impl From<ToolSearchCallStep> for Step {
+    fn from(value: ToolSearchCallStep) -> Self {
+        Step::ToolSearchCall(value)
+    }
+}
+
+impl From<ToolSearchResultStep> for Step {
+    fn from(value: ToolSearchResultStep) -> Self {
+        Step::ToolSearchResult(value)
+    }
+}
+
 impl_extra_accessors!(
     UserInputStep,
     ModelOutputStep,
@@ -1418,4 +1567,6 @@ impl_extra_accessors!(
     McpServerToolResultStep,
     ProcessingCallStep,
     ProcessingResultStep,
+    ToolSearchCallStep,
+    ToolSearchResultStep,
 );
