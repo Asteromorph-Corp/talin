@@ -245,8 +245,8 @@ impl From<ReasoningEffort> for ThinkingLevel {
             ReasoningEffort::Low => ThinkingLevel::Low,
             ReasoningEffort::Medium => ThinkingLevel::Medium,
             ReasoningEffort::High => ThinkingLevel::High,
-            ReasoningEffort::Xhigh => ThinkingLevel::High,
-            ReasoningEffort::Max => ThinkingLevel::High,
+            ReasoningEffort::Xhigh => ThinkingLevel::XHigh,
+            ReasoningEffort::Max => ThinkingLevel::XHigh,
         }
     }
 }

@@ -204,6 +204,10 @@ string_enum! {
 
         /// High thinking level.
         High,
+
+        /// Extra high thinking level.
+        #[serde(rename = "xhigh")]
+        XHigh,
     }
 }
 
