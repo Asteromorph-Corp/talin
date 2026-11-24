@@ -148,6 +148,7 @@ mod normalize {
         ("Step", "type"),
         ("ThoughtContent", "type"),
         ("FunctionResultSubContent", "type"),
+        ("ToolSearchResultTool", "type"),
         ("Tool", "type"),
         ("ResponseFormat", "type"),
         ("EnvironmentConfig", "type"),

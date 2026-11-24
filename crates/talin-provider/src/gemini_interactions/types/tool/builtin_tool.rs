@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use super::{CodeExecution, ComputerUse, FileSearch, GoogleMaps, GoogleSearch, Tool, UrlContext};
+use super::{
+    CodeExecution, ComputerUse, FileSearch, GoogleMaps, GoogleSearch, Tool, ToolSearch, UrlContext,
+};
 
 /// A built-in tool of the Gemini Interactions API, i.e. every [`Tool`] variant except the
 /// user-defined [`Tool::Function`] and the MCP-provided [`Tool::McpServer`].
@@ -23,6 +25,8 @@ pub enum BuiltinTool {
     GoogleMaps(GoogleMaps),
     /// Enables the model to interact with a computer.
     ComputerUse(ComputerUse),
+    /// Enables the model to search for and load tools on demand.
+    ToolSearch(ToolSearch),
 }
 
 impl From<CodeExecution> for BuiltinTool {
@@ -56,6 +60,12 @@ impl From<ComputerUse> for BuiltinTool {
     }
 }
 
+impl From<ToolSearch> for BuiltinTool {
+    fn from(tool: ToolSearch) -> Self {
+        BuiltinTool::ToolSearch(tool)
+    }
+}
+
 impl From<BuiltinTool> for Tool {
     fn from(tool: BuiltinTool) -> Self {
         match tool {
@@ -65,6 +75,7 @@ impl From<BuiltinTool> for Tool {
             BuiltinTool::FileSearch(t) => Tool::FileSearch(t),
             BuiltinTool::GoogleMaps(t) => Tool::GoogleMaps(t),
             BuiltinTool::ComputerUse(t) => Tool::ComputerUse(t),
+            BuiltinTool::ToolSearch(t) => Tool::ToolSearch(t),
         }
     }
 }

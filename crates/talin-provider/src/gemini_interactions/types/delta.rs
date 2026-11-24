@@ -5,7 +5,8 @@ use serde_with::{serde_as, skip_serializing_none};
 use super::{
     Annotation, AudioMimeType, CodeExecutionCallArguments, Content, DocumentMimeType,
     FunctionResultValue, GoogleMapsCallArguments, GoogleMapsResult, GoogleSearchCallArguments,
-    GoogleSearchResult, ImageMimeType, MediaResolution, UrlContextCallArguments, UrlContextResult,
+    GoogleSearchResult, ImageMimeType, MediaResolution, ToolSearchCallStepArguments,
+    ToolSearchResultTool, UrlContextCallArguments, UrlContextResult,
 };
 use crate::utils::{string_enum, tagged_enum};
 
@@ -99,6 +100,8 @@ tagged_enum! {
         McpServerToolCall(McpServerToolCallDelta),
         /// A processing call.
         ProcessingCall(ProcessingCallDelta),
+        /// A tool search call.
+        ToolSearchCall(ToolSearchCallDelta),
         /// A code execution result.
         CodeExecutionResult(CodeExecutionResultDelta),
         /// A URL context result.
@@ -115,6 +118,8 @@ tagged_enum! {
         McpServerToolResult(McpServerToolResultDelta),
         /// A processing result.
         ProcessingResult(ProcessingResultDelta),
+        /// A tool search result.
+        ToolSearchResult(ToolSearchResultDelta),
     }
 }
 
@@ -571,6 +576,40 @@ pub struct ProcessingCallDelta {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct ProcessingResultDelta {
+    /// A signature hash for backend validation.
+    #[serde_as(as = "Option<Base64>")]
+    #[cfg_attr(test, schema(value_type = String, format = Byte))]
+    pub signature: Option<Vec<u8>>,
+}
+
+/// A streamed tool search call.
+#[skip_serializing_none]
+#[serde_as]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[non_exhaustive]
+pub struct ToolSearchCallDelta {
+    /// The arguments for tool search.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub arguments: Option<ToolSearchCallStepArguments>,
+
+    /// A signature hash for backend validation.
+    #[serde_as(as = "Option<Base64>")]
+    #[cfg_attr(test, schema(value_type = String, format = Byte))]
+    pub signature: Option<Vec<u8>>,
+}
+
+/// A streamed tool search result.
+#[skip_serializing_none]
+#[serde_as]
+#[cfg_attr(test, derive(utoipa::ToSchema))]
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[non_exhaustive]
+pub struct ToolSearchResultDelta {
+    /// The retrieved function definitions.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub result: Option<Vec<ToolSearchResultTool>>,
+
     /// A signature hash for backend validation.
     #[serde_as(as = "Option<Base64>")]
     #[cfg_attr(test, schema(value_type = String, format = Byte))]
