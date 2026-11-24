@@ -224,6 +224,10 @@ pub struct McpServer {
     /// The full URL for the server endpoint, for example `https://api.example.com/mcp`.
     #[cfg_attr(test, schema(nullable = false))]
     pub url: Option<String>,
+
+    /// If true, loading of tools on this MCP server is deferred.
+    #[cfg_attr(test, schema(nullable = false))]
+    pub defer_loading: Option<bool>,
 }
 
 /// A tool that allows the model to dynamically search for and load tools into the model's
@@ -658,6 +662,7 @@ impl McpServer {
             headers: None,
             name: Some(name.into()),
             url: Some(url.into()),
+            defer_loading: None,
         }
     }
 
@@ -670,6 +675,12 @@ impl McpServer {
     /// Sets the headers sent to the server endpoint.
     pub fn with_headers(mut self, headers: BTreeMap<String, String>) -> Self {
         self.headers = Some(headers);
+        self
+    }
+
+    /// Sets whether loading of tools on this MCP server is deferred.
+    pub fn with_defer_loading(mut self, defer_loading: bool) -> Self {
+        self.defer_loading = Some(defer_loading);
         self
     }
 }

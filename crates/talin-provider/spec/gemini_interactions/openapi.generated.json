@@ -2351,6 +2351,10 @@
             },
             "type": "array"
           },
+          "defer_loading": {
+            "description": "If true, loading of tools on this MCP server is deferred.",
+            "type": "boolean"
+          },
           "headers": {
             "additionalProperties": {
               "type": "string"
