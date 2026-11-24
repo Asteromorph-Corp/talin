@@ -367,6 +367,7 @@ pub struct CodeExecutionResultStep {
 #[serde(untagged)]
 pub enum CodeExecutionResult {
     /// The contents of the list.
+    #[cfg_attr(test, schema(title = "ContentList"))]
     ContentList(Vec<Content>),
     /// Single text string.
     Text(String),

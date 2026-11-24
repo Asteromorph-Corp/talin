@@ -335,6 +335,7 @@
             "items": {
               "$ref": "#/components/schemas/Content"
             },
+            "title": "ContentList",
             "type": "array"
           },
           {
