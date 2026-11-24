@@ -166,6 +166,10 @@
             "$ref": "#/components/schemas/AudioMimeType",
             "description": "The mime type of the audio."
           },
+          "processing": {
+            "$ref": "#/components/schemas/AudioProcessing",
+            "description": "How the model processes this audio for understanding."
+          },
           "sample_rate": {
             "description": "The sample rate of the audio.",
             "format": "int32",
@@ -213,6 +217,31 @@
         },
         "type": "object"
       },
+      "AudioMediaProcessing": {
+        "description": "How the model processes an audio block.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AudioStaticMediaProcessing",
+                "description": "All audio placed in context, optionally over a segment."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "All audio placed in context, optionally over a segment."
+          }
+        ]
+      },
       "AudioMimeType": {
         "description": "The mime type of an audio block.",
         "enum": [
@@ -244,6 +273,26 @@
         ],
         "type": "string"
       },
+      "AudioProcessing": {
+        "description": "How the model processes an audio block for understanding.\n\nThe API accepts either a bare [`AudioProcessingMode`] or an [`AudioMediaProcessing`]\nconfiguration.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AudioProcessingMode",
+            "description": "A processing mode, taking the defaults of that mode."
+          },
+          {
+            "$ref": "#/components/schemas/AudioMediaProcessing",
+            "description": "A processing configuration."
+          }
+        ]
+      },
+      "AudioProcessingMode": {
+        "description": "A way the model processes audio for understanding.",
+        "enum": [
+          "static"
+        ],
+        "type": "string"
+      },
       "AudioResponseFormat": {
         "description": "Configuration for audio output format.",
         "properties": {
@@ -264,6 +313,22 @@
             "description": "Sample rate in Hz.",
             "format": "int32",
             "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AudioStaticMediaProcessing": {
+        "description": "All audio placed in context, optionally over a segment of the audio.",
+        "properties": {
+          "end_offset": {
+            "description": "Segment end time, relative to the start of the audio stream, as a decimal number of\nseconds with an `s` suffix (e.g. `\"30s\"`).\n\nMust be positive, and greater than `start_offset` when that is set.",
+            "format": "google-duration",
+            "type": "string"
+          },
+          "start_offset": {
+            "description": "Segment start time, relative to the start of the audio stream, as a decimal number of\nseconds with an `s` suffix (e.g. `\"10.5s\"`).\n\nMust be non-negative.",
+            "format": "google-duration",
+            "type": "string"
           }
         },
         "type": "object"
@@ -780,6 +845,14 @@
             "$ref": "#/components/schemas/DocumentMimeType",
             "description": "The mime type of the document."
           },
+          "processing": {
+            "$ref": "#/components/schemas/DocumentProcessing",
+            "description": "How the model processes this document for understanding."
+          },
+          "resolution": {
+            "$ref": "#/components/schemas/MediaResolution",
+            "description": "The resolution of the media. Applicable when [`PageContentLayer::PageImage`] is\nselected in the page options' content layers."
+          },
           "uri": {
             "description": "The URI of the document.",
             "type": "string"
@@ -806,6 +879,31 @@
         },
         "type": "object"
       },
+      "DocumentMediaProcessing": {
+        "description": "How the model processes a document block.\n\nDiscriminated by its `type` field.",
+        "oneOf": [
+          {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DocumentStaticMediaProcessing",
+                "description": "Extracted pages placed in context."
+              },
+              {
+                "properties": {
+                  "type": {
+                    "const": "static"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              }
+            ],
+            "description": "Extracted pages placed in context."
+          }
+        ]
+      },
       "DocumentMimeType": {
         "description": "The mime type of a document block.",
         "enum": [
@@ -823,6 +921,40 @@
           "application/vnd.oasis.opendocument.spreadsheet"
         ],
         "type": "string"
+      },
+      "DocumentProcessing": {
+        "description": "How the model processes a document for understanding.\n\nThe API accepts either a bare [`DocumentProcessingMode`] or a [`DocumentMediaProcessing`]\nconfiguration.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/DocumentProcessingMode",
+            "description": "A processing mode, taking the defaults of that mode."
+          },
+          {
+            "$ref": "#/components/schemas/DocumentMediaProcessing",
+            "description": "A processing configuration."
+          }
+        ]
+      },
+      "DocumentProcessingMode": {
+        "description": "A way the model processes a document for understanding.",
+        "enum": [
+          "static"
+        ],
+        "type": "string"
+      },
+      "DocumentStaticMediaProcessing": {
+        "description": "Extracted pages placed in context, with options per kind of document.",
+        "properties": {
+          "page_options": {
+            "$ref": "#/components/schemas/PageProcessingOptions",
+            "description": "Options for paginated documents. Only valid for paginated document MIME types (e.g.\nPDF, Office documents, and presentations)."
+          },
+          "spreadsheet_options": {
+            "$ref": "#/components/schemas/SpreadsheetProcessingOptions",
+            "description": "Options for spreadsheets. Only valid for spreadsheet MIME types (`.xlsx`, `.xls`,\n`.ods`)."
+          }
+        },
+        "type": "object"
       },
       "EgressAllowlist": {
         "description": "The value of an egress allowlist: a list of rules, or `\"disabled\"`.",
@@ -2548,6 +2680,37 @@
         ],
         "type": "string"
       },
+      "PageContentLayer": {
+        "description": "A content layer to extract from a paginated document.",
+        "enum": [
+          "page_image",
+          "page_text"
+        ],
+        "type": "string"
+      },
+      "PageProcessingOptions": {
+        "description": "Processing options for paginated documents, such as PDFs, Office documents, and\npresentations.",
+        "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from a paginated document.",
+            "items": {
+              "$ref": "#/components/schemas/PageContentLayer"
+            },
+            "type": "array"
+          },
+          "end_page": {
+            "description": "1-indexed end page, inclusive. Must be >= `start_page` if `start_page` is set.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "start_page": {
+            "description": "1-indexed start page, inclusive.",
+            "format": "int32",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
       "PlaceCitation": {
         "description": "A place citation annotation.",
         "properties": {
@@ -2971,9 +3134,47 @@
         },
         "type": "object"
       },
+      "SpreadsheetContentLayer": {
+        "description": "A content layer to extract from a spreadsheet.",
+        "enum": [
+          "visual",
+          "data",
+          "formulas"
+        ],
+        "type": "string"
+      },
+      "SpreadsheetProcessingOptions": {
+        "description": "Processing options for spreadsheets.",
+        "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from a spreadsheet.",
+            "items": {
+              "$ref": "#/components/schemas/SpreadsheetContentLayer"
+            },
+            "type": "array"
+          },
+          "sheet_index": {
+            "description": "The 1-indexed index of the sheet to extract, in workbook order. If not set, all sheets\nare extracted.",
+            "format": "int32",
+            "type": "integer"
+          },
+          "visible_cells": {
+            "description": "The range of cells to extract, in A1 notation (e.g. `\"A1:D10\"`). If not set, the full\noccupied area of the sheet is used.",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "StaticMediaProcessing": {
         "description": "Fixed-rate frame extraction, optionally over a segment of the media.",
         "properties": {
+          "content_layers": {
+            "description": "Content layers to extract from the video.",
+            "items": {
+              "$ref": "#/components/schemas/VideoContentLayer"
+            },
+            "type": "array"
+          },
           "end_offset": {
             "description": "Segment end time, as a decimal number of seconds with an `s` suffix (e.g. `\"30s\"`).\n\nMust be non-negative, and greater than `start_offset` when that is set.",
             "format": "google-duration",
@@ -4942,6 +5143,15 @@
           }
         },
         "type": "object"
+      },
+      "VideoContentLayer": {
+        "description": "A content layer to extract from a video.",
+        "enum": [
+          "frames",
+          "audio",
+          "transcript"
+        ],
+        "type": "string"
       },
       "VideoDelta": {
         "description": "An incremental video update.",

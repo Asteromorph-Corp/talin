@@ -13,6 +13,7 @@ use crate::gemini_interactions::types::{Content, Step};
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
 #[non_exhaustive]
+#[allow(clippy::large_enum_variant)] // Boxing `Content` would change the public variant type.
 pub enum InteractionsInput {
     /// A single content block.
     Content(Content),

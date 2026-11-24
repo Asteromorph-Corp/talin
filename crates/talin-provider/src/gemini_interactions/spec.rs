@@ -153,6 +153,8 @@ mod normalize {
         ("ResponseFormat", "type"),
         ("EnvironmentConfig", "type"),
         ("MediaProcessing", "type"),
+        ("AudioMediaProcessing", "type"),
+        ("DocumentMediaProcessing", "type"),
         ("TranscriptionMode", "type"),
         ("Ranking", "ranking_config"),
         ("InteractionSseEvent", "event_type"),
