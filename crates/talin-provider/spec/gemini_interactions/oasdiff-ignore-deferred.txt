@@ -12,4 +12,5 @@
 # When the current version reaches or exceeds the specified version, CI will fail until the entry is addressed.
 # See spec/README.md for more information.
 
-# --- No deferred entries at this time ---
+#@ 0.2.0 make `ModelInteraction::input` optional, as upstream no longer requires it
+post /{api_version}/interactions the request property `oneOf[subschema #2: CreateModelInteractionParams]/input` became required
