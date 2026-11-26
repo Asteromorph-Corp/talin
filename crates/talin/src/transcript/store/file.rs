@@ -32,7 +32,8 @@ pub enum FileStoreError {
 impl FileStore {
     /// Creates a store that writes to `path`.
     ///
-    /// Use [`restore`](AgentSession::restore) to continue an existing transcript.
+    /// Use [`restore`](crate::agent::AgentSession::restore) to continue an existing
+    /// transcript.
     pub fn new(path: impl Into<PathBuf>) -> Self {
         Self { path: path.into() }
     }

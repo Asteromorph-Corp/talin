@@ -12,7 +12,7 @@ pub use file::{FileStore, FileStoreError};
 
 /// A persistent store for the [agent transcript](crate::transcript::AgentTranscript).
 ///
-/// A [runner](crate::agent::AgentRunner) calls [`checkpoint`](TranscriptStoreExt::checkpoint):
+/// A [runner](crate::agent::AgentRunner) calls [`checkpoint`]:
 /// - after the turn's messages are recorded
 /// - after each model response
 /// - after each step completes through [`AgentRunner::step`] or [`PendingStep::complete`].

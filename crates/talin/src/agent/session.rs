@@ -12,6 +12,7 @@ use crate::strategy::{CompactionStrategy, Strategy};
 use crate::template::{PromptTemplate, TemplateError};
 use crate::tools::{Tool, ToolResolver};
 use crate::transcript::scope::{Anchor, Last};
+use crate::transcript::store::{TranscriptStore, TranscriptStoreExt};
 use crate::transcript::{AgentTranscript, Entry, Scope};
 
 /// A persistent conversation between an agent and the LLM.
@@ -45,6 +46,11 @@ where
     /// Use [`AgentTranscript::modify`](AgentTranscript::modify) and the other methods on
     /// [`AgentTranscript`] to edit the transcript mid-session.
     pub transcript: AgentTranscript<L::System, L::Item>,
+
+    /// Optional store that persists the transcript as the session runs; see [`TranscriptStore`].
+    ///
+    /// Store failures are logged and do not fail the session.
+    store: Option<Box<dyn TranscriptStore>>,
 
     /// Optional history compaction policy, run before each generation request.
     /// Original transcript entries and their UUIDs are preserved.
@@ -95,6 +101,7 @@ where
             llm: self.llm,
             prompt: self.prompt,
             transcript: self.transcript,
+            store: None,
             compaction: self.compaction,
             tools: self.tools,
             builtin_tools: self.builtin_tools,
@@ -114,6 +121,7 @@ where
             llm: agent.llm.clone(),
             prompt: agent.prompt.clone(),
             transcript: AgentTranscript::default(),
+            store: None,
             compaction: None,
             tools: agent.tools.clone(),
             builtin_tools: agent.builtin_tools.clone(),
@@ -140,6 +148,7 @@ where
             llm: agent.llm.clone(),
             prompt: agent.prompt.clone(),
             transcript: self.transcript,
+            store: self.store,
             compaction: self.compaction,
             tools: agent.tools.clone(),
             builtin_tools: agent.builtin_tools.clone(),
@@ -174,6 +183,7 @@ where
             llm: agent.llm.clone(),
             prompt: agent.prompt.clone(),
             transcript: self.transcript.migrate::<L2::System, L2::Item>()?,
+            store: self.store,
             compaction: None,
             tools: agent.tools.clone(),
             builtin_tools: agent.builtin_tools.clone(),
@@ -184,6 +194,16 @@ where
             options: agent.options,
             _phantom: std::marker::PhantomData,
         })
+    }
+
+    /// Persists the transcript to `store` as the session runs; see [`TranscriptStore`].
+    ///
+    /// The store first receives the transcript at the next checkpoint.
+    ///
+    /// To also keep a transcript from an earlier run, call [`restore`](Self::restore) first.
+    pub fn with_store(mut self, store: impl TranscriptStore + 'static) -> Self {
+        self.store = Some(Box::new(store));
+        self
     }
 
     /// Configures history compaction for this session.
@@ -289,6 +309,43 @@ where
                 None,
             )
             .await
+    }
+
+    /// Hands the transcript to the [store](Self::with_store), if there is one.
+    ///
+    /// A [runner](crate::agent::AgentRunner) calls [`checkpoint`]:
+    /// - after the turn's messages are recorded
+    /// - after each model response
+    /// - after each step completes through [`AgentRunner::step`] or [`PendingStep::complete`].
+    ///
+    /// If you resolve a step manually with [`PendingStep::complete_with`] or
+    /// [`PendingStep::discard`], or edit the transcript, the transcript would be persisted at
+    /// the next checkpoint. You can also call this function manually to persist the transcript.
+    ///
+    /// [`checkpoint`]: crate::agent::AgentSession::checkpoint
+    /// [`AgentRunner::step`]: crate::agent::AgentRunner::step
+    /// [`PendingStep::complete`]: crate::agent::PendingStep::complete
+    /// [`PendingStep::complete_with`]: crate::agent::PendingStep::complete_with
+    /// [`PendingStep::discard`]: crate::agent::PendingStep::discard
+    pub async fn checkpoint(&mut self) {
+        let Some(store) = &mut self.store else {
+            return;
+        };
+        if let Err(e) = store.checkpoint(&self.transcript).await {
+            log::error!("failed to checkpoint the transcript: {e}");
+        }
+    }
+
+    /// Restores the transcript from the [store](Self::with_store), if there is one.
+    pub async fn restore(&mut self) {
+        let Some(store) = &self.store else {
+            return;
+        };
+        match store.restore().await {
+            Ok(Some(transcript)) => self.transcript = transcript,
+            Ok(None) => log::info!("no transcript found in the store"),
+            Err(error) => log::error!("failed to restore the transcript: {error}"),
+        }
     }
 }
 
