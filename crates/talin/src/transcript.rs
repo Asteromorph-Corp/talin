@@ -3,6 +3,7 @@
 use std::collections::{HashMap, HashSet};
 use std::ops::Range;
 
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::llm::{LlmRequestItem, LlmRequestSystem, UnsupportedContent};
@@ -24,7 +25,7 @@ pub use error::{ApplyEditError, ModifyError};
 pub use scope::{Anchor, Scope};
 
 /// The conversation state exchanged with the LLM.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentTranscript<NS, NM> {
     system: SystemRecord<NS>,
     entries: Vec<Entry<NM>>,

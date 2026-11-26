@@ -1,10 +1,10 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 /// An object describing metadata about the request.
 #[skip_serializing_none]
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct Metadata {
     /// An external identifier for the user who is associated with the request.

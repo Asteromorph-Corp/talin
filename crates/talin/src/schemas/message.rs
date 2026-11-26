@@ -101,7 +101,7 @@ pub struct ToolMessage {
 }
 
 /// An erroneous tool result.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolErrorMessage {
     /// The id of the tool call the error is for.
     pub call_id: String,

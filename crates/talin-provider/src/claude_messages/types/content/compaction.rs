@@ -22,7 +22,7 @@ pub struct CompactionBlock {
 
 /// A [compaction block parameter](https://platform.claude.com/docs/en/api/http/beta/messages#beta_compaction_block_param) sent in a later request.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct CompactionBlockParam {
     /// Keep `null` for failed compactions when round-tripping the block.
@@ -35,6 +35,7 @@ pub struct CompactionBlockParam {
     pub signature: Option<String>,
     /// Tool changes returned with the summary, preserving omitted, null, and empty values.
     #[serde(
+        default,
         skip_serializing_if = "Option::is_none",
         with = "serde_with::rust::double_option"
     )]

@@ -272,7 +272,8 @@ impl Llm for SglangGenerate {
 /// [`CompletionInstructor`] and a message carrying media has nowhere to go. Rejecting it here keeps
 /// the failure at the point the content enters the transcript, rather than silently sending a
 /// prompt that omits it.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
 pub struct GenerateMessage(pub BodyMessage);
 
 impl LlmRequestItem for GenerateMessage {

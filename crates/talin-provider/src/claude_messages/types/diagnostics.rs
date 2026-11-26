@@ -7,7 +7,7 @@ use crate::utils::tagged_enum;
 /// divergence reporting.
 #[skip_serializing_none]
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Default, Clone)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 #[non_exhaustive]
 pub struct DiagnosticsParam {
     /// The `id` (`msg_...`) from this client's previous Messages response.

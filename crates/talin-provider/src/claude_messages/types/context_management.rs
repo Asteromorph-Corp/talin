@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 /// The [`BetaContextManagementConfig`](https://platform.claude.com/docs/en/api/http/beta/messages#beta_context_management_config) request field.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct ContextManagementConfig {
     /// Context management edits to apply to the request.
@@ -28,7 +28,7 @@ impl ContextManagementConfig {
 /// Supported context management edits.
 /// See [threshold compaction](https://platform.claude.com/docs/en/build-with-claude/compaction-threshold).
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
 #[non_exhaustive]
 pub enum ContextManagementEdit {
@@ -40,7 +40,7 @@ pub enum ContextManagementEdit {
 /// The `compact_20260112` edit; configures server-side auto compaction at a token threshold.
 /// Requires the `compact-2026-01-12` beta header.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, Default)]
 #[non_exhaustive]
 pub struct CompactEdit {
     /// Optional instructions for generating the summary.
