@@ -2,14 +2,14 @@
 
 use async_trait::async_trait;
 use indexmap::IndexMap;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 use crate::mcp::McpServerHttp;
 use crate::schemas::{
     BodyMessage, LlmStep, Message, ModelKey, Prompt, ToolErrorMessage, Usage, UsageLines, WithUsage,
 };
 use crate::tools::ToolSpec;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 use crate::transcript::{AgentTranscript, Entry, ModelRecord, TruncatedRecord};
 
 mod error;
@@ -267,9 +267,7 @@ pub trait LlmResponse: Sized + Send + Sync + 'static {
 }
 
 /// Provider-specific system prompt representation for an [`Llm`].
-pub trait LlmRequestSystem:
-    Clone + Send + Sync + Serialize + DeserializeOwned + 'static
-{
+pub trait LlmRequestSystem: Clone + Send + Sync + Serialize + DeserializeOwned + 'static {
     /// Constructs a new system item with the given contents.
     fn from_contents(contents: Vec<String>) -> Self;
 
@@ -287,9 +285,7 @@ impl LlmRequestSystem for Vec<String> {
 }
 
 /// Provider-specific request item for an [`Llm`].
-pub trait LlmRequestItem:
-    Clone + Send + Sync + Serialize + DeserializeOwned + 'static
-{
+pub trait LlmRequestItem: Clone + Send + Sync + Serialize + DeserializeOwned + 'static {
     /// Constructs a request item from the given message.
     ///
     /// Fails with [`UnsupportedContent`] when the message carries content the provider cannot
