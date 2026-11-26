@@ -16,6 +16,7 @@ mod entry;
 mod error;
 pub mod query;
 pub mod scope;
+pub mod store;
 
 pub use entry::{
     Entry, EntryEdit, EntryView, MessageRecord, ModelRecord, Record, SystemRecord, ToolErrorRecord,
