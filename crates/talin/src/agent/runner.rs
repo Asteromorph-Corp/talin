@@ -246,7 +246,9 @@ where
     /// final answer.
     pub async fn step(&mut self) -> Result<Option<O::Partial>, AgentError> {
         let pending = self.half_step().await?;
-        pending.complete().await.inspect_err(|e| self.on_fail(e))
+        let result = pending.complete().await.inspect_err(|e| self.on_fail(e));
+        self.session.checkpoint().await;
+        result
     }
 
     /// Executes the LLM half of a step, returning a [`PendingStep`].
@@ -265,8 +267,12 @@ where
     pub async fn half_step(
         &mut self,
     ) -> Result<PendingStep<'_, 'session, 'input, L, I, O, S, A>, AgentError> {
-        let step = self.step_inner().await.inspect_err(|e| self.on_fail(e))?;
-        Ok(PendingStep { runner: self, step })
+        let step = self.step_inner().await.inspect_err(|e| self.on_fail(e));
+        self.session.checkpoint().await;
+        Ok(PendingStep {
+            runner: self,
+            step: step?,
+        })
     }
 
     async fn step_inner(&mut self) -> Result<LlmStep, AgentError> {
