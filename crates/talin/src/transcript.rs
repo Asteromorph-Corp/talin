@@ -556,7 +556,7 @@ mod tests {
 
     /// A request item that accepts text but rejects any attached image, standing in for a provider
     /// that cannot represent a given media source.
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
     struct TextOnly(String);
 
     impl LlmRequestItem for TextOnly {

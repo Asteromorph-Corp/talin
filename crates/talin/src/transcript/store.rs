@@ -1,8 +1,6 @@
 //! Stores that persist a transcript while a session runs.
 
 use async_trait::async_trait;
-use serde::Serialize;
-use serde::de::DeserializeOwned;
 
 use crate::llm::{LlmRequestItem, LlmRequestSystem};
 use crate::transcript::AgentTranscript;
@@ -21,6 +19,7 @@ pub use file::{FileStore, FileStoreError};
 /// or edit the transcript, the transcript would be persisted at the next checkpoint. You can also
 /// call [`AgentSession::checkpoint`] manually to persist the transcript.
 ///
+/// [`checkpoint`]: crate::agent::AgentSession::checkpoint
 /// [`AgentRunner::step`]: crate::agent::AgentRunner::step
 /// [`PendingStep::complete`]: crate::agent::PendingStep::complete
 /// [`PendingStep::complete_with`]: crate::agent::PendingStep::complete_with
@@ -47,8 +46,8 @@ pub trait TranscriptStoreExt: TranscriptStore {
         transcript: &AgentTranscript<S, B>,
     ) -> Result<(), StoreError>
     where
-        S: LlmRequestSystem + Serialize + Sync,
-        B: LlmRequestItem + Serialize + Sync,
+        S: LlmRequestSystem,
+        B: LlmRequestItem,
     {
         let json = serde_json::to_string(transcript)?;
         self.checkpoint_raw(&json).await
@@ -60,8 +59,8 @@ pub trait TranscriptStoreExt: TranscriptStore {
     /// the original types and then [`migrate`](AgentTranscript::migrate).
     async fn restore<S, B>(&self) -> Result<Option<AgentTranscript<S, B>>, StoreError>
     where
-        S: LlmRequestSystem + DeserializeOwned,
-        B: LlmRequestItem + DeserializeOwned,
+        S: LlmRequestSystem,
+        B: LlmRequestItem,
     {
         match self.restore_raw().await? {
             Some(json) => Ok(Some(serde_json::from_str(&json)?)),
