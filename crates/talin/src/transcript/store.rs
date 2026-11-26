@@ -12,7 +12,7 @@ pub use file::{FileStore, FileStoreError};
 
 /// A persistent store for the [agent transcript](crate::transcript::AgentTranscript).
 ///
-/// A [runner](crate::agent::AgentRunner) calls [`checkpoint`](Self::checkpoint):
+/// A [runner](crate::agent::AgentRunner) calls [`checkpoint`](TranscriptStoreExt::checkpoint):
 /// - after the turn's messages are recorded
 /// - after each model response
 /// - after each step completes through [`AgentRunner::step`] or [`PendingStep::complete`].
@@ -32,7 +32,7 @@ pub trait TranscriptStore: Send + Sync {
     async fn checkpoint_raw(&mut self, json: &str) -> Result<(), StoreError>;
 
     /// Returns the last checkpointed JSON document, or `None` if nothing is stored yet.
-    async fn restore_raw(&mut self) -> Result<Option<String>, StoreError>;
+    async fn restore_raw(&self) -> Result<Option<String>, StoreError>;
 }
 
 /// Typed convenience over [`TranscriptStore`].
@@ -58,7 +58,7 @@ pub trait TranscriptStoreExt: TranscriptStore {
     ///
     /// To resume with a different provider than the one that wrote the checkpoint, restore with
     /// the original types and then [`migrate`](AgentTranscript::migrate).
-    async fn restore<S, B>(&mut self) -> Result<Option<AgentTranscript<S, B>>, StoreError>
+    async fn restore<S, B>(&self) -> Result<Option<AgentTranscript<S, B>>, StoreError>
     where
         S: LlmRequestSystem + DeserializeOwned,
         B: LlmRequestItem + DeserializeOwned,

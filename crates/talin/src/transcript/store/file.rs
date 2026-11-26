@@ -70,7 +70,7 @@ impl FileStore {
     }
 
     /// Reads the file's contents, or `None` if the file does not exist.
-    async fn read(&mut self) -> Result<Option<String>, FileStoreError> {
+    async fn read(&self) -> Result<Option<String>, FileStoreError> {
         let json = match fs::read_to_string(&self.path).await {
             Ok(json) => json,
             Err(source) if source.kind() == std::io::ErrorKind::NotFound => {
@@ -92,7 +92,7 @@ impl TranscriptStore for FileStore {
         Ok(())
     }
 
-    async fn restore_raw(&mut self) -> Result<Option<String>, StoreError> {
+    async fn restore_raw(&self) -> Result<Option<String>, StoreError> {
         Ok(self.read().await?)
     }
 }
