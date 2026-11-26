@@ -9,7 +9,7 @@ use tokio::io::AsyncWriteExt;
 use crate::transcript::store::{StoreError, TranscriptStore};
 
 /// A [`TranscriptStore`] that keeps a transcript as a JSON file.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FileStore {
     path: PathBuf,
 }

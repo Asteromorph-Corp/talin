@@ -865,6 +865,45 @@ mod tests {
         }
 
         #[tokio::test]
+        async fn persists_the_transcript_and_resumes_from_it() {
+            use crate::transcript::store::FileStore;
+
+            let path = std::env::temp_dir()
+                .join(format!("pe-session-{}", std::process::id()))
+                .join("session.json");
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+
+            let store = FileStore::new(path.clone());
+
+            let llm = ScriptedLlm::new([
+                ScriptedMessage::new(AssistantMessage::new(None, "Hello!")),
+                ScriptedMessage::new(AssistantMessage::new(None, "Still here.")),
+            ]);
+            let agent: Agent<_> = Agent::builder().build(llm.clone());
+
+            let mut session = agent.session().with_store(store.clone());
+            assert_eq!(session.run_turn("Hi.").await.unwrap(), "Hello!");
+            let saved = std::fs::read_to_string(&path).unwrap();
+            assert_eq!(saved, serde_json::to_string(&session.transcript).unwrap());
+
+            // A new process picks up where the first left off, and keeps persisting.
+            let mut session = agent.session().with_store(store);
+            assert!(session.restore().await.unwrap());
+            assert_eq!(session.run_turn("Again?").await.unwrap(), "Still here.");
+
+            let requests = llm.requests();
+            assert_eq!(
+                requests[1].items.len(),
+                3,
+                "the resumed turn lost its history"
+            );
+            let saved = std::fs::read_to_string(&path).unwrap();
+            assert_eq!(saved, serde_json::to_string(&session.transcript).unwrap());
+
+            std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+        }
+
+        #[tokio::test]
         async fn drops_truncated_tool_call() {
             let script = [
                 ScriptedMessage::truncated(ToolCallMessage::from_parts(

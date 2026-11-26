@@ -12,7 +12,7 @@ use crate::strategy::{CompactionStrategy, Strategy};
 use crate::template::{PromptTemplate, TemplateError};
 use crate::tools::{Tool, ToolResolver};
 use crate::transcript::scope::{Anchor, Last};
-use crate::transcript::store::{TranscriptStore, TranscriptStoreExt};
+use crate::transcript::store::{StoreError, TranscriptStore, TranscriptStoreExt};
 use crate::transcript::{AgentTranscript, Entry, Scope};
 
 /// A persistent conversation between an agent and the LLM.
@@ -336,16 +336,20 @@ where
         }
     }
 
-    /// Restores the transcript from the [store](Self::with_store), if there is one.
-    pub async fn restore(&mut self) {
+    /// Restores the transcript from the [store](Self::with_store), replacing the current one.
+    ///
+    /// Returns `true` if a transcript was restored, and `false` if the session has no store or
+    /// the store holds nothing yet. On error the current transcript is left untouched.
+    pub async fn restore(&mut self) -> Result<bool, StoreError> {
         let Some(store) = &self.store else {
-            return;
+            return Ok(false);
         };
-        match store.restore().await {
-            Ok(Some(transcript)) => self.transcript = transcript,
-            Ok(None) => log::info!("no transcript found in the store"),
-            Err(error) => log::error!("failed to restore the transcript: {error}"),
-        }
+        let transcript = match store.restore().await? {
+            Some(transcript) => transcript,
+            None => return Ok(false),
+        };
+        self.transcript = transcript;
+        Ok(true)
     }
 }
 
