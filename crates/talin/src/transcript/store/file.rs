@@ -9,13 +9,9 @@ use tokio::io::AsyncWriteExt;
 use crate::transcript::store::{StoreError, TranscriptStore};
 
 /// A [`TranscriptStore`] that keeps a transcript as a JSON file.
-///
-/// A file must have a single writer: the store does not lock it.
 #[derive(Debug)]
 pub struct FileStore {
     path: PathBuf,
-    /// A hash of the document last written, or `None` if the file is not yet known.
-    written: Option<blake3::Hash>,
 }
 
 /// An error from [`FileStore`].
@@ -34,15 +30,11 @@ pub enum FileStoreError {
 }
 
 impl FileStore {
-    /// Creates a store that writes to `path`, replacing any file already there on the first
-    /// checkpoint.
+    /// Creates a store that writes to `path`.
     ///
     /// Use [`restore`](AgentSession::restore) to continue an existing transcript.
     pub fn new(path: impl Into<PathBuf>) -> Self {
-        Self {
-            path: path.into(),
-            written: None,
-        }
+        Self { path: path.into() }
     }
 
     /// The path of the file.
@@ -51,7 +43,7 @@ impl FileStore {
     }
 
     /// Writes the file by first writing to a temporary file and then renaming it into place.
-    async fn write_with_tmp(&mut self, json: &str) -> Result<(), std::io::Error> {
+    async fn write_with_tmp(&self, json: &str) -> Result<(), std::io::Error> {
         let mut temp: OsString = OsString::from(self.path.as_os_str());
         temp.push(".tmp");
         let temp = PathBuf::from(temp);
@@ -68,20 +60,12 @@ impl FileStore {
         fs::rename(&temp, &self.path).await
     }
 
-    /// Writes the file if it has changed since the last write.
-    async fn write(&mut self, json: &str) -> Result<(), FileStoreError> {
-        let hash = blake3::hash(json.as_bytes());
-
-        if self.written == Some(hash) {
-            return Ok(());
-        }
-
+    /// Replaces the file's contents with `json`.
+    async fn write(&self, json: &str) -> Result<(), FileStoreError> {
         if let Err(source) = self.write_with_tmp(json).await {
-            self.written = None;
             let path = self.path.clone();
             return Err(FileStoreError::Io { path, source });
         }
-        self.written = Some(hash);
         Ok(())
     }
 
@@ -97,7 +81,6 @@ impl FileStore {
                 return Err(FileStoreError::Io { path, source });
             }
         };
-        self.written = Some(blake3::hash(json.as_bytes()));
         Ok(Some(json))
     }
 }
@@ -166,10 +149,7 @@ mod tests {
         );
 
         // The temporary file does not linger.
-        assert_eq!(
-            std::fs::read_dir(path.parent().unwrap()).unwrap().count(),
-            1
-        );
+        assert!(!path.with_extension("json.tmp").exists());
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
 
@@ -179,6 +159,7 @@ mod tests {
         let mut store = FileStore::new(&path);
         let transcript = Transcript::new(vec!["sys".into()], vec![user("one")]).unwrap();
         store.checkpoint(&transcript).await.unwrap();
+        drop(store);
 
         let mut store = FileStore::new(&path);
         let mut restored = store
@@ -209,6 +190,29 @@ mod tests {
         let transcript = Transcript::default();
         store.checkpoint(&transcript).await.unwrap();
         assert!(path.exists());
+        std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
+    }
+
+    #[tokio::test]
+    async fn overwrites_a_file_changed_behind_its_back() {
+        let path = temp_path("overwrite");
+        let mut store = FileStore::new(&path);
+        let transcript = Transcript::new(vec!["sys".into()], vec![user("one")]).unwrap();
+        store.checkpoint(&transcript).await.unwrap();
+
+        std::fs::write(&path, "not a transcript").unwrap();
+        store.checkpoint(&transcript).await.unwrap();
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            json_of(&transcript)
+        );
+
+        std::fs::remove_file(&path).unwrap();
+        store.checkpoint(&transcript).await.unwrap();
+        assert_eq!(
+            std::fs::read_to_string(&path).unwrap(),
+            json_of(&transcript)
+        );
         std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
     }
 }
