@@ -44,7 +44,7 @@ tagged_enum! {
 
 tagged_enum! {
     /// A content block within a request message.
-    #[derive(Serialize, Debug, Clone)]
+    #[derive(Serialize, Deserialize, Debug, Clone)]
     #[serde(tag = "type", rename_all = "snake_case")]
     pub enum ContentBlockParam {
         /// A text block.

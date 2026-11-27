@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 #[cfg(feature = "mcp-client-2025-11-20")]
@@ -13,7 +13,7 @@ use crate::claude_messages::types::{
 /// Request body for the [Messages](https://docs.claude.com/en/api/messages) endpoint.
 #[skip_serializing_none]
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct MessagesRequest {
     /// The model that will complete your prompt.
@@ -124,7 +124,7 @@ pub struct MessagesRequest {
 ///
 /// See [`messages`](https://docs.claude.com/en/api/messages#body-messages)
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "role", rename_all = "snake_case")]
 #[non_exhaustive]
 pub enum MessageParam {
@@ -140,7 +140,7 @@ pub enum MessageParam {
 
 /// A message from the user.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct UserMessageParam {
     /// The message content.
@@ -150,7 +150,7 @@ pub struct UserMessageParam {
 
 /// A message from the assistant.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct AssistantMessageParam {
     /// The message content.
@@ -160,7 +160,7 @@ pub struct AssistantMessageParam {
 
 /// A system message.
 #[cfg_attr(test, derive(utoipa::ToSchema))]
-#[derive(Serialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[non_exhaustive]
 pub struct SystemMessageParam {
     /// The message content.

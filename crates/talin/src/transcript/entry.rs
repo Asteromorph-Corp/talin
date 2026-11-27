@@ -1,10 +1,12 @@
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::llm::{LlmRequestItem, LlmRequestSystem, UnsupportedContent};
 use crate::schemas::{AssistantMessage, BodyMessage, LlmStep, ToolErrorMessage, TruncatedStep};
 
 /// An entry of a transcript, generic over the provider-native item type `N`.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Entry<N> {
     /// Message entry holding the canonical message and the original provider-specific item.
     Message(Uuid, MessageRecord<N>),
@@ -47,7 +49,7 @@ impl<N> Entry<N> {
 }
 
 /// Provider-agnostic canonical representation paired with the original provider-specific item.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Record<C, N> {
     pub(crate) canonical: C,
     pub(crate) native: N,

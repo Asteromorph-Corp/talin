@@ -3,6 +3,7 @@
 use std::collections::{HashMap, HashSet};
 use std::ops::Range;
 
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::llm::{LlmRequestItem, LlmRequestSystem, UnsupportedContent};
@@ -15,6 +16,7 @@ mod entry;
 mod error;
 pub mod query;
 pub mod scope;
+pub mod store;
 
 pub use entry::{
     Entry, EntryEdit, EntryView, MessageRecord, ModelRecord, Record, SystemRecord, ToolErrorRecord,
@@ -24,7 +26,7 @@ pub use error::{ApplyEditError, ModifyError};
 pub use scope::{Anchor, Scope};
 
 /// The conversation state exchanged with the LLM.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AgentTranscript<NS, NM> {
     system: SystemRecord<NS>,
     entries: Vec<Entry<NM>>,
@@ -554,7 +556,7 @@ mod tests {
 
     /// A request item that accepts text but rejects any attached image, standing in for a provider
     /// that cannot represent a given media source.
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
     struct TextOnly(String);
 
     impl LlmRequestItem for TextOnly {

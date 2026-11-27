@@ -246,7 +246,9 @@ where
     /// final answer.
     pub async fn step(&mut self) -> Result<Option<O::Partial>, AgentError> {
         let pending = self.half_step().await?;
-        pending.complete().await.inspect_err(|e| self.on_fail(e))
+        let result = pending.complete().await.inspect_err(|e| self.on_fail(e));
+        self.session.checkpoint().await;
+        result
     }
 
     /// Executes the LLM half of a step, returning a [`PendingStep`].
@@ -265,8 +267,12 @@ where
     pub async fn half_step(
         &mut self,
     ) -> Result<PendingStep<'_, 'session, 'input, L, I, O, S, A>, AgentError> {
-        let step = self.step_inner().await.inspect_err(|e| self.on_fail(e))?;
-        Ok(PendingStep { runner: self, step })
+        let step = self.step_inner().await.inspect_err(|e| self.on_fail(e));
+        self.session.checkpoint().await;
+        Ok(PendingStep {
+            runner: self,
+            step: step?,
+        })
     }
 
     async fn step_inner(&mut self) -> Result<LlmStep, AgentError> {
@@ -856,6 +862,45 @@ mod tests {
                 .filter(|entry| matches!(entry, EntryView::Message(_, BodyMessage::User(_))))
                 .count();
             assert_eq!(users, 1, "the continuation prompt outlived the merge");
+        }
+
+        #[tokio::test]
+        async fn persists_the_transcript_and_resumes_from_it() {
+            use crate::transcript::store::FileStore;
+
+            let path = std::env::temp_dir()
+                .join(format!("pe-session-{}", std::process::id()))
+                .join("session.json");
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+
+            let store = FileStore::new(path.clone());
+
+            let llm = ScriptedLlm::new([
+                ScriptedMessage::new(AssistantMessage::new(None, "Hello!")),
+                ScriptedMessage::new(AssistantMessage::new(None, "Still here.")),
+            ]);
+            let agent: Agent<_> = Agent::builder().build(llm.clone());
+
+            let mut session = agent.session().with_store(store.clone());
+            assert_eq!(session.run_turn("Hi.").await.unwrap(), "Hello!");
+            let saved = std::fs::read_to_string(&path).unwrap();
+            assert_eq!(saved, serde_json::to_string(&session.transcript).unwrap());
+
+            // A new process picks up where the first left off, and keeps persisting.
+            let mut session = agent.session().with_store(store);
+            assert!(session.restore().await.unwrap());
+            assert_eq!(session.run_turn("Again?").await.unwrap(), "Still here.");
+
+            let requests = llm.requests();
+            assert_eq!(
+                requests[1].items.len(),
+                3,
+                "the resumed turn lost its history"
+            );
+            let saved = std::fs::read_to_string(&path).unwrap();
+            assert_eq!(saved, serde_json::to_string(&session.transcript).unwrap());
+
+            std::fs::remove_dir_all(path.parent().unwrap()).unwrap();
         }
 
         #[tokio::test]

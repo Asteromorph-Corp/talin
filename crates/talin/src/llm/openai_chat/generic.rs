@@ -265,7 +265,8 @@ where
 }
 
 /// A [`GenericChat`] request item.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
 #[repr(transparent)]
 pub struct GenericChatMessage(pub ChatCompletionRequestMessage);
 
