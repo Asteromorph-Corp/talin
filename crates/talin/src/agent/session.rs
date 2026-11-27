@@ -339,11 +339,24 @@ where
     /// Restores the transcript from the [store](Self::with_store), replacing the current one.
     ///
     /// Returns `true` if a transcript was restored, and `false` if the session has no store or
-    /// the store holds nothing yet. On error the current transcript is left untouched.
+    /// the store holds nothing yet. On error, the current transcript is left untouched.
     pub async fn restore(&mut self) -> Result<bool, StoreError> {
         let Some(store) = &self.store else {
             return Ok(false);
         };
+        let transcript = match store.restore().await? {
+            Some(transcript) => transcript,
+            None => return Ok(false),
+        };
+        self.transcript = transcript;
+        Ok(true)
+    }
+
+    /// Restores the transcript from the given `store`, without attaching it to the session.
+    ///
+    /// Returns `true` if a transcript was restored, and `false` if the store holds nothing yet.
+    /// On error, the current transcript is left untouched.
+    pub async fn restore_from(&mut self, store: &dyn TranscriptStore) -> Result<bool, StoreError> {
         let transcript = match store.restore().await? {
             Some(transcript) => transcript,
             None => return Ok(false),
